@@ -18,6 +18,18 @@ fl_gmail:
     gmail_message_class: \AppBundle\Entity\GmailMessage
     gmail_label_class: \AppBundle\Entity\GmailLabel
     gmail_history_class: \AppBundle\Entity\GmailHistory
+    
+swiftmailer:
+    default_mailer: general_mailer
+    mailers:
+        general_mailer:
+            transport: "%mailer_transport%"
+            host:      "%mailer_host%"
+            username:  "%mailer_user%"
+            password:  "%mailer_password%"
+            spool:     { type: memory }
+        fl_gmail_api_mailer:
+            transport: fl_gmail.swift_transport
 ```
 
 ```yaml
