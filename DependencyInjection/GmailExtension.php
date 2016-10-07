@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\Loader;
  *
  * @link http://symfony.com/doc/current/cookbook/bundles/extension.html
  */
-class FLGmailExtension extends Extension
+class GmailExtension extends Extension
 {
     /**
      * {@inheritdoc}
