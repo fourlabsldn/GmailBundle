@@ -29,5 +29,5 @@ fl_gmail:
 
 ## License
 
-QBJSParser is licensed under the MIT license.
+GmailBundle is licensed under the MIT license.
 
