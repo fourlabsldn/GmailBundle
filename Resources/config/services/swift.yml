@@ -1,0 +1,6 @@
+services:
+    swiftmailer.mailer.transport.fl_gmail.swift_transport: # transports are expected to be in swiftmailer.mailer.transport
+        class: FL\GmailBundle\Swift\GmailApiTransport
+        arguments:
+            - "@fl_gmail.email"
+            - "@swiftmailer.mailer.fl_gmail_api_mailer.transport.eventdispatcher" # must name mailer fl_gmail_api_mailer for this to work

@@ -1,0 +1,7 @@
+fl_gmail.save_access_token:
+    path: /save-access-token
+    defaults: { _controller: 'FL\GmailBundle\Action\SaveAccessTokenAction:__invoke' }
+
+fl_gmail.authorise_google:
+    path: /authorise-google
+    defaults: { _controller: 'FL\GmailBundle\Action\AuthoriseGoogleAction:__invoke' }

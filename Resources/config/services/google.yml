@@ -1,0 +1,48 @@
+services:
+    fl_gmail.token_file_storage:
+        class: FL\GmailBundle\Token\TokenFileStorage
+        arguments:
+            - "@filesystem"
+            - '%fl_gmail.access_token_path%'
+            - '%fl_gmail.auth_code_path%'
+
+    fl_gmail.unauthorised_client:
+        class: Google_Client
+        calls:
+            - [setAccessType, ['offline']]
+            - [setApprovalPrompt, ['force']]
+            - [setApplicationName, ['%fl_gmail.application_name%']]
+            - [setClientId, ['%fl_gmail.client_id%']]
+            - [setClientSecret, ['%fl_gmail.client_secret%']]
+            - [setRedirectUri, ['%fl_gmail.redirect_uri%']]
+            - [setScopes, ['%fl_gmail.gmail_scopes%']]
+
+    fl_gmail.access_token_factory:
+        class: FL\GmailBundle\Token\AccessTokenFactory
+        arguments:
+            - "@fl_gmail.unauthorised_client"
+            - "@fl_gmail.token_file_storage"
+
+    fl_gmail.access_token:
+        class: FL\GmailBundle\Token\AccessToken
+        factory: ['@fl_gmail.access_token_factory', createAccessToken]
+
+    fl_gmail.google_client:
+        class: Google_Client
+        parent: fl_gmail.unauthorised_client
+        lazy: true
+        calls:
+            - [setAccessToken, ["@=service('fl_gmail.access_token').getAccessToken()"]]
+
+    fl_gmail.gmail_service:
+        class: Google_Service_Gmail
+        arguments: ["@fl_gmail.google_client"]
+
+    fl_gmail.directory_service:
+        class: Google_Service_Directory
+        arguments: ["@fl_gmail.google_client"]
+
+    fl_gmail.oauth_service:
+            class: Google_Service_Oauth2
+            arguments: ["@fl_gmail.google_client"]
+

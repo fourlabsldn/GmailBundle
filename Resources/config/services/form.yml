@@ -1,0 +1,8 @@
+services:
+    fl_gmail.type.inbox:
+        class: FL\GmailBundle\Form\Type\InboxType
+        tags:
+            - { name: form.type }
+        arguments:
+            - "@fl_gmail.oauth"
+            - "@fl_gmail.directory"

@@ -1,0 +1,39 @@
+imports:
+    - { resource: 'services/actions.yml' }
+    - { resource: 'services/google.yml' }
+    - { resource: 'services/form.yml' }
+    - { resource: 'services/swift.yml' }
+
+services:
+    fl_gmail.message_transformer:
+        class: FL\GmailBundle\DataTransformer\GmailMessageTransformer
+        arguments:
+            - "%fl_gmail.gmail_message_class%"
+
+    fl_gmail.label_transformer:
+        class: FL\GmailBundle\DataTransformer\GmailLabelTransformer
+        arguments:
+            - "%fl_gmail.gmail_label_class%"
+
+    fl_gmail.email:
+        class: FL\GmailBundle\Services\Email
+        arguments: ["@fl_gmail.gmail_service"]
+
+    fl_gmail.directory:
+        class: FL\GmailBundle\Services\Directory
+        arguments: ["@fl_gmail.directory_service"]
+
+    fl_gmail.oauth:
+            class: FL\GmailBundle\Services\OAuth
+            arguments: ["@fl_gmail.oauth_service"]
+
+    fl_gmail.sync_manager:
+        class: FL\GmailBundle\Services\SyncManager
+        arguments:
+            - "@fl_gmail.email"
+            - "@event_dispatcher"
+            - "@fl_gmail.message_transformer"
+            - "@fl_gmail.label_transformer"
+            - "%fl_gmail.gmail_history_class%"
+            - "%fl_gmail.gmail_max_results%"
+
