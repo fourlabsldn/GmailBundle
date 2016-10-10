@@ -78,7 +78,10 @@ class AccessTokenFactory
             $this->accessToken = $this->client->fetchAccessTokenWithAuthCode($code);
             $this->storage->persistAccessToken($this->accessToken);
             $this->storage->deleteAuthCode();
+        } else {
+            throw new MissingTokenException();
         }
+
 
         $this->verifyAccessToken();
 
@@ -95,10 +98,6 @@ class AccessTokenFactory
     private function verifyAccessToken()
     {
         $this->client->setAccessToken($this->getAccessTokenJson());
-
-        if ($this->getAccessTokenJson() === "null") {
-            throw new MissingTokenException();
-        }
 
         if ($this->client->isAccessTokenExpired()) {
             $refreshToken = $this->client->getRefreshToken();
