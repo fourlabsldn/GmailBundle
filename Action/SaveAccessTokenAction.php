@@ -29,16 +29,24 @@ class SaveAccessTokenAction
     private $storage;
 
     /**
+     * @var string
+     */
+    private $redirectRouteAfterTokenSaved;
+
+    /**
      * SaveAccessTokenAction constructor.
      * @param RouterInterface $router
      * @param TokenStorageInterface $storage
+     * @param string $redirectRouterAfterTokenSaved
      */
     public function __construct(
         RouterInterface $router,
-        TokenStorageInterface $storage
+        TokenStorageInterface $storage,
+        string $redirectRouterAfterTokenSaved
     ) {
         $this->router = $router;
         $this->storage = $storage;
+        $this->redirectRouteAfterTokenSaved = $redirectRouterAfterTokenSaved;
     }
 
     /**
@@ -56,7 +64,7 @@ class SaveAccessTokenAction
         $this->storage->persistAuthCode($code);
 
         return new RedirectResponse(
-            $this->router->generate('app.email.gmail'),
+            $this->router->generate($this->redirectRouteAfterTokenSaved),
             Response::HTTP_MOVED_PERMANENTLY
         );
     }

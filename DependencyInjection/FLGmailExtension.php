@@ -32,6 +32,7 @@ class FLGmailExtension extends Extension
         $container->setParameter('fl_gmail.gmail_label_class', $config['gmail_label_class']);
         $container->setParameter('fl_gmail.gmail_history_class', $config['gmail_history_class']);
         $container->setParameter('fl_gmail.gmail_max_results', $config['gmail_max_results']);
+        $container->setParameter('fl_gmail.redirect_route_after_token_saved', $config['redirect_route_after_token_saved']);
 
         // The scopes to be used for the \Google_Client instance need to be set here
         // because we need access to the \Google_Service_Gmail constants.
