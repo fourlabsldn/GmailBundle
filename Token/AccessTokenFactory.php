@@ -2,6 +2,8 @@
 
 namespace FL\GmailBundle\Token;
 
+use FL\GmailBundle\Exception\MissingTokenException;
+
 /**
  * Class AccessTokenFactory
  *
@@ -59,6 +61,7 @@ class AccessTokenFactory
      * Create an access token and make sure it has not expired.
      * @param void
      * @return AccessToken
+     * @throws MissingTokenException
      */
     public function createAccessToken(): AccessToken
     {
@@ -87,10 +90,15 @@ class AccessTokenFactory
      * using the refresh token and save the new access token to storage.
      * @param void
      * @return void
+     * @throws MissingTokenException
      */
     private function verifyAccessToken()
     {
         $this->client->setAccessToken($this->getAccessTokenJson());
+
+        if ($this->getAccessTokenJson() === "null") {
+            throw new MissingTokenException();
+        }
 
         if ($this->client->isAccessTokenExpired()) {
             $refreshToken = $this->client->getRefreshToken();
