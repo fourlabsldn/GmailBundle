@@ -62,6 +62,9 @@ class GmailApiTransport implements \Swift_Transport
     {
         $gmailMessage = new \Google_Service_Gmail_Message();
         $gmailMessage->setRaw($this->base64url_encode($swiftMessage));
+        if ($swiftMessage instanceof SwiftGmailMessage) {
+            $gmailMessage->setThreadId($swiftMessage->getThreadId());
+        }
         $fromArray = $swiftMessage->getFrom();
 
         // when sending, we can use email addresses, instead of a $userId
