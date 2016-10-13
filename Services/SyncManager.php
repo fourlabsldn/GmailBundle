@@ -230,10 +230,10 @@ class SyncManager
      */
     private function processApiHistory(string $userId, \Google_Service_Gmail_History $apiHistory)
     {
-        /** @var \Google_Service_Gmail_HistoryMessageAdded $messageAdded */
-        foreach ($apiHistory->getMessagesAdded() as $messageAdded) {
+        /** @var \Google_Service_Gmail_Message $messageModified */
+        foreach ($apiHistory->getMessages() as $messageModified) {
             /** @var \Google_Service_Gmail_Message $apiMessage */
-            $apiMessage = $this->email->get($userId, $messageAdded->getMessage()->getId());
+            $apiMessage = $this->email->get($userId, $messageModified->getId());
             $this->processApiMessage($userId, $apiMessage);
         }
     }
