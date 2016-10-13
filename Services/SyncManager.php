@@ -58,6 +58,13 @@ class SyncManager
 
     /**
      * Keys are $userId
+     * Values are $messageId
+     * @var string[]
+     */
+    private $apiMessageCache = [];
+
+    /**
+     * Keys are $userId
      * @var GmailLabelCollection[]
      */
     private $gmailLabelCache = [];
@@ -204,12 +211,10 @@ class SyncManager
      */
     private function resolveLabelNames(string $userId, array $labelIds)
     {
-        if (!array_key_exists($userId, $this->apiLabelCache)) {
-            $this->apiLabelCache[$userId] = [];
+        $this->verifyCaches($userId);
 
-            foreach ($this->email->getLabels($userId) as $label) {
-                $this->apiLabelCache[$userId][$label->id] = $label->name;
-            }
+        foreach ($this->email->getLabels($userId) as $label) {
+            $this->apiLabelCache[$userId][$label->id] = $label->name;
         }
 
         $labelNames = [];
@@ -230,11 +235,17 @@ class SyncManager
      */
     private function processApiHistory(string $userId, \Google_Service_Gmail_History $apiHistory)
     {
-        /** @var \Google_Service_Gmail_Message $messageModified */
-        foreach ($apiHistory->getMessages() as $messageModified) {
-            /** @var \Google_Service_Gmail_Message $apiMessage */
-            $apiMessage = $this->email->get($userId, $messageModified->getId());
-            $this->processApiMessage($userId, $apiMessage);
+        $this->verifyCaches($userId);
+
+        /** @var \Google_Service_Gmail_Message $historyMessage */
+        foreach ($apiHistory->getMessages() as $historyMessage) {
+            $historyMessageId = $historyMessage->getId();
+            if (! in_array($historyMessageId, $this->apiMessageCache[$userId])){
+                $this->apiMessageCache[$userId][] = $historyMessageId;
+                /** @var \Google_Service_Gmail_Message $apiMessage */
+                $apiMessage = $this->email->get($userId, $historyMessage->getId());
+                $this->processApiMessage($userId, $apiMessage);
+            }
         }
     }
 
@@ -270,6 +281,12 @@ class SyncManager
      */
     private function verifyCaches(string $userId)
     {
+        if (!array_key_exists($userId, $this->apiLabelCache)) {
+            $this->apiLabelCache[$userId] = [];
+        }
+        if (!array_key_exists($userId, $this->apiMessageCache)) {
+            $this->apiMessageCache[$userId] = [];
+        }
         if (!array_key_exists($userId, $this->gmailLabelCache)) {
             $this->gmailLabelCache[$userId] = new GmailLabelCollection();
         }
