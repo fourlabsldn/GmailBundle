@@ -34,4 +34,28 @@ class Thread
         $postBody->setRemoveLabelIds(['INBOX']);
         return $this->service->users_threads->modify($userId, $threadId, $postBody);
     }
+
+    /**
+     * @param string $userId
+     * @param string $threadId
+     * @return \Google_Service_Gmail_Thread
+     */
+    public function markRead(string $userId, string $threadId): \Google_Service_Gmail_Thread
+    {
+        $postBody = new \Google_Service_Gmail_ModifyThreadRequest();
+        $postBody->setRemoveLabelIds(['UNREAD']);
+        return $this->service->users_threads->modify($userId, $threadId, $postBody);
+    }
+
+    /**
+     * @param string $userId
+     * @param string $threadId
+     * @return \Google_Service_Gmail_Thread
+     */
+    public function markUnread(string $userId, string $threadId): \Google_Service_Gmail_Thread
+    {
+        $postBody = new \Google_Service_Gmail_ModifyThreadRequest();
+        $postBody->setAddLabelIds(['UNREAD']);
+        return $this->service->users_threads->modify($userId, $threadId, $postBody);
+    }
 }
