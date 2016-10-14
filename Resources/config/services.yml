@@ -19,6 +19,10 @@ services:
         class: FL\GmailBundle\Services\Email
         arguments: ["@fl_gmail.gmail_service"]
 
+    fl_gmail.thread:
+        class: FL\GmailBundle\Services\Thread
+        arguments: ["@fl_gmail.gmail_service"]
+
     fl_gmail.directory:
         class: FL\GmailBundle\Services\Directory
         arguments: ["@fl_gmail.directory_service"]
