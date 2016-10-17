@@ -58,6 +58,25 @@ class Email
     }
 
     /**
+     * Notes are messages that don't have 'from' or 'to' headers.
+     *
+     * @param string $userId
+     * @param string $emailId
+     * @param array $options
+     * @return \Google_Service_Gmail_Message|null
+     */
+    public function getIfNotNote(string $userId, string $emailId, array $options = [])
+    {
+        $fetchedApiMessage = $this->get($userId, $emailId, $options);
+
+        $isNotNote = $this->hasHeader($fetchedApiMessage, 'To') && $this->hasHeader($fetchedApiMessage, 'From');
+        if ($isNotNote) {
+            return $fetchedApiMessage;
+        }
+        return null;
+    }
+
+    /**
      * Send an email and return the full Gmail Message stored by Google as a response.
      * @param string $userId
      * @param \Google_Service_Gmail_Message $message
@@ -98,32 +117,6 @@ class Email
     public function getLabels(string $userId): \Google_Service_Gmail_ListLabelsResponse
     {
         return $this->service->users_labels->listUsersLabels($userId);
-    }
-
-    /**
-     * Initialize Api Messages (e.g. add labels)
-     *
-     * Discard the notes from an array of GmailMessages.
-     * Notes are messages that don't have 'from' or 'to' headers.
-     * @internal
-     * @param string $userId
-     * @param \Google_Service_Gmail_Message[] $messages
-     * @return \Google_Service_Gmail_Message[]
-     */
-    public function removeNotes(string $userId, array $messages): array
-    {
-        $filtered = [];
-
-        foreach ($messages as $message) {
-            $gmailMessage = $this->get($userId, $message->id);
-
-            $isNote = !$this->hasHeader($gmailMessage, 'To') || !$this->hasHeader($gmailMessage, 'From');
-            if (!$isNote) {
-                $filtered[] = $gmailMessage;
-            }
-        }
-
-        return $filtered;
     }
 
     /**

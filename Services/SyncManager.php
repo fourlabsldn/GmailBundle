@@ -135,16 +135,16 @@ class SyncManager
                 ]
             );
 
-            $apiMessages = $this->email->removeNotes($userId, $apiEmailsResponse->getMessages());
-            foreach ($apiMessages as $apiMessage) {
+            foreach ($apiEmailsResponse as $idAndThreadId) {
+                $apiMessage = $this->email->get($userId, $idAndThreadId['id']);
                 $this->processApiMessage($userId, $apiMessage);
             }
 
             // We need to get the History ID from the very first message in the first batch
             // so we can know up to which point the sync has been done for this user.
-            if (!$historyId && count($apiMessages) > 0) {
+            if (!$historyId && count($apiEmailsResponse) > 0) {
                 /** @var \Google_Service_Gmail_Message $latestMessage */
-                $latestMessage = $apiMessages[0];
+                $latestMessage = $apiEmailsResponse[0];
                 $historyId = $latestMessage->getHistoryId();
             }
         } while (($nextPage = $apiEmailsResponse->getNextPageToken()));
