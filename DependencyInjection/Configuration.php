@@ -62,10 +62,6 @@ class Configuration implements ConfigurationInterface
                     ->cannotBeEmpty()
                     ->defaultValue('\FL\GmailBundle\Model\GmailHistory')
                 ->end()
-                ->scalarNode('gmail_max_results')
-                    ->cannotBeEmpty()
-                    ->defaultValue(100)
-                ->end()
             ->end()
         ;
 

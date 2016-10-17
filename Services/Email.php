@@ -101,6 +101,8 @@ class Email
     }
 
     /**
+     * Initialize Api Messages (e.g. add labels)
+     *
      * Discard the notes from an array of GmailMessages.
      * Notes are messages that don't have 'from' or 'to' headers.
      * @internal

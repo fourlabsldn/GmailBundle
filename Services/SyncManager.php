@@ -45,12 +45,6 @@ class SyncManager
     private $historyClass;
 
     /**
-     * Max number of results when getting emails from Gmail.
-     * @var int
-     */
-    private $maxResults;
-
-    /**
      * Keys are $userId
      * @var string[]
      */
@@ -82,22 +76,19 @@ class SyncManager
      * @param GmailMessageTransformer $gmailMessageTransformer
      * @param GmailLabelTransformer $gmailLabelTransformer
      * @param string $historyClass
-     * @param int $maxResults
      */
     public function __construct(
         Email $email,
         EventDispatcherInterface $dispatcher,
         GmailMessageTransformer $gmailMessageTransformer,
         GmailLabelTransformer $gmailLabelTransformer,
-        string $historyClass,
-        int $maxResults
+        string $historyClass
     ) {
         $this->email = $email;
         $this->dispatcher = $dispatcher;
         $this->gmailMessageTransformer = $gmailMessageTransformer;
         $this->gmailLabelTransformer = $gmailLabelTransformer;
         $this->historyClass = $historyClass;
-        $this->maxResults = $maxResults;
     }
 
     /**
@@ -126,7 +117,6 @@ class SyncManager
     /**
      * Run full sync of stored messages against the user's Gmail Messages.
      * Save the historyId for future partial sync.
-     * This is done as a batch operation using a number of results defined in maxResults.
      * @param string $userId
      * @return void
      */
@@ -139,7 +129,7 @@ class SyncManager
             $apiEmailsResponse = $this->email->list(
                 $userId,
                 [
-                    'maxResults' => $this->maxResults,
+                    'maxResults' => 2000,
                     'includeSpamTrash' => 'true',
                     'pageToken' => $nextPage,
                 ]
@@ -182,7 +172,7 @@ class SyncManager
             $emails = $this->email->historyList(
                 $userId,
                 [
-                    'maxResults' => $this->maxResults,
+                    'maxResults' => 2000,
                     'pageToken' => $nextPage,
                     'startHistoryId' => $currentHistoryId,
                 ]
@@ -206,12 +196,16 @@ class SyncManager
     /**
      * Get label names from the API based on given $labelIds.
      * @param string $userId
-     * @param string[] $labelIds
+     * @param string[]|null $labelIds
      * @return string[]
      */
-    private function resolveLabelNames(string $userId, array $labelIds)
+    private function resolveLabelNames(string $userId, array $labelIds = null)
     {
         $this->verifyCaches($userId);
+
+        if (! is_array($labelIds)) {
+            $labelIds = [];
+        }
 
         foreach ($this->email->getLabels($userId) as $label) {
             $this->apiLabelCache[$userId][$label->id] = $label->name;
