@@ -2,6 +2,8 @@
 
 namespace FL\GmailBundle\Model;
 
+use FL\GmailBundle\Util\EmailTransformations;
+
 /**
  * Class GmailMessage
  * Contains the relevant fields of a Gmail email.
@@ -128,6 +130,14 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public function getToEmails()
+    {
+        return EmailTransformations::getMultipleEmailsFromString($this->to);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function setFrom(string $from): GmailMessageInterface
@@ -143,6 +153,18 @@ class GmailMessage implements GmailMessageInterface
     public function getFrom()
     {
         return $this->from;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFromEmail()
+    {
+        $emails = EmailTransformations::getMultipleEmailsFromString($this->from);
+        if (array_key_exists(0, $emails) && is_string($emails[0])) {
+            return $emails[0];
+        }
+        return null;
     }
 
     /**

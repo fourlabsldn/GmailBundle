@@ -22,6 +22,12 @@ interface GmailMessageInterface
     public function getTo();
 
     /**
+     * Returns an array of valid email strings, instead of a string that might contain multiple emails, names, '<', and '>'
+     * @return string[]
+     */
+    public function getToEmails();
+
+    /**
      * Set email sender
      * @param string $from
      * @return GmailMessageInterface
@@ -33,6 +39,12 @@ interface GmailMessageInterface
      * @return string|null
      */
     public function getFrom();
+
+    /**
+     * Returns a single valid email, instead of a string that might contain a name, '<', and '>'
+     * @return string|null
+     */
+    public function getFromEmail();
 
     /**
      * Set email sent datetime
