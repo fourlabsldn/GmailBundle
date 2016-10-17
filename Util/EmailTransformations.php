@@ -13,14 +13,18 @@ abstract class EmailTransformations
      * @param string $string
      * @return string[]
      */
-    final public static function getMultipleEmailsFromString(string $string = null)
+    final public static function getMultipleEmailsFromString(string $string = null, bool $emailsAsKeys = false)
     {
         $emails = [];
         if (is_string($string) && !empty($string)) {
             $possibleEmails = preg_split("/(,|<|>|,|\\s)/", $string);
             foreach($possibleEmails as $possibleEmail){
                 if (filter_var($possibleEmail, FILTER_VALIDATE_EMAIL)) {
-                    $emails[$possibleEmail] = $possibleEmail;
+                    if ($emailsAsKeys) {
+                        $emails[$possibleEmail] = $possibleEmail;
+                    } else{
+                        $emails[] = $possibleEmail;
+                    }
                 }
             }
         }

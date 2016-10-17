@@ -134,7 +134,7 @@ class GmailMessage implements GmailMessageInterface
      */
     public function getToEmails()
     {
-        return EmailTransformations::getMultipleEmailsFromString($this->to);
+        return EmailTransformations::getMultipleEmailsFromString($this->to, false);
     }
 
     /**
@@ -160,7 +160,7 @@ class GmailMessage implements GmailMessageInterface
      */
     public function getFromEmail()
     {
-        $emails = EmailTransformations::getMultipleEmailsFromString($this->from);
+        $emails = EmailTransformations::getMultipleEmailsFromString($this->from, false);
         if (array_key_exists(0, $emails) && is_string($emails[0])) {
             return $emails[0];
         }
