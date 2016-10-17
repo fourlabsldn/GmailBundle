@@ -35,6 +35,12 @@ services:
         class: FL\GmailBundle\Services\SyncManager
         arguments:
             - "@fl_gmail.email"
+            - "@fl_gmail.sync_manager_helper"
+
+    fl_gmail.sync_manager_helper:
+        class: FL\GmailBundle\Services\SyncManagerHelper
+        arguments:
+            - "@fl_gmail.email"
             - "@event_dispatcher"
             - "@fl_gmail.message_transformer"
             - "@fl_gmail.label_transformer"

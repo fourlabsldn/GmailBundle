@@ -13,8 +13,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class SyncManager
- * This class relies on @see Email, to provide a wrapper
- * which we can use to send emails through the Gmail API.
  * @package FL\GmailBundle\Services
  */
 class SyncManager
@@ -25,70 +23,19 @@ class SyncManager
     private $email;
 
     /**
-     * @var EventDispatcherInterface
+     * @var SyncManagerHelper
      */
-    private $dispatcher;
-
-    /**
-     * @var GmailMessageTransformer
-     */
-    private $gmailMessageTransformer;
-
-    /**
-     * @var GmailLabelTransformer
-     */
-    private $gmailLabelTransformer;
-
-    /**
-     * @var string $historyClass
-     */
-    private $historyClass;
-
-    /**
-     * Keys are $userId
-     * @var string[]
-     */
-    private $apiLabelCache = [];
-
-    /**
-     * Keys are $userId
-     * Values are $messageId
-     * @var string[]
-     */
-    private $apiMessageCache = [];
-
-    /**
-     * Keys are $userId
-     * @var GmailLabelCollection[]
-     */
-    private $gmailLabelCache = [];
-
-    /**
-     * Keys are $userId
-     * @var GmailMessageCollection[]
-     */
-    private $gmailMessageCache = [];
+    private $syncManagerHelper;
 
     /**
      * SyncManager constructor.
      * @param Email $email
-     * @param EventDispatcherInterface $dispatcher
-     * @param GmailMessageTransformer $gmailMessageTransformer
-     * @param GmailLabelTransformer $gmailLabelTransformer
-     * @param string $historyClass
+     * @param SyncManagerHelper $syncManagerHelper
      */
-    public function __construct(
-        Email $email,
-        EventDispatcherInterface $dispatcher,
-        GmailMessageTransformer $gmailMessageTransformer,
-        GmailLabelTransformer $gmailLabelTransformer,
-        string $historyClass
-    ) {
+    public function __construct(Email $email, SyncManagerHelper $syncManagerHelper)
+    {
         $this->email = $email;
-        $this->dispatcher = $dispatcher;
-        $this->gmailMessageTransformer = $gmailMessageTransformer;
-        $this->gmailLabelTransformer = $gmailLabelTransformer;
-        $this->historyClass = $historyClass;
+        $this->syncManagerHelper = $syncManagerHelper;
     }
 
     /**
@@ -118,12 +65,12 @@ class SyncManager
      * Run full sync of stored messages against the user's Gmail Messages.
      * Save the historyId for future partial sync.
      * @param string $userId
-     * @return void
      */
     private function fullSync(string $userId)
     {
         $nextPage = null;
         $historyId = null;
+        $gmailIds = [];
 
         do {
             $apiEmailsResponse = $this->email->list(
@@ -136,23 +83,12 @@ class SyncManager
             );
 
             foreach ($apiEmailsResponse as $idAndThreadId) {
-                $apiMessage = $this->email->get($userId, $idAndThreadId['id']);
-                $this->processApiMessage($userId, $apiMessage);
+                $gmailIds[] = $idAndThreadId['id'];
             }
 
-            // We need to get the History ID from the very first message in the first batch
-            // so we can know up to which point the sync has been done for this user.
-            if (!$historyId && count($apiEmailsResponse) > 0) {
-                /** @var \Google_Service_Gmail_Message $latestMessage */
-                $latestMessage = $apiEmailsResponse[0];
-                $historyId = $latestMessage->getHistoryId();
-            }
         } while (($nextPage = $apiEmailsResponse->getNextPageToken()));
 
-        if (!is_null($historyId)) {
-            $this->dispatchSyncEvent($userId);
-            $this->dispatchHistoryEvent($userId, $historyId);
-        }
+        $this->syncManagerHelper->syncFromGmailIds($userId, $gmailIds);
     }
 
     /**
@@ -165,7 +101,7 @@ class SyncManager
     private function partialSync(string $userId, string $currentHistoryId)
     {
         $nextPage = null;
-        $newHistoryId = null;
+        $histories = [];
 
         do {
             /** @var \Google_Service_Gmail_ListHistoryResponse $response */
@@ -179,148 +115,11 @@ class SyncManager
             );
 
             foreach ($emails->getHistory() as $apiHistory) {
-                $this->processApiHistory($userId, $apiHistory);
+                $histories[] = $apiHistory;
             }
 
-            if (!$newHistoryId) {
-                $newHistoryId = $emails->getHistoryId();
-            }
         } while (($nextPage = $emails->getNextPageToken()));
 
-        if (!is_null($newHistoryId)) {
-            $this->dispatchSyncEvent($userId);
-            $this->dispatchHistoryEvent($userId, $newHistoryId);
-        }
-    }
-
-    /**
-     * Get label names from the API based on given $labelIds.
-     * @param string $userId
-     * @param string[]|null $labelIds
-     * @return string[]
-     */
-    private function resolveLabelNames(string $userId, array $labelIds = null)
-    {
-        $this->verifyCaches($userId);
-
-        if (! is_array($labelIds)) {
-            $labelIds = [];
-        }
-
-        foreach ($this->email->getLabels($userId) as $label) {
-            $this->apiLabelCache[$userId][$label->id] = $label->name;
-        }
-
-        $labelNames = [];
-        foreach ($labelIds as $id) {
-            $labelNames[] = $this->apiLabelCache[$userId][$id];
-        }
-
-        return array_filter($this->apiLabelCache[$userId], function ($labelName, $labelId) use ($labelIds) {
-            return in_array($labelId, $labelIds);
-        }, ARRAY_FILTER_USE_BOTH);
-    }
-
-    /**
-     * Before we can use an $apiHistory, we need to get its $apiMessages.
-     * And then use @see SyncManager::processApiMessage on each $apiMessage
-     * @param string $userId
-     * @param \Google_Service_Gmail_History $apiHistory
-     */
-    private function processApiHistory(string $userId, \Google_Service_Gmail_History $apiHistory)
-    {
-        $this->verifyCaches($userId);
-
-        /** @var \Google_Service_Gmail_Message $historyMessage */
-        foreach ($apiHistory->getMessages() as $historyMessage) {
-            $historyMessageId = $historyMessage->getId();
-            if (! in_array($historyMessageId, $this->apiMessageCache[$userId])){
-                $this->apiMessageCache[$userId][] = $historyMessageId;
-                /** @var \Google_Service_Gmail_Message $apiMessage */
-                $apiMessage = $this->email->get($userId, $historyMessage->getId());
-                $this->processApiMessage($userId, $apiMessage);
-            }
-        }
-    }
-
-    /**
-     * When converting and placing a batch of $apiMessages into $allGmailMessages,
-     * we must not create a new $gmailLabel, if the label's name has been used previously.
-     * @param string $userId
-     * @param \Google_Service_Gmail_Message $apiMessage
-     */
-    private function processApiMessage(string $userId, \Google_Service_Gmail_Message $apiMessage)
-    {
-        $this->verifyCaches($userId);
-
-        $labelNames = $this->resolveLabelNames($userId, $apiMessage->getLabelIds());
-        $gmailLabels = [];
-
-        // populate $gmailLabels
-        foreach ($labelNames as $labelName) {
-            if (!$this->gmailLabelCache[$userId]->hasLabelOfName($labelName)) {
-                $this->gmailLabelCache[$userId]->addLabel($this->gmailLabelTransformer->transform($labelName, $userId));
-            }
-
-            $gmailLabels[] = $this->gmailLabelCache[$userId]->getLabelOfName($labelName);
-        }
-
-        // Convert the $apiMessage, with its $gmailLabels, into a GmailMessageInterface.
-        // Then add it to the $allGmailMessages collection.
-        $this->gmailMessageCache[$userId]->addMessage($this->gmailMessageTransformer->transform($apiMessage, $gmailLabels, $userId));
-    }
-
-    /**
-     * @param string $userId
-     */
-    private function verifyCaches(string $userId)
-    {
-        if (!array_key_exists($userId, $this->apiLabelCache)) {
-            $this->apiLabelCache[$userId] = [];
-        }
-        if (!array_key_exists($userId, $this->apiMessageCache)) {
-            $this->apiMessageCache[$userId] = [];
-        }
-        if (!array_key_exists($userId, $this->gmailLabelCache)) {
-            $this->gmailLabelCache[$userId] = new GmailLabelCollection();
-        }
-        if (!array_key_exists($userId, $this->gmailMessageCache)) {
-            $this->gmailMessageCache[$userId] = new GmailMessageCollection();
-        }
-    }
-
-    /**
-     * @param string $userId
-     * @return void
-     */
-    private function dispatchSyncEvent(string $userId)
-    {
-        $this->verifyCaches($userId);
-
-        /**
-         * Dispatch Sync End Event
-         * @var GmailHistoryInterface $history
-         */
-        $syncEvent = new GmailSyncEndEvent($this->gmailMessageCache[$userId], $this->gmailLabelCache[$userId]);
-        $this->dispatcher->dispatch(GmailSyncEndEvent::EVENT_NAME, $syncEvent);
-    }
-
-    /**
-     * @param string $userId
-     * @param string $historyId
-     * @return void
-     */
-    private function dispatchHistoryEvent(string $userId, string $historyId)
-    {
-        $this->verifyCaches($userId);
-
-        /**
-         * Dispatch History Update Event
-         * @var GmailHistoryInterface $history
-         */
-        $history = new $this->historyClass;
-        $history->setUserId($userId)->setHistoryId($historyId);
-        $historyEvent = new GmailHistoryUpdatedEvent($history);
-        $this->dispatcher->dispatch(GmailHistoryUpdatedEvent::EVENT_NAME, $historyEvent);
+        $this->syncManagerHelper->syncFromGmailIds($userId, $histories);
     }
 }
