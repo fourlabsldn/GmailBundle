@@ -107,6 +107,11 @@ interface GmailMessageInterface
     public function removeLabel(GmailLabelInterface $label): GmailMessageInterface;
 
     /**
+     * @return GmailMessageInterface
+     */
+    public function clearLabels(): GmailMessageInterface;
+
+    /**
      * Set the Gmail ID for this email
      * @param string $gmailId
      * @return GmailMessageInterface

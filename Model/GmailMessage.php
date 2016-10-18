@@ -252,6 +252,16 @@ class GmailMessage implements GmailMessageInterface
     /**
      * @inheritdoc
      */
+    public function clearLabels(): GmailMessageInterface
+    {
+        $this->labels = new \SplObjectStorage();
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function setUserId(string $userId): GmailMessageInterface
     {
         $this->userId = $userId;
