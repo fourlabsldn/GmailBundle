@@ -35,6 +35,8 @@ services:
         class: FL\GmailBundle\Services\SyncHelper
         arguments:
             - "@fl_gmail.email"
+            - "@event_dispatcher"
+            - "%fl_gmail.gmail_history_class%"
 
     fl_gmail.sync_manager:
         class: FL\GmailBundle\Services\SyncManager
@@ -43,5 +45,3 @@ services:
             - "@event_dispatcher"
             - "@fl_gmail.message_transformer"
             - "@fl_gmail.label_transformer"
-            - "%fl_gmail.gmail_history_class%"
-

@@ -12,7 +12,9 @@ use FL\GmailBundle\Model\Collection\GmailLabelCollection;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Class SyncHelper
+ * Class SyncHelper:
+ * 1. Fetches Gmail Ids
+ * 2. Informs how caught up we are with historyIds, by dispatching @see GmailHistoryUpdatedEvent
  * @package FL\GmailBundle\Services
  */
 class SyncHelper
@@ -23,12 +25,26 @@ class SyncHelper
     private $email;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    private $dispatcher;
+
+    /**
+     * @var string $historyClass
+     */
+    private $historyClass;
+
+    /**
      * SyncManager constructor.
      * @param Email $email
+     * @param EventDispatcherInterface $dispatcher
+     * @param string $historyClass
      */
-    public function __construct(Email $email)
+    public function __construct(Email $email, EventDispatcherInterface $dispatcher, string $historyClass)
     {
         $this->email = $email;
+        $this->dispatcher = $dispatcher;
+        $this->historyClass = $historyClass;
     }
 
     /**
@@ -38,7 +54,6 @@ class SyncHelper
     public function resolveAllGmailIds(string $userId)
     {
         $nextPage = null;
-        $historyId = null;
         $gmailIds = [];
 
         do {
@@ -55,6 +70,14 @@ class SyncHelper
                 $gmailIds[] = $idAndThreadId['id'];
             }
 
+            // We need to get the History ID from the very first message in the first batch
+            // so we can know up to which point the sync has been done for this user.
+            if ( (!isset($historyId)) && count($apiEmailsResponse) > 0) {
+                /** @var \Google_Service_Gmail_Message $latestMessage */
+                $latestMessage = $apiEmailsResponse[0];
+                $historyId = $latestMessage->getHistoryId();
+                $this->dispatchHistoryEvent($userId, $historyId);
+            }
         } while (($nextPage = $apiEmailsResponse->getNextPageToken()));
 
         return $gmailIds;
@@ -94,6 +117,12 @@ class SyncHelper
                         $gmailIds[] = $historyMessage->getId();
                     }
                 }
+                // We need to get the History ID in the first batch
+                // so we can know up to which point the sync has been done for this user.
+                if (! isset($newHistoryId)) {
+                    $newHistoryId = $emails->getHistoryId();
+                    $this->dispatchHistoryEvent($userId, $newHistoryId);
+                }
             } while (($nextPage = $emails->getNextPageToken()));
             return $gmailIds;
         } catch (\Google_Service_Exception $e) {
@@ -105,5 +134,22 @@ class SyncHelper
              */
             return $this->resolveAllGmailIds($userId);
         }
+    }
+
+    /**
+     * @param string $userId
+     * @param int $historyId
+     * @return void
+     */
+    private function dispatchHistoryEvent(string $userId, int $historyId)
+    {
+        /**
+         * Dispatch History Event
+         * @var GmailHistoryInterface $history
+         */
+        $history = new $this->historyClass;
+        $history->setUserId($userId)->setHistoryId($historyId);
+        $historyEvent = new GmailHistoryUpdatedEvent($history);
+        $this->dispatcher->dispatch(GmailHistoryUpdatedEvent::EVENT_NAME, $historyEvent);
     }
 }

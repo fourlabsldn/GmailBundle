@@ -14,6 +14,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class SyncManager
+ * 1. Fetches Messages and their Labels by using a list of Gmail Ids
+ * 2. Informs of this, by dispatching a @see GmailSyncEndEvent
  * @package FL\GmailBundle\Services
  */
 class SyncManager
@@ -37,11 +39,6 @@ class SyncManager
      * @var GmailLabelTransformer
      */
     private $gmailLabelTransformer;
-
-    /**
-     * @var string $historyClass
-     */
-    private $historyClass;
 
     /**
      * Keys are $userId
@@ -74,20 +71,17 @@ class SyncManager
      * @param EventDispatcherInterface $dispatcher
      * @param GmailMessageTransformer $gmailMessageTransformer
      * @param GmailLabelTransformer $gmailLabelTransformer
-     * @param string $historyClass
      */
     public function __construct(
         Email $email,
         EventDispatcherInterface $dispatcher,
         GmailMessageTransformer $gmailMessageTransformer,
-        GmailLabelTransformer $gmailLabelTransformer,
-        string $historyClass
+        GmailLabelTransformer $gmailLabelTransformer
     ) {
         $this->email = $email;
         $this->dispatcher = $dispatcher;
         $this->gmailMessageTransformer = $gmailMessageTransformer;
         $this->gmailLabelTransformer = $gmailLabelTransformer;
-        $this->historyClass = $historyClass;
     }
 
     /**
@@ -106,7 +100,6 @@ class SyncManager
             }
         }
         $this->dispatchSyncEndEvent($userId);
-        $this->dispatchHistoryEvent($userId);
     }
 
     /**
@@ -197,32 +190,5 @@ class SyncManager
          */
         $syncEvent = new GmailSyncEndEvent($this->gmailMessageCache[$userId], $this->gmailLabelCache[$userId]);
         $this->dispatcher->dispatch(GmailSyncEndEvent::EVENT_NAME, $syncEvent);
-    }
-
-    /**
-     * @param string $userId
-     * @return void
-     */
-    private function dispatchHistoryEvent(string $userId)
-    {
-        $this->verifyCaches($userId);
-
-        $maxHistoryId = 1;
-        /** @var GmailMessageCollection $messageCollection */
-        foreach ($this->gmailMessageCache[$userId] as $messageCollection) {
-            /** @var GmailMessageInterface $message */
-            foreach ($messageCollection->getMessages() as $message) {
-                $maxHistoryId = max($message->getHistoryId(), $maxHistoryId);
-            }
-        }
-
-        /**
-         * Dispatch History Update Event
-         * @var GmailHistoryInterface $history
-         */
-        $history = new $this->historyClass;
-        $history->setUserId($userId)->setHistoryId($maxHistoryId);
-        $historyEvent = new GmailHistoryUpdatedEvent($history);
-        $this->dispatcher->dispatch(GmailHistoryUpdatedEvent::EVENT_NAME, $historyEvent);
     }
 }
