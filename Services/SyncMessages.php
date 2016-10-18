@@ -89,7 +89,9 @@ class SyncMessages
     public function syncFromGmailIds(GmailIdsInterface $gmailIds)
     {
         $userId = $gmailIds->getUserId();
-        foreach ($gmailIds as $id) {
+        $this->verifyCaches($userId);
+
+        foreach ($gmailIds->getGmailIds() as $id) {
             if (! in_array($id, $this->apiMessageCache[$userId])){
                 $this->apiMessageCache[$userId][] = $id;
                 $apiMessage = $this->email->getIfNotNote($userId, $id);
