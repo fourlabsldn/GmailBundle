@@ -5,19 +5,22 @@ namespace FL\GmailBundle\Services;
 use FL\GmailBundle\DataTransformer\GmailMessageTransformer;
 use FL\GmailBundle\DataTransformer\GmailLabelTransformer;
 use FL\GmailBundle\Event\GmailHistoryUpdatedEvent;
+use FL\GmailBundle\Event\GmailIdsResolvedEvent;
 use FL\GmailBundle\Event\GmailSyncEndEvent;
 use FL\GmailBundle\Model\Collection\GmailMessageCollection;
 use FL\GmailBundle\Model\GmailHistoryInterface;
 use FL\GmailBundle\Model\Collection\GmailLabelCollection;
+use FL\GmailBundle\Model\GmailIdsInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class SyncHelper:
- * 1. Fetches Gmail Ids
- * 2. Informs how caught up we are with historyIds, by dispatching @see GmailHistoryUpdatedEvent
+ * 1. Resolves GmailIds
+ * 2. Informs of this, by dispatching a @see GmailIdsResolvedEvent
+ * 3. Informs how caught up we are with historyIds, by dispatching @see GmailHistoryUpdatedEvent
  * @package FL\GmailBundle\Services
  */
-class SyncHelper
+class SyncGmailIds
 {
     /**
      * @var Email
@@ -30,26 +33,32 @@ class SyncHelper
     private $dispatcher;
 
     /**
-     * @var string $historyClass
+     * @var string
      */
     private $historyClass;
+
+    /**
+     * @var string
+     */
+    private $gmailIdsClass;
 
     /**
      * SyncManager constructor.
      * @param Email $email
      * @param EventDispatcherInterface $dispatcher
      * @param string $historyClass
+     * @param string $gmailIdsClass
      */
-    public function __construct(Email $email, EventDispatcherInterface $dispatcher, string $historyClass)
+    public function __construct(Email $email, EventDispatcherInterface $dispatcher, string $historyClass, string $gmailIdsClass)
     {
         $this->email = $email;
         $this->dispatcher = $dispatcher;
         $this->historyClass = $historyClass;
+        $this->gmailIdsClass = $gmailIdsClass;
     }
 
     /**
      * @param string $userId
-     * @return string[]
      */
     public function resolveAllGmailIds(string $userId)
     {
@@ -79,14 +88,12 @@ class SyncHelper
                 $this->dispatchHistoryEvent($userId, $historyId);
             }
         } while (($nextPage = $apiEmailsResponse->getNextPageToken()));
-
-        return $gmailIds;
+        $this->dispatchGmailIdsEvent($userId, $gmailIds);
     }
 
     /**
      * @param string $userId
      * @param string $currentHistoryId
-     * @return string[]
      */
     public function resolveGmailIdsFromHistoryId(string $userId, string $currentHistoryId)
     {
@@ -124,7 +131,7 @@ class SyncHelper
                     $this->dispatchHistoryEvent($userId, $newHistoryId);
                 }
             } while (($nextPage = $emails->getNextPageToken()));
-            return $gmailIds;
+            $this->dispatchGmailIdsEvent($userId, $gmailIds);
         } catch (\Google_Service_Exception $e) {
             /**
              * A historyId is typically valid for at least a week, but in some rare circumstances may be valid
@@ -132,14 +139,13 @@ class SyncHelper
              * a full sync.
              * @link https://developers.google.com/gmail/api/v1/reference/users/history/list#startHistoryId
              */
-            return $this->resolveAllGmailIds($userId);
+            $this->resolveAllGmailIds($userId);
         }
     }
 
     /**
      * @param string $userId
      * @param int $historyId
-     * @return void
      */
     private function dispatchHistoryEvent(string $userId, int $historyId)
     {
@@ -151,5 +157,21 @@ class SyncHelper
         $history->setUserId($userId)->setHistoryId($historyId);
         $historyEvent = new GmailHistoryUpdatedEvent($history);
         $this->dispatcher->dispatch(GmailHistoryUpdatedEvent::EVENT_NAME, $historyEvent);
+    }
+
+    /**
+     * @param string $userId
+     * @param string[] $gmailIdsArray
+     */
+    private function dispatchGmailIdsEvent(string $userId, array $gmailIdsArray)
+    {
+        /**
+         * Dispatch GmailIds Event
+         * @var GmailIdsInterface $gmailIdsObject
+         */
+        $gmailIdsObject = new $this->gmailIdsClass;
+        $gmailIdsObject->setUserId($userId)->setGmailIds($gmailIdsArray);
+        $gmailIdsEvent = new GmailIdsResolvedEvent($gmailIdsObject);
+        $this->dispatcher->dispatch(GmailIdsResolvedEvent::EVENT_NAME, $gmailIdsEvent);
     }
 }

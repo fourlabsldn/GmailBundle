@@ -62,6 +62,10 @@ class Configuration implements ConfigurationInterface
                     ->cannotBeEmpty()
                     ->defaultValue('\FL\GmailBundle\Model\GmailHistory')
                 ->end()
+                ->scalarNode('gmail_ids_class')
+                    ->cannotBeEmpty()
+                    ->defaultValue('\FL\GmailBundle\Model\GmailIds')
+                ->end()
             ->end()
         ;
 

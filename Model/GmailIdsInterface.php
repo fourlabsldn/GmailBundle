@@ -30,7 +30,7 @@ interface GmailIdsInterface
 
     /**
      * Get the gmail IDs.
-     * @return array
+     * @return string[]
      */
-    public function getGmailIds();
+    public function getGmailIds(): array;
 }

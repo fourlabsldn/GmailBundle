@@ -4,21 +4,20 @@ namespace FL\GmailBundle\Services;
 
 use FL\GmailBundle\DataTransformer\GmailMessageTransformer;
 use FL\GmailBundle\DataTransformer\GmailLabelTransformer;
-use FL\GmailBundle\Event\GmailHistoryUpdatedEvent;
 use FL\GmailBundle\Event\GmailSyncEndEvent;
 use FL\GmailBundle\Model\Collection\GmailMessageCollection;
 use FL\GmailBundle\Model\GmailHistoryInterface;
 use FL\GmailBundle\Model\Collection\GmailLabelCollection;
-use FL\GmailBundle\Model\GmailMessageInterface;
+use FL\GmailBundle\Model\GmailIdsInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class SyncManager
- * 1. Fetches Messages and their Labels by using a list of Gmail Ids
+ * 1. Resolves Messages and their Labels
  * 2. Informs of this, by dispatching a @see GmailSyncEndEvent
  * @package FL\GmailBundle\Services
  */
-class SyncManager
+class SyncMessages
 {
     /**
      * @var Email
@@ -85,11 +84,11 @@ class SyncManager
     }
 
     /**
-     * @param string $userId
-     * @param string[] $gmailIds
+     * @param GmailIdsInterface $gmailIds
      */
-    public function syncFromGmailIds(string $userId, array $gmailIds)
+    public function syncFromGmailIds(GmailIdsInterface $gmailIds)
     {
+        $userId = $gmailIds->getUserId();
         foreach ($gmailIds as $id) {
             if (! in_array($id, $this->apiMessageCache[$userId])){
                 $this->apiMessageCache[$userId][] = $id;
