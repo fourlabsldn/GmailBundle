@@ -7,12 +7,12 @@ use FL\GmailBundle\Model\Collection\GmailMessageCollection;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Class GmailSyncEndEvent
+ * Class GmailSyncMessagesEvent
  * @package FL\GmailBundle\Event
  */
-class GmailSyncEndEvent extends Event
+class GmailSyncMessagesEvent extends Event
 {
-    const EVENT_NAME = "fl_gmail.sync.end";
+    const EVENT_NAME = "fl_gmail.sync.messages";
 
     /**
      * @var GmailMessageCollection
@@ -25,7 +25,7 @@ class GmailSyncEndEvent extends Event
     protected $labelCollection;
 
     /**
-     * GmailSyncEndEvent constructor.
+     * GmailSyncMessagesEvent constructor.
      * @param GmailMessageCollection $messageCollection
      * @param GmailLabelCollection $labelCollection
      */

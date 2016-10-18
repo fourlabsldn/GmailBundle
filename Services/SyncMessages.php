@@ -4,7 +4,7 @@ namespace FL\GmailBundle\Services;
 
 use FL\GmailBundle\DataTransformer\GmailMessageTransformer;
 use FL\GmailBundle\DataTransformer\GmailLabelTransformer;
-use FL\GmailBundle\Event\GmailSyncEndEvent;
+use FL\GmailBundle\Event\GmailSyncMessagesEvent;
 use FL\GmailBundle\Model\Collection\GmailMessageCollection;
 use FL\GmailBundle\Model\GmailHistoryInterface;
 use FL\GmailBundle\Model\Collection\GmailLabelCollection;
@@ -14,7 +14,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Class SyncManager
  * 1. Resolves Messages and their Labels
- * 2. Informs of this, by dispatching a @see GmailSyncEndEvent
+ * 2. Informs of this, by dispatching a @see GmailSyncMessagesEvent
  * @package FL\GmailBundle\Services
  */
 class SyncMessages
@@ -187,7 +187,7 @@ class SyncMessages
          * Dispatch Sync End Event
          * @var GmailHistoryInterface $history
          */
-        $syncEvent = new GmailSyncEndEvent($this->gmailMessageCache[$userId], $this->gmailLabelCache[$userId]);
-        $this->dispatcher->dispatch(GmailSyncEndEvent::EVENT_NAME, $syncEvent);
+        $syncEvent = new GmailSyncMessagesEvent($this->gmailMessageCache[$userId], $this->gmailLabelCache[$userId]);
+        $this->dispatcher->dispatch(GmailSyncMessagesEvent::EVENT_NAME, $syncEvent);
     }
 }

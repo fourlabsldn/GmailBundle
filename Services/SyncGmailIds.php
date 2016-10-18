@@ -2,22 +2,17 @@
 
 namespace FL\GmailBundle\Services;
 
-use FL\GmailBundle\DataTransformer\GmailMessageTransformer;
-use FL\GmailBundle\DataTransformer\GmailLabelTransformer;
-use FL\GmailBundle\Event\GmailHistoryUpdatedEvent;
-use FL\GmailBundle\Event\GmailIdsResolvedEvent;
-use FL\GmailBundle\Event\GmailSyncEndEvent;
-use FL\GmailBundle\Model\Collection\GmailMessageCollection;
+use FL\GmailBundle\Event\GmailSyncHistoryEvent;
+use FL\GmailBundle\Event\GmailSyncIdsEvent;
 use FL\GmailBundle\Model\GmailHistoryInterface;
-use FL\GmailBundle\Model\Collection\GmailLabelCollection;
 use FL\GmailBundle\Model\GmailIdsInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class SyncHelper:
  * 1. Resolves GmailIds
- * 2. Informs of this, by dispatching a @see GmailIdsResolvedEvent
- * 3. Informs how caught up we are with historyIds, by dispatching @see GmailHistoryUpdatedEvent
+ * 2. Informs of this, by dispatching a @see GmailSyncIdsEvent
+ * 3. Informs how caught up we are with historyIds, by dispatching @see GmailSyncHistoryEvent
  * @package FL\GmailBundle\Services
  */
 class SyncGmailIds
@@ -155,8 +150,8 @@ class SyncGmailIds
          */
         $history = new $this->historyClass;
         $history->setUserId($userId)->setHistoryId($historyId);
-        $historyEvent = new GmailHistoryUpdatedEvent($history);
-        $this->dispatcher->dispatch(GmailHistoryUpdatedEvent::EVENT_NAME, $historyEvent);
+        $historyEvent = new GmailSyncHistoryEvent($history);
+        $this->dispatcher->dispatch(GmailSyncHistoryEvent::EVENT_NAME, $historyEvent);
     }
 
     /**
@@ -171,7 +166,7 @@ class SyncGmailIds
          */
         $gmailIdsObject = new $this->gmailIdsClass;
         $gmailIdsObject->setUserId($userId)->setGmailIds($gmailIdsArray);
-        $gmailIdsEvent = new GmailIdsResolvedEvent($gmailIdsObject);
-        $this->dispatcher->dispatch(GmailIdsResolvedEvent::EVENT_NAME, $gmailIdsEvent);
+        $gmailIdsEvent = new GmailSyncIdsEvent($gmailIdsObject);
+        $this->dispatcher->dispatch(GmailSyncIdsEvent::EVENT_NAME, $gmailIdsEvent);
     }
 }

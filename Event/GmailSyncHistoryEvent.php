@@ -6,12 +6,12 @@ use FL\GmailBundle\Model\GmailHistoryInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Class GmailHistoryUpdatedEvent
+ * Class GmailSyncHistoryEvent
  * @package FL\GmailBundle\Event
  */
-class GmailHistoryUpdatedEvent extends Event
+class GmailSyncHistoryEvent extends Event
 {
-    const EVENT_NAME = "fl_gmail.gmail_history.updated";
+    const EVENT_NAME = "fl_gmail.sync.history";
 
     /**
      * @var GmailHistoryInterface
@@ -19,7 +19,7 @@ class GmailHistoryUpdatedEvent extends Event
     protected $history;
 
     /**
-     * GmailHistoryUpdatedEvent constructor.
+     * GmailSyncHistoryEvent constructor.
      * @param GmailHistoryInterface $history
      */
     public function __construct(GmailHistoryInterface $history)

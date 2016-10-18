@@ -9,9 +9,9 @@ use Symfony\Component\EventDispatcher\Event;
  * Class GmailMessageUpdatedEvent
  * @package FL\GmailBundle\Event
  */
-class GmailIdsResolvedEvent extends Event
+class GmailSyncIdsEvent extends Event
 {
-    const EVENT_NAME = "fl_gmail.gmail_ids.resolved";
+    const EVENT_NAME = "fl_gmail.sync.ids";
 
     /**
      * @var GmailIdsInterface
