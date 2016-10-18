@@ -83,7 +83,9 @@ class SyncGmailIds
             }
         } while (($nextPage = $apiEmailsResponse->getNextPageToken()));
         $this->dispatchGmailIdsEvent($userId, $gmailIds);
-        $this->dispatchHistoryEvent($userId, $historyId);
+        if (isset($historyId)) {
+            $this->dispatchHistoryEvent($userId, intval($historyId));
+        }
     }
 
     /**
@@ -126,7 +128,9 @@ class SyncGmailIds
                 }
             } while (($nextPage = $emails->getNextPageToken()));
             $this->dispatchGmailIdsEvent($userId, $gmailIds);
-            $this->dispatchHistoryEvent($userId, $newHistoryId);
+            if (isset($newHistoryId)) {
+                $this->dispatchHistoryEvent($userId, intval($newHistoryId));
+            }
         } catch (\Google_Service_Exception $e) {
             /**
              * A historyId is typically valid for at least a week, but in some rare circumstances may be valid
