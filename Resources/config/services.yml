@@ -31,14 +31,13 @@ services:
             class: FL\GmailBundle\Services\OAuth
             arguments: ["@fl_gmail.oauth_service"]
 
-    fl_gmail.sync_manager:
-        class: FL\GmailBundle\Services\SyncManager
+    fl_gmail.sync_helper:
+        class: FL\GmailBundle\Services\SyncHelper
         arguments:
             - "@fl_gmail.email"
-            - "@fl_gmail.sync_manager_helper"
 
-    fl_gmail.sync_manager_helper:
-        class: FL\GmailBundle\Services\SyncManagerHelper
+    fl_gmail.sync_manager:
+        class: FL\GmailBundle\Services\SyncManager
         arguments:
             - "@fl_gmail.email"
             - "@event_dispatcher"
