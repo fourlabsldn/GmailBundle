@@ -23,6 +23,7 @@ interface GmailIdsInterface
 
     /**
      * Set the gmail IDs.
+     * By convention, place latestIds first
      * @param string[] $gmailIds
      * @return GmailIdsInterface
      */
