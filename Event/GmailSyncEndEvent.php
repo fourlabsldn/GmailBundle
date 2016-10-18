@@ -7,7 +7,7 @@ use FL\GmailBundle\Model\Collection\GmailMessageCollection;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Class GmailMessageUpdatedEvent
+ * Class GmailSyncEndEvent
  * @package FL\GmailBundle\Event
  */
 class GmailSyncEndEvent extends Event
