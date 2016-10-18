@@ -15,24 +15,28 @@ class GmailSyncIdsEvent extends Event
 
     /**
      * @var GmailIdsInterface
+     *
+     * Name to avoid confusion, imagine calling
+     * $gmailSyncIdsEvent->getGmailIds()->getGmailIds()
+     * With this name, we get
+     * $gmailSyncIdsEvent->getGmailIdsObject()->getGmailIds()
      */
-    private $gmailIds;
+    private $gmailIdsObject;
 
     /**
      * GmailSyncEndEvent constructor.
-     * @param GmailIdsInterface $gmailIds
+     * @param GmailIdsInterface $gmailIdsObject
      */
-    public function __construct(GmailIdsInterface $gmailIds)
+    public function __construct(GmailIdsInterface $gmailIdsObject)
     {
-        $this->gmailIds = $gmailIds;
+        $this->gmailIdsObject = $gmailIdsObject;
     }
 
     /**
      * Get gmailIds that have been resolved
      * @return GmailIdsInterface
      */
-    public function getGmailIds()
-    {
-        return $this->gmailIds;
+    public function getGmailIdsObject() {
+        return $this->gmailIdsObject;
     }
 }
