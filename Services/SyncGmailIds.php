@@ -55,7 +55,7 @@ class SyncGmailIds
     /**
      * @param string $userId
      */
-    public function resolveAllGmailIds(string $userId)
+    public function syncAll(string $userId)
     {
         $nextPage = null;
         $gmailIds = [];
@@ -80,17 +80,17 @@ class SyncGmailIds
                 /** @var \Google_Service_Gmail_Message $latestMessage */
                 $latestMessage = $apiEmailsResponse[0];
                 $historyId = $latestMessage->getHistoryId();
-                $this->dispatchHistoryEvent($userId, $historyId);
             }
         } while (($nextPage = $apiEmailsResponse->getNextPageToken()));
         $this->dispatchGmailIdsEvent($userId, $gmailIds);
+        $this->dispatchHistoryEvent($userId, $historyId);
     }
 
     /**
      * @param string $userId
-     * @param string $currentHistoryId
+     * @param int $currentHistoryId
      */
-    public function resolveGmailIdsFromHistoryId(string $userId, string $currentHistoryId)
+    public function syncFromHistoryId(string $userId, int $currentHistoryId)
     {
         try {
             $gmailIds = [];
@@ -123,10 +123,10 @@ class SyncGmailIds
                 // so we can know up to which point the sync has been done for this user.
                 if (! isset($newHistoryId)) {
                     $newHistoryId = $emails->getHistoryId();
-                    $this->dispatchHistoryEvent($userId, $newHistoryId);
                 }
             } while (($nextPage = $emails->getNextPageToken()));
             $this->dispatchGmailIdsEvent($userId, $gmailIds);
+            $this->dispatchHistoryEvent($userId, $newHistoryId);
         } catch (\Google_Service_Exception $e) {
             /**
              * A historyId is typically valid for at least a week, but in some rare circumstances may be valid
@@ -134,7 +134,7 @@ class SyncGmailIds
              * a full sync.
              * @link https://developers.google.com/gmail/api/v1/reference/users/history/list#startHistoryId
              */
-            $this->resolveAllGmailIds($userId);
+            $this->syncAll($userId);
         }
     }
 
