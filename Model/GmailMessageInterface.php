@@ -87,10 +87,10 @@ interface GmailMessageInterface
 
     /**
      * Set email body in plain text.
-     * @param string $bodyPlainText
+     * @param string|null $bodyPlainText
      * @return GmailMessageInterface
      */
-    public function setBodyPlainText(string $bodyPlainText): GmailMessageInterface;
+    public function setBodyPlainText(string $bodyPlainText = null): GmailMessageInterface;
 
     /**
      * Get email body in plain text.
@@ -100,10 +100,10 @@ interface GmailMessageInterface
 
     /**
      * Set email body in HTML.
-     * @param string $bodyHtml
+     * @param string|null $bodyHtml
      * @return GmailMessageInterface
      */
-    public function setBodyHtml(string $bodyHtml): GmailMessageInterface;
+    public function setBodyHtml(string $bodyHtml = null): GmailMessageInterface;
 
     /**
      * Get email body in HTML.
