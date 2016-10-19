@@ -234,7 +234,7 @@ class GmailMessage implements GmailMessageInterface
     /**
      * {@inheritdoc}
      */
-    public function setBodyPlainText(string $bodyPlainText): GmailMessageInterface
+    public function setBodyPlainText(string $bodyPlainText = null): GmailMessageInterface
     {
         $this->bodyPlainText = $bodyPlainText;
 
@@ -252,7 +252,7 @@ class GmailMessage implements GmailMessageInterface
     /**
      * {@inheritdoc}
      */
-    public function setBodyHtml(string $bodyHtml): GmailMessageInterface
+    public function setBodyHtml(string $bodyHtml = null): GmailMessageInterface
     {
         $this->bodyHtml = $bodyHtml;
 
@@ -344,7 +344,7 @@ class GmailMessage implements GmailMessageInterface
     /**
      * @inheritdoc
      */
-    final public static function createFromGmailApiMessage(\Google_Service_Gmail_Message $gmailApiMessage, array $labels, string $userId): GmailMessageInterface
+    public static function createFromGmailApiMessage(\Google_Service_Gmail_Message $gmailApiMessage, array $labels, string $userId): GmailMessageInterface
     {
         /** @var GmailMessageInterface $message */
         $message =  new static();
@@ -371,7 +371,8 @@ class GmailMessage implements GmailMessageInterface
             }
         }
 
-        $message->setUserId($userId)
+        $message
+            ->setUserId($userId)
             ->setGmailId($gmailApiMessage->getId())
             ->setThreadId($gmailApiMessage->getThreadId())
             ->setHistoryId($gmailApiMessage->getHistoryId())
@@ -383,22 +384,19 @@ class GmailMessage implements GmailMessageInterface
         foreach ($payload->getParts() as $part) {
             switch ($part->getMimeType()) {
                 case 'text/plain':
+                    /** @var  \Google_Service_Gmail_MessagePartBody $body */
+                    $body = $part->getBody();
+                    $sanitizedData = strtr($body->getData(),'-_', '+/');
+                    $message->setBodyPlainText(base64_decode($sanitizedData));
+                    break;
                 case 'text/html':
                      /** @var  \Google_Service_Gmail_MessagePartBody $body */
                     $body = $part->getBody();
                     $sanitizedData = strtr($body->getData(),'-_', '+/');
-                break;
-            }
-            switch ($part->getMimeType()) {
-                case 'text/plain':
-                    $message->setBodyPlainText(base64_decode($sanitizedData));
-                    break;
-                case 'text/html':
                     $message->setBodyHtml(base64_decode($sanitizedData));
                     break;
             }
         }
-        die();
 
         /** @var GmailLabelInterface $label */
         foreach ($labels as $label) {
