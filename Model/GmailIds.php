@@ -49,8 +49,11 @@ class GmailIds implements GmailIdsInterface
     /**
      * {@inheritdoc}
      */
-    public function getGmailIds()
+    public function getGmailIds(int $limit = null)
     {
-        return $this->gmailIds;
+        if (!is_array($this->gmailIds)) {
+            return null;
+        }
+        return array_slice($this->gmailIds, 0, $limit);
     }
 }

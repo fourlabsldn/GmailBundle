@@ -31,7 +31,8 @@ interface GmailIdsInterface
 
     /**
      * Get the gmail IDs.
+     * @param int $limit
      * @return string[]|null
      */
-    public function getGmailIds();
+    public function getGmailIds(int $limit = null);
 }
