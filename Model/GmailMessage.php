@@ -378,7 +378,7 @@ class GmailMessage implements GmailMessageInterface
             ->setHistoryId($gmailApiMessage->getHistoryId())
             ->setSnippet($gmailApiMessage->getSnippet())
             ->setBodyHtml(static::resolveBodyHtmlFromApiMessage($gmailApiMessage))
-            ->setBodyPlainText(static::resolveBodyTextFromApiMessage($gmailApiMessage))
+            ->setBodyPlainText(static::resolveBodyPlainTextFromApiMessage($gmailApiMessage))
         ;
 
         /** @var GmailLabelInterface $label */
@@ -412,7 +412,7 @@ class GmailMessage implements GmailMessageInterface
     /**
      * @inheritdoc
      */
-    public static function resolveBodyTextFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage)
+    public static function resolveBodyPlainTextFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage)
     {
         /** @var \Google_Service_Gmail_MessagePart $payload */
         $payload = $gmailApiMessage->getPayload();

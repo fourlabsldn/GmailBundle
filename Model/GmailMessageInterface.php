@@ -209,5 +209,5 @@ interface GmailMessageInterface
      * @param \Google_Service_Gmail_Message $gmailApiMessage
      * @return null|string
      */
-    public static function resolveBodyTextFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage);
+    public static function resolveBodyPlainTextFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage);
 }
