@@ -79,12 +79,15 @@ class SyncGmailIds
             if ( (!isset($historyId)) && count($apiEmailsResponse) > 0) {
                 /** @var \Google_Service_Gmail_Message $latestMessage */
                 $latestMessage = $apiEmailsResponse[0];
-                $historyId = $latestMessage->getHistoryId();
+                $latestMessage = $this->email->get($userId, $latestMessage->getId()); // populates historyId (one extra API call)
+                $newHistoryId = $latestMessage->getHistoryId();
             }
         } while (($nextPage = $apiEmailsResponse->getNextPageToken()));
-        $this->dispatchGmailIdsEvent($userId, $gmailIds);
-        if (isset($historyId)) {
-            $this->dispatchHistoryEvent($userId, intval($historyId));
+        if (count($gmailIds) > 0) {
+            $this->dispatchGmailIdsEvent($userId, $gmailIds);
+        }
+        if (isset($newHistoryId)) {
+            $this->dispatchHistoryEvent($userId, intval($newHistoryId));
         }
     }
 
@@ -99,7 +102,7 @@ class SyncGmailIds
             $nextPage = null;
             do {
                 /** @var \Google_Service_Gmail_ListHistoryResponse $response */
-                $emails = $this->email->historyList(
+                $historyList = $this->email->historyList(
                     $userId,
                     [
                         'maxResults' => 2000,
@@ -109,7 +112,7 @@ class SyncGmailIds
                 );
 
                 /** @var \Google_Service_Gmail_History $apiHistory */
-                foreach ($emails->getHistory() as $apiHistory) {
+                foreach ($historyList->getHistory() as $apiHistory) {
                     $histories[] = $apiHistory;
                     /**
                      * @var \Google_Service_Gmail_Message $historyMessage
@@ -124,10 +127,12 @@ class SyncGmailIds
                 // We need to get the History ID in the first batch
                 // so we can know up to which point the sync has been done for this user.
                 if (! isset($newHistoryId)) {
-                    $newHistoryId = $emails->getHistoryId();
+                    $newHistoryId = $historyList->getHistoryId();
                 }
-            } while (($nextPage = $emails->getNextPageToken()));
-            $this->dispatchGmailIdsEvent($userId, $gmailIds);
+            } while (($nextPage = $historyList->getNextPageToken()));
+            if (count($gmailIds) > 0) {
+                $this->dispatchGmailIdsEvent($userId, $gmailIds);
+            }
             if (isset($newHistoryId)) {
                 $this->dispatchHistoryEvent($userId, intval($newHistoryId));
             }
