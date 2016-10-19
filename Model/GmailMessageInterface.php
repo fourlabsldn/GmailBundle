@@ -86,6 +86,32 @@ interface GmailMessageInterface
     public function getSnippet();
 
     /**
+     * Set email body in plain text.
+     * @param string $bodyPlainText
+     * @return GmailMessageInterface
+     */
+    public function setBodyPlainText(string $bodyPlainText): GmailMessageInterface;
+
+    /**
+     * Get email body in plain text.
+     * @return string|null
+     */
+    public function getBodyPlainText();
+
+    /**
+     * Set email body in HTML.
+     * @param string $bodyHtml
+     * @return GmailMessageInterface
+     */
+    public function setBodyHtml(string $bodyHtml): GmailMessageInterface;
+
+    /**
+     * Get email body in HTML.
+     * @return string|null
+     */
+    public function getBodyHtml();
+
+    /**
      * Add a label to the Gmail Message.
      * @param GmailLabelInterface $label
      * @return  GmailMessageInterface
