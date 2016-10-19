@@ -350,8 +350,8 @@ class GmailMessage implements GmailMessageInterface
         $message =  new static();
 
         /** @var \Google_Service_Gmail_MessagePart $payload */
-        /** @var \Google_Service_Gmail_MessagePartHeader[] $headers */
         $payload = $gmailApiMessage->getPayload();
+        /** @var \Google_Service_Gmail_MessagePartHeader[] $headers */
         $headers = $payload->getHeaders();
 
         foreach ($headers as $header) {
@@ -377,8 +377,8 @@ class GmailMessage implements GmailMessageInterface
             ->setThreadId($gmailApiMessage->getThreadId())
             ->setHistoryId($gmailApiMessage->getHistoryId())
             ->setSnippet($gmailApiMessage->getSnippet())
-            ->setBodyHtml(static::resolveBodyHtmlFromPayload($payload))
-            ->setBodyPlainText(static::resolveBodyPlainTextFromPayload($payload))
+            ->setBodyHtml(static::resolveBodyHtmlFromApiMessage($gmailApiMessage))
+            ->setBodyPlainText(static::resolveBodyTextFromApiMessage($gmailApiMessage))
         ;
 
         /** @var GmailLabelInterface $label */
@@ -392,8 +392,11 @@ class GmailMessage implements GmailMessageInterface
     /**
      * @inheritdoc
      */
-    public static function resolveBodyHtmlFromPayload(\Google_Service_Gmail_MessagePart $payload)
+    public static function resolveBodyHtmlFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage)
     {
+        /** @var \Google_Service_Gmail_MessagePart $payload */
+        $payload = $gmailApiMessage->getPayload();
+
         /** @var \Google_Service_Gmail_MessagePart $part */
         foreach ($payload->getParts() as $part) {
             if ($part->getMimeType() === 'text/html') {
@@ -409,8 +412,11 @@ class GmailMessage implements GmailMessageInterface
     /**
      * @inheritdoc
      */
-    public static function resolveBodyPlainTextFromPayload(\Google_Service_Gmail_MessagePart $payload)
+    public static function resolveBodyTextFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage)
     {
+        /** @var \Google_Service_Gmail_MessagePart $payload */
+        $payload = $gmailApiMessage->getPayload();
+
         /** @var \Google_Service_Gmail_MessagePart $part */
         foreach ($payload->getParts() as $part) {
             if ($part->getMimeType() === 'text/plain') {
