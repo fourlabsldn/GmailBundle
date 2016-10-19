@@ -14,7 +14,7 @@ class GmailIds implements GmailIdsInterface
     protected $userId;
 
     /**
-     * @var string[]
+     * @var string[]|null
      */
     protected $gmailIds = [];
 
@@ -39,7 +39,7 @@ class GmailIds implements GmailIdsInterface
     /**
      * {@inheritdoc}
      */
-    public function setGmailIds(array $gmailIds): GmailIdsInterface
+    public function setGmailIds(array $gmailIds = null): GmailIdsInterface
     {
         $this->gmailIds = $gmailIds;
 
@@ -49,7 +49,7 @@ class GmailIds implements GmailIdsInterface
     /**
      * {@inheritdoc}
      */
-    public function getGmailIds(): array
+    public function getGmailIds()
     {
         return $this->gmailIds;
     }

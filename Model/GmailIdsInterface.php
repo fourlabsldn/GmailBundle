@@ -24,14 +24,14 @@ interface GmailIdsInterface
     /**
      * Set the gmail IDs.
      * By convention, place latestIds first
-     * @param string[] $gmailIds
+     * @param string[]|null $gmailIds
      * @return GmailIdsInterface
      */
-    public function setGmailIds(array $gmailIds): GmailIdsInterface;
+    public function setGmailIds(array $gmailIds = null): GmailIdsInterface;
 
     /**
      * Get the gmail IDs.
-     * @return string[]
+     * @return string[]|null
      */
-    public function getGmailIds(): array;
+    public function getGmailIds();
 }
