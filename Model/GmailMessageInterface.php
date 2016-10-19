@@ -200,14 +200,14 @@ interface GmailMessageInterface
     public static function createFromGmailApiMessage(\Google_Service_Gmail_Message $gmailApiMessage, array $labels, string $userId): GmailMessageInterface;
 
     /**
-     * @param \Google_Service_Gmail_Message $apiMessage
+     * @param \Google_Service_Gmail_Message $gmailApiMessage
      * @return null|string
      */
-    public static function resolveBodyHtmlFromApiMessage(\Google_Service_Gmail_Message $apiMessage);
+    public static function resolveBodyHtmlFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage);
 
     /**
-     * @param \Google_Service_Gmail_Message $apiMessage
+     * @param \Google_Service_Gmail_Message $gmailApiMessage
      * @return null|string
      */
-    public static function resolveBodyTextFromApiMessage(\Google_Service_Gmail_Message $apiMessage);
+    public static function resolveBodyTextFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage);
 }
