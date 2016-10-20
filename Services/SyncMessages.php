@@ -25,6 +25,11 @@ class SyncMessages
     private $email;
 
     /**
+     * @var OAuth
+     */
+    private $oAuth;
+
+    /**
      * @var EventDispatcherInterface
      */
     private $dispatcher;
@@ -67,18 +72,21 @@ class SyncMessages
     /**
      * SyncManager constructor.
      * @param Email $email
+     * @param OAuth $oAuth
      * @param EventDispatcherInterface $dispatcher
      * @param GmailMessageTransformer $gmailMessageTransformer
      * @param GmailLabelTransformer $gmailLabelTransformer
      */
     public function __construct(
         Email $email,
+        OAuth $oAuth,
         EventDispatcherInterface $dispatcher,
         GmailMessageTransformer $gmailMessageTransformer,
         GmailLabelTransformer $gmailLabelTransformer
     ) {
         $this->email = $email;
         $this->dispatcher = $dispatcher;
+        $this->oAuth = $oAuth;
         $this->gmailMessageTransformer = $gmailMessageTransformer;
         $this->gmailLabelTransformer = $gmailLabelTransformer;
     }
@@ -96,7 +104,7 @@ class SyncMessages
                 $this->apiMessageCache[$userId][] = $id;
                 $apiMessage = $this->email->getIfNotNote($userId, $id);
                 if ($apiMessage instanceof \Google_Service_Gmail_Message) {
-                    $this->processApiMessage($userId, $apiMessage);
+                    $this->processApiMessage($userId, $this->oAuth->resolveDomain(), $apiMessage);
                 }
             }
         }
@@ -135,9 +143,10 @@ class SyncMessages
      * When converting and placing a batch of $apiMessages into $allGmailMessages,
      * we must not create a new $gmailLabel, if the label's name has been used previously.
      * @param string $userId
+     * @param string $domain
      * @param \Google_Service_Gmail_Message $apiMessage
      */
-    private function processApiMessage(string $userId, \Google_Service_Gmail_Message $apiMessage)
+    private function processApiMessage(string $userId, string $domain, \Google_Service_Gmail_Message $apiMessage)
     {
         $this->verifyCaches($userId);
 
@@ -155,7 +164,7 @@ class SyncMessages
 
         // Convert the $apiMessage, with its $gmailLabels, into a GmailMessageInterface.
         // Then add it to the $allGmailMessages collection.
-        $this->gmailMessageCache[$userId]->addMessage($this->gmailMessageTransformer->transform($apiMessage, $gmailLabels, $userId));
+        $this->gmailMessageCache[$userId]->addMessage($this->gmailMessageTransformer->transform($apiMessage, $gmailLabels, $userId, $domain));
     }
 
     /**

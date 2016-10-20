@@ -22,6 +22,17 @@ interface GmailHistoryInterface
     public function getUserId();
 
     /**
+     * @param string $domain
+     * @return GmailHistoryInterface
+     */
+    public function setDomain(string $domain): GmailHistoryInterface;
+
+    /**
+     * @return string
+     */
+    public function getDomain(): string;
+
+    /**
      * Set the history ID.
      * @param int $historyId
      * @return GmailHistoryInterface

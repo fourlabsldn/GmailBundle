@@ -43,13 +43,14 @@ class GmailMessageTransformer
      * @param \Google_Service_Gmail_Message $message
      * @param GmailLabelInterface[] $labels
      * @param string $userId
+     * @param string $domain
      * @return GmailMessageInterface
      */
-    public function transform(\Google_Service_Gmail_Message $message, array $labels, string $userId): GmailMessageInterface
+    public function transform(\Google_Service_Gmail_Message $message, array $labels, string $userId, string $domain): GmailMessageInterface
     {
         /** @var GmailMessageInterface $gmailMessageClass (not really an instance of an object, but helps auto-complete) */
         $gmailMessageClass = $this->gmailMessageClass;
-        $gmailMessage = $gmailMessageClass::createFromGmailApiMessage($message, $labels, $userId);
+        $gmailMessage = $gmailMessageClass::createFromGmailApiMessage($message, $labels, $userId, $domain);
 
         return $gmailMessage;
     }

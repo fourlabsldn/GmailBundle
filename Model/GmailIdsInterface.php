@@ -22,6 +22,16 @@ interface GmailIdsInterface
     public function getUserId();
 
     /**
+     * @param string $domain
+     * @return GmailIdsInterface
+     */
+    public function setDomain(string $domain): GmailIdsInterface;
+
+    /**
+     * @return string
+     */
+    public function getDomain(): string;
+    /**
      * Set the gmail IDs.
      * By convention, place latestIds first
      * @param string[]|null $gmailIds

@@ -14,6 +14,11 @@ class GmailIds implements GmailIdsInterface
     protected $userId;
 
     /**
+     * @var string
+     */
+    protected $domain = '';
+
+    /**
      * @var string[]|null
      */
     protected $gmailIds = [];
@@ -34,6 +39,25 @@ class GmailIds implements GmailIdsInterface
     public function getUserId()
     {
         return $this->userId;
+    }
+
+    /**
+     * @param string $domain
+     * @return GmailIdsInterface
+     */
+    public function setDomain(string $domain): GmailIdsInterface
+    {
+        $this->domain = $domain;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDomain(): string
+    {
+        return $this->domain;
     }
 
     /**

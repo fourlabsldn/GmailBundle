@@ -47,6 +47,7 @@ services:
         class: FL\GmailBundle\Services\SyncMessages
         arguments:
             - "@fl_gmail.email"
+            - "@fl_gmail.email"
             - "@event_dispatcher"
             - "@fl_gmail.message_transformer"
             - "@fl_gmail.label_transformer"

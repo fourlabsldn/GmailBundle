@@ -23,6 +23,11 @@ class SyncGmailIds
     private $email;
 
     /**
+     * @var OAuth
+     */
+    private $oAuth;
+
+    /**
      * @var EventDispatcherInterface
      */
     private $dispatcher;
@@ -44,9 +49,15 @@ class SyncGmailIds
      * @param string $historyClass
      * @param string $gmailIdsClass
      */
-    public function __construct(Email $email, EventDispatcherInterface $dispatcher, string $historyClass, string $gmailIdsClass)
+    public function __construct(
+        Email $email,
+        OAuth $oAuth,
+        EventDispatcherInterface $dispatcher,
+        string $historyClass,
+        string $gmailIdsClass)
     {
         $this->email = $email;
+        $this->oAuth = $oAuth;
         $this->dispatcher = $dispatcher;
         $this->historyClass = $historyClass;
         $this->gmailIdsClass = $gmailIdsClass;
@@ -158,7 +169,11 @@ class SyncGmailIds
          * @var GmailHistoryInterface $history
          */
         $history = new $this->historyClass;
-        $history->setUserId($userId)->setHistoryId($historyId);
+        $history
+            ->setUserId($userId)
+            ->setHistoryId($historyId)
+            ->setDomain($this->oAuth->resolveDomain())
+        ;
         $historyEvent = new GmailSyncHistoryEvent($history);
         $this->dispatcher->dispatch(GmailSyncHistoryEvent::EVENT_NAME, $historyEvent);
     }
@@ -174,7 +189,11 @@ class SyncGmailIds
          * @var GmailIdsInterface $gmailIdsObject
          */
         $gmailIdsObject = new $this->gmailIdsClass;
-        $gmailIdsObject->setUserId($userId)->setGmailIds($gmailIdsArray);
+        $gmailIdsObject
+            ->setUserId($userId)
+            ->setGmailIds($gmailIdsArray)
+            ->setDomain($this->oAuth->resolveDomain())
+        ;
         $gmailIdsEvent = new GmailSyncIdsEvent($gmailIdsObject);
         $this->dispatcher->dispatch(GmailSyncIdsEvent::EVENT_NAME, $gmailIdsEvent);
     }

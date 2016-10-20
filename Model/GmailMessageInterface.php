@@ -206,6 +206,7 @@ interface GmailMessageInterface
      * @param \Google_Service_Gmail_Message $gmailApiMessage
      * @param GmailLabelInterface[] $labels
      * @param string $userId
+     * @param string $domain
      * @return GmailMessageInterface
      *
      * NOTE:
@@ -218,7 +219,7 @@ interface GmailMessageInterface
      * @see GmailMessageInterface::resolveBodyHtmlFromApiMessage()
      * @see GmailMessageInterface::resolveBodyPlainTextFromApiMessage()
      */
-    public static function createFromGmailApiMessage(\Google_Service_Gmail_Message $gmailApiMessage, array $labels, string $userId): GmailMessageInterface;
+    public static function createFromGmailApiMessage(\Google_Service_Gmail_Message $gmailApiMessage, array $labels, string $userId, string $domain): GmailMessageInterface;
 
     /**
      * @param \Google_Service_Gmail_Message $gmailApiMessage

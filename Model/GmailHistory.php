@@ -15,6 +15,16 @@ class GmailHistory implements GmailHistoryInterface
     protected $userId;
 
     /**
+     * @var string
+     */
+    protected $domain = '';
+
+    /**
+     * @var string[]|null
+     */
+    protected $gmailIds = [];
+
+    /**
      * @var int
      */
     protected $historyId;
@@ -35,6 +45,24 @@ class GmailHistory implements GmailHistoryInterface
     public function getUserId()
     {
         return $this->userId;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setDomain(string $domain): GmailHistoryInterface
+    {
+        $this->domain = $domain;
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getDomain(): string
+    {
+        return $this->domain;
     }
 
     /**

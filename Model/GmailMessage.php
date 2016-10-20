@@ -347,7 +347,7 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getDomain(): string
     {
@@ -355,8 +355,7 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @param string $domain
-     * @return GmailMessageInterface
+     * @inheritdoc
      */
     public function setDomain(string $domain): GmailMessageInterface
     {
@@ -368,7 +367,7 @@ class GmailMessage implements GmailMessageInterface
     /**
      * @inheritdoc
      */
-    public static function createFromGmailApiMessage(\Google_Service_Gmail_Message $gmailApiMessage, array $labels, string $userId): GmailMessageInterface
+    public static function createFromGmailApiMessage(\Google_Service_Gmail_Message $gmailApiMessage, array $labels, string $userId, string $domain): GmailMessageInterface
     {
         /** @var GmailMessageInterface $message */
         $message =  new static();
@@ -403,6 +402,7 @@ class GmailMessage implements GmailMessageInterface
             ->setSnippet($gmailApiMessage->getSnippet())
             ->setBodyHtmlFromApiMessage($gmailApiMessage)
             ->setBodyPlainTextFromApiMessage($gmailApiMessage)
+            ->setDomain($domain)
         ;
 
         /** @var GmailLabelInterface $label */
