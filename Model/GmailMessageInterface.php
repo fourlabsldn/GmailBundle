@@ -190,6 +190,17 @@ interface GmailMessageInterface
     public function getUserId();
 
     /**
+     * @return string
+     */
+    public function getDomain(): string;
+
+    /**
+     * @param string $domain
+     * @return GmailMessageInterface
+     */
+    public function setDomain(string $domain): GmailMessageInterface;
+
+    /**
      * Returns a new GmailMessageInterface instance initiated from the passed Google_Service_Gmail_Message instance.
      * The userId is done separately, because we cannot get it from \Google_Service_Gmail_Message
      * @param \Google_Service_Gmail_Message $gmailApiMessage

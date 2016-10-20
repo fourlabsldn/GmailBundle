@@ -73,6 +73,11 @@ class GmailMessage implements GmailMessageInterface
     protected $bodyHtml;
 
     /**
+     * @var string
+     */
+    protected $domain = '';
+
+    /**
      * @var \SplObjectStorage
      */
     protected $labels;
@@ -339,6 +344,25 @@ class GmailMessage implements GmailMessageInterface
     public function getHistoryId()
     {
         return $this->historyId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDomain(): string
+    {
+        return $this->domain;
+    }
+
+    /**
+     * @param string $domain
+     * @return GmailMessageInterface
+     */
+    public function setDomain(string $domain): GmailMessageInterface
+    {
+        $this->domain = $domain;
+
+        return $this;
     }
 
     /**
