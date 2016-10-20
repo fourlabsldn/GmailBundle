@@ -15,6 +15,10 @@ services:
         arguments:
             - "%fl_gmail.gmail_label_class%"
 
+    fl_gmail.client_status:
+        class: FL\GmailBundle\Services\ClientStatus
+        arguments: ["@fl_gmail.access_token"]
+
     fl_gmail.email:
         class: FL\GmailBundle\Services\Email
         arguments: ["@fl_gmail.gmail_service"]
