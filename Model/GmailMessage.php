@@ -392,22 +392,20 @@ class GmailMessage implements GmailMessageInterface
     /**
      * @inheritdoc
      */
-    public function setBodyPlainTextFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage, bool $overrideExistingBody = false): GmailMessageInterface
+    public function setBodyPlainTextFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage): GmailMessageInterface
     {
-        if ($this->bodyPlainText === null || $overrideExistingBody === true) {
-            $this->bodyPlainText = static::resolveBodyPlainTextFromApiMessage($gmailApiMessage);
-        }
+        $this->bodyPlainText = static::resolveBodyPlainTextFromApiMessage($gmailApiMessage);
+
         return $this;
     }
 
     /**
      * @inheritdoc
      */
-    public function setBodyHtmlFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage, bool $overrideExistingBody = false): GmailMessageInterface
+    public function setBodyHtmlFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage): GmailMessageInterface
     {
-        if ($this->bodyHtml === null || $overrideExistingBody === true) {
-            $this->bodyHtml = static::resolveBodyHtmlFromApiMessage($gmailApiMessage);
-        }
+        $this->bodyHtml = static::resolveBodyHtmlFromApiMessage($gmailApiMessage);
+
         return $this;
     }
 

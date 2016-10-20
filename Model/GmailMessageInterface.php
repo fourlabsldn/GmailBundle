@@ -211,17 +211,15 @@ interface GmailMessageInterface
 
     /**
      * @param \Google_Service_Gmail_Message $gmailApiMessage
-     * @param bool $overrideExistingBody
      * @return GmailMessageInterface
      */
-    public function setBodyHtmlFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage, bool $overrideExistingBody = false): GmailMessageInterface;
+    public function setBodyHtmlFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage): GmailMessageInterface;
 
     /**
      * @param \Google_Service_Gmail_Message $gmailApiMessage
-     * @param bool $overrideExistingBody
      * @return GmailMessageInterface
      */
-    public function setBodyPlainTextFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage, bool $overrideExistingBody = false): GmailMessageInterface;
+    public function setBodyPlainTextFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage): GmailMessageInterface;
 
     /**
      * @param \Google_Service_Gmail_Message $gmailApiMessage
