@@ -22,12 +22,11 @@ class InboxType extends AbstractType
 
     /**
      * InboxType constructor.
-     * @param OAuth $oAuth
      * @param Directory $directory
      */
-    public function __construct(OAuth $oAuth, Directory $directory)
+    public function __construct(Directory $directory)
     {
-        $this->emailToUserId = $directory->resolveInboxesToUserIdArray(", ", $oAuth->resolveDomain(), Directory::MODE_RESOLVE_PRIMARY_ONLY);
+        $this->emailToUserId = $directory->resolveInboxesToUserIdArray(", ", Directory::MODE_RESOLVE_PRIMARY_ONLY);
     }
 
     /**
