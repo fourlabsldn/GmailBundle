@@ -16,8 +16,8 @@ services:
             - "%fl_gmail.gmail_label_class%"
 
     fl_gmail.client_status:
-        class: FL\GmailBundle\Services\ClientStatus
-        arguments: ["@fl_gmail.access_token"]
+        class: FL\GmailBundle\Services\GoogleClientStatus
+        arguments: ["@fl_gmail.token_file_storage"]
 
     fl_gmail.email:
         class: FL\GmailBundle\Services\Email
