@@ -196,8 +196,32 @@ interface GmailMessageInterface
      * @param GmailLabelInterface[] $labels
      * @param string $userId
      * @return GmailMessageInterface
+     *
+     * NOTE:
+     *
+     * You can store GmailMessages without their body,
+     * and then set them at runtime with these methods:
+     *
+     * @see GmailMessageInterface::setBodyHtmlFromApiMessage()
+     * @see GmailMessageInterface::setBodyPlainTextFromApiMessage()
+     * @see GmailMessageInterface::resolveBodyHtmlFromApiMessage()
+     * @see GmailMessageInterface::resolveBodyPlainTextFromApiMessage()
      */
     public static function createFromGmailApiMessage(\Google_Service_Gmail_Message $gmailApiMessage, array $labels, string $userId): GmailMessageInterface;
+
+    /**
+     * @param \Google_Service_Gmail_Message $gmailApiMessage
+     * @param bool $overrideExistingBody
+     * @return GmailMessageInterface
+     */
+    public function setBodyHtmlFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage, bool $overrideExistingBody = false): GmailMessageInterface;
+
+    /**
+     * @param \Google_Service_Gmail_Message $gmailApiMessage
+     * @param bool $overrideExistingBody
+     * @return GmailMessageInterface
+     */
+    public function setBodyPlainTextFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage, bool $overrideExistingBody = false): GmailMessageInterface;
 
     /**
      * @param \Google_Service_Gmail_Message $gmailApiMessage

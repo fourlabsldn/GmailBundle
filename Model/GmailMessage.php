@@ -377,8 +377,8 @@ class GmailMessage implements GmailMessageInterface
             ->setThreadId($gmailApiMessage->getThreadId())
             ->setHistoryId($gmailApiMessage->getHistoryId())
             ->setSnippet($gmailApiMessage->getSnippet())
-            ->setBodyHtml(static::resolveBodyHtmlFromApiMessage($gmailApiMessage))
-            ->setBodyPlainText(static::resolveBodyPlainTextFromApiMessage($gmailApiMessage))
+            ->setBodyHtmlFromApiMessage($gmailApiMessage)
+            ->setBodyPlainTextFromApiMessage($gmailApiMessage)
         ;
 
         /** @var GmailLabelInterface $label */
@@ -387,6 +387,28 @@ class GmailMessage implements GmailMessageInterface
         }
 
         return $message;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setBodyPlainTextFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage, bool $overrideExistingBody = false): GmailMessageInterface
+    {
+        if ($this->bodyPlainText === null || $overrideExistingBody === true) {
+            $this->bodyPlainText = static::resolveBodyPlainTextFromApiMessage($gmailApiMessage);
+        }
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setBodyHtmlFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage, bool $overrideExistingBody = false): GmailMessageInterface
+    {
+        if ($this->bodyHtml === null || $overrideExistingBody === true) {
+            $this->bodyHtml = static::resolveBodyHtmlFromApiMessage($gmailApiMessage);
+        }
+        return $this;
     }
 
     /**
