@@ -4,5 +4,4 @@ services:
         tags:
             - { name: form.type }
         arguments:
-            - "@fl_gmail.oauth"
             - "@fl_gmail.directory"

@@ -29,25 +29,28 @@ services:
 
     fl_gmail.directory:
         class: FL\GmailBundle\Services\Directory
-        arguments: ["@fl_gmail.directory_service"]
+        arguments:
+          - "@fl_gmail.directory_service"
+          - "@fl_gmail.oauth"
 
     fl_gmail.oauth:
             class: FL\GmailBundle\Services\OAuth
             arguments: ["@fl_gmail.oauth_service"]
 
-    fl_gmail.sync_helper:
+    fl_gmail.sync_gmail_ids:
         class: FL\GmailBundle\Services\SyncGmailIds
         arguments:
             - "@fl_gmail.email"
+            - "@fl_gmail.oauth"
             - "@event_dispatcher"
             - "%fl_gmail.gmail_history_class%"
             - "%fl_gmail.gmail_ids_class%"
 
-    fl_gmail.sync_manager:
+    fl_gmail.sync_messages:
         class: FL\GmailBundle\Services\SyncMessages
         arguments:
             - "@fl_gmail.email"
-            - "@fl_gmail.email"
+            - "@fl_gmail.oauth"
             - "@event_dispatcher"
             - "@fl_gmail.message_transformer"
             - "@fl_gmail.label_transformer"
