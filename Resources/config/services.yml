@@ -17,6 +17,7 @@ services:
 
     fl_gmail.client_status:
         class: FL\GmailBundle\Services\GoogleClientStatus
+        lazy: true
         arguments: ["@fl_gmail.token_file_storage"]
 
     fl_gmail.email:
