@@ -29,7 +29,7 @@ interface GmailMessageInterface
 
     /**
      * Returns comma separated emails, instead of a string that might contain multiple emails, names, '<', and '>'
-     * @return string
+     * @return string|null
      */
     public function getToEmailsCSV();
 
@@ -51,6 +51,24 @@ interface GmailMessageInterface
      * @return string|null
      */
     public function getFromEmail();
+
+    /**
+     * Returns an array that merges getTo and getFrom
+     * @return string[]
+     */
+    public function getAll();
+
+    /**
+     * Returns an array of valid email strings, instead of a string that might contain multiple emails, names, '<', and '>'
+     * @return string[]
+     */
+    public function getAllEmails();
+
+    /**
+     * Returns comma separated emails, instead of a string that might contain multiple emails, names, '<', and '>'
+     * @return string|null
+     */
+    public function getAllEmailsCSV();
 
     /**
      * Set email sent datetime

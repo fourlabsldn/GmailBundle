@@ -161,6 +161,7 @@ class GmailMessage implements GmailMessageInterface
         if (count($emails) === 0) {
             return null;
         }
+
         return implode(',', $emails);
     }
 
@@ -191,7 +192,40 @@ class GmailMessage implements GmailMessageInterface
         if (array_key_exists(0, $emails) && is_string($emails[0])) {
             return $emails[0];
         }
+
         return null;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAll()
+    {
+        return array_merge($this->getTo(), [$this->getFrom()]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAllEmails()
+    {
+        if ($this->getFromEmail() === null) {
+            return $this->getToEmails();
+        }
+
+        return array_merge($this->getToEmails(), [$this->getFromEmail()]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAllEmailsCSV()
+    {
+        $emails = $this->getAllEmails();
+        if (count($emails) === 0) {
+            return null;
+        }
+        return implode(',', $emails);
     }
 
     /**
