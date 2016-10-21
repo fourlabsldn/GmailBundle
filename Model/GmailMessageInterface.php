@@ -28,6 +28,12 @@ interface GmailMessageInterface
     public function getToEmails();
 
     /**
+     * Returns comma separated emails, instead of a string that might contain multiple emails, names, '<', and '>'
+     * @return string
+     */
+    public function getToEmailsCSV();
+
+    /**
      * Set email sender
      * @param string $from
      * @return GmailMessageInterface

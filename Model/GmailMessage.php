@@ -153,6 +153,18 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public function getToEmailsCSV()
+    {
+        $emails = $this->getToEmails();
+        if (count($emails) === 0) {
+            return null;
+        }
+        return implode(',', $emails);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function setFrom(string $from): GmailMessageInterface

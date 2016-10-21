@@ -11,9 +11,10 @@ abstract class EmailTransformations
      * email@example.com Miles <miles@example.com>, Mila <mila@example.com, Charles charles@example.com,,,,, <Mick> mick@example.com
      *
      * @param string $string
+     * @param bool $emailsAsKeys
      * @return string[]
      */
-    final public static function getMultipleEmailsFromString(string $string = null, bool $emailsAsKeys = false)
+    final public static function getMultipleEmailsFromString(string $string = null, bool $emailsAsKeys = false): array
     {
         $emails = [];
         if (is_string($string) && !empty($string)) {
