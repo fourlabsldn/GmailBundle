@@ -3,3 +3,10 @@ services:
         class: FL\GmailBundle\Action\AuthoriseGoogleAction
         arguments:
           - "@fl_gmail.unauthorised_client"
+
+    'FL\GmailBundle\Action\SaveAuthorisationAction':
+        class: FL\GmailBundle\Action\SaveAuthorisationAction
+        arguments:
+          - "@router"
+          - "XXXXXXXXXX"
+          - "%fl_gmail.redirect_route_after_save_authorisation%"

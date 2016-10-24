@@ -2,8 +2,7 @@
 
 namespace FL\GmailBundle\Action;
 
-use FL\GmailBundle\Event\SaveAuthorisationEvent;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use FL\GmailBundle\Token\TokenStorageInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,29 +21,29 @@ class SaveAuthorisationAction
     private $router;
 
     /**
-     * @var EventDispatcherInterface
+     * @var TokenStorageInterface
      */
-    private $dispatcher;
+    private $storage;
 
     /**
      * @var string
      */
-    private $redirectRouteAfterTokenSaved;
+    private $redirectRoute;
 
     /**
      * SaveAuthorisationAction constructor.
      * @param RouterInterface $router
-     * @param EventDispatcherInterface $dispatcher
-     * @param string $redirectRouteAfterSaveAuthorisation
+     * @param TokenStorageInterface $storage
+     * @param string $redirectRoute
      */
     public function __construct(
         RouterInterface $router,
-        EventDispatcherInterface $dispatcher,
-        string $redirectRouteAfterSaveAuthorisation
+        TokenStorageInterface $storage,
+        string $redirectRoute
     ) {
         $this->router = $router;
-        $this->dispatcher = $dispatcher;
-        $this->redirectRouteAfterTokenSaved = $redirectRouteAfterSaveAuthorisation;
+        $this->storage = $storage;
+        $this->redirectRoute = $redirectRoute;
     }
 
     /**
@@ -57,10 +56,10 @@ class SaveAuthorisationAction
             throw new BadRequestHttpException("No authorisation code in request.");
         }
 
-        $this->dispatcher->dispatch(SaveAuthorisationEvent::EVENT_NAME, new SaveAuthorisationEvent($code));
+        $this->storage->persistAuthCode($code);
 
         return new RedirectResponse(
-            $this->router->generate($this->redirectRouteAfterTokenSaved),
+            $this->router->generate($this->redirectRoute),
             Response::HTTP_MOVED_PERMANENTLY
         );
     }

@@ -11,24 +11,24 @@ class AccessToken
     /**
      * @var array
      */
-    private $accessToken = null;
+    private $jsonToken = null;
 
     /**
      * Get the current access token as a json string.
      * @return string|null
      */
-    public function getToken()
+    public function getJsonToken()
     {
-        return $this->accessToken;
+        return $this->jsonToken;
     }
 
     /**
-     * @param string $accessToken
+     * @param string $jsonToken
      * @return AccessToken
      */
-    public function setToken(string $accessToken)
+    public function setJsonToken(string $jsonToken)
     {
-        $this->accessToken = $accessToken;
+        $this->jsonToken = $jsonToken;
 
         return $this;
     }

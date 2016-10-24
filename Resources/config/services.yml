@@ -18,7 +18,7 @@ services:
     fl_gmail.client_status:
         class: FL\GmailBundle\Services\GoogleClientStatus
         lazy: true
-        arguments: ["@fl_gmail.json_access_token"]
+        arguments: ["@fl_gmail.access_token"]
 
     fl_gmail.email:
         class: FL\GmailBundle\Services\Email
