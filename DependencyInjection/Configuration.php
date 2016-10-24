@@ -57,7 +57,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('redirect_route_after_save_authorisation')
                     ->cannotBeEmpty()
                 ->end()
-                ->scalarNode('credentials_storage')
+                ->scalarNode('credentials_storage_service_name')
                     ->cannotBeEmpty()
                 ->end()
             ->end()

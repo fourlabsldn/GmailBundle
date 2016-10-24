@@ -8,5 +8,5 @@ services:
         class: FL\GmailBundle\Action\SaveAuthorisationAction
         arguments:
           - "@router"
-          - "%fl_gmail.credentials_storage%"
+          - "@fl_gmail.holds_credentials_storage"
           - "%fl_gmail.redirect_route_after_save_authorisation%"

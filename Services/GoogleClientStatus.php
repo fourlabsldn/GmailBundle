@@ -9,14 +9,14 @@ class GoogleClientStatus
     /**
      * @var AccessToken
      */
-    private $AccessToken;
+    private $accessToken;
 
     /**
-     * @param AccessToken $AccessToken
+     * @param AccessToken $accessToken
      */
-    public function __construct(AccessToken $AccessToken)
+    public function __construct(AccessToken $accessToken)
     {
-        $this->AccessToken = $AccessToken;
+        $this->accessToken = $accessToken;
     }
 
     /**
@@ -24,7 +24,7 @@ class GoogleClientStatus
      */
     public function isAuthenticated()
     {
-        if ( !empty($this->AccessToken->getToken())) {
+        if ( !empty($this->accessToken->getJsonToken())) {
             return true;
         }
         return false;

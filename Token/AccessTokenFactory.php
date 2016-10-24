@@ -2,6 +2,7 @@
 namespace FL\GmailBundle\Token;
 
 use FL\GmailBundle\Storage\CredentialsStorageInterface;
+use FL\GmailBundle\Storage\HoldsCredentialsStorage;
 
 /**
  * Class AccessTokenFactory
@@ -22,12 +23,12 @@ class AccessTokenFactory
     /**
      * AccessTokenFactory constructor.
      * @param \Google_Client $unauthorisedClient
-     * @param CredentialsStorageInterface $credentialsStorage
+     * @param HoldsCredentialsStorage $holdsCredentialsStorage
      */
-    public function __construct(\Google_Client $unauthorisedClient, CredentialsStorageInterface $credentialsStorage)
+    public function __construct(\Google_Client $unauthorisedClient, HoldsCredentialsStorage $holdsCredentialsStorage)
     {
         $this->unauthorisedClient = $unauthorisedClient;
-        $this->credentialsStorage = $credentialsStorage;
+        $this->credentialsStorage = $holdsCredentialsStorage->getCredentialsStorageService();
     }
 
     /**

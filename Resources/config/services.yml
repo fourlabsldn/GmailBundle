@@ -55,3 +55,9 @@ services:
             - "@event_dispatcher"
             - "@fl_gmail.message_transformer"
             - "@fl_gmail.label_transformer"
+
+    fl_gmail.holds_credentials_storage:
+        class: FL\GmailBundle\Storage\HoldsCredentialsStorage
+        arguments:
+            - "@service_container"
+            - "%fl_gmail.credentials_storage_service_name%"

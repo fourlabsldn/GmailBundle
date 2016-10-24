@@ -3,6 +3,7 @@
 namespace FL\GmailBundle\Action;
 
 use FL\GmailBundle\Storage\CredentialsStorageInterface;
+use FL\GmailBundle\Storage\HoldsCredentialsStorage;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,16 +34,16 @@ class SaveAuthorisationAction
     /**
      * SaveAuthorisationAction constructor.
      * @param RouterInterface $router
-     * @param CredentialsStorageInterface $storage
+     * @param HoldsCredentialsStorage $holdsCredentialsStorage
      * @param string $redirectRoute
      */
     public function __construct(
         RouterInterface $router,
-        CredentialsStorageInterface $storage,
+        HoldsCredentialsStorage $holdsCredentialsStorage,
         string $redirectRoute
     ) {
         $this->router = $router;
-        $this->storage = $storage;
+        $this->storage = $holdsCredentialsStorage->getCredentialsStorageService();
         $this->redirectRoute = $redirectRoute;
     }
 

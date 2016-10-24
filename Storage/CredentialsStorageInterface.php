@@ -8,6 +8,9 @@ namespace FL\GmailBundle\Storage;
  * Interface for the persistence of the auth code and the access token,
  * providing methods to get and persist them as needed.
  *
+ * Meant to be implemented as a service.
+ * Also @see HoldsCredentialsStorage
+ *
  * @package FL\GmailBundle\Token
  */
 interface CredentialsStorageInterface
