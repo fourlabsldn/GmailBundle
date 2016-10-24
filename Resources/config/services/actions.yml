@@ -9,4 +9,4 @@ services:
     'FL\GmailBundle\Action\AuthoriseGoogleAction':
         class: FL\GmailBundle\Action\AuthoriseGoogleAction
         arguments:
-          - "@fl_gmail.unauthorised_client"
+          - "@fl_gmail.google_client"

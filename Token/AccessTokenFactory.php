@@ -81,7 +81,6 @@ class AccessTokenFactory
             return new AccessToken();
         }
 
-
         $this->verifyAccessToken();
 
         return new AccessToken($this->getAccessTokenJson());
