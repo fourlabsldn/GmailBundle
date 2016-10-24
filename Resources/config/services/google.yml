@@ -14,7 +14,7 @@ services:
         class: FL\GmailBundle\Token\AccessTokenFactory
         arguments:
             - "@fl_gmail.unauthorised_client"
-            - "XXXXXXXXXXXXX"
+            - "%fl_gmail.credentials_storage%"
 
     fl_gmail.access_token:
         class: FL\GmailBundle\Token\AccessToken
