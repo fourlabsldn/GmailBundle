@@ -61,7 +61,6 @@ class AccessTokenFactory
      * Create an access token and make sure it has not expired.
      * @param void
      * @return AccessToken
-     * @throws MissingTokenException
      */
     public function createAccessToken(): AccessToken
     {
@@ -79,7 +78,7 @@ class AccessTokenFactory
             $this->storage->persistAccessToken($this->accessToken);
             $this->storage->deleteAuthCode();
         } else {
-            throw new MissingTokenException();
+            return new AccessToken();
         }
 
 
@@ -93,7 +92,6 @@ class AccessTokenFactory
      * using the refresh token and save the new access token to storage.
      * @param void
      * @return void
-     * @throws MissingTokenException
      */
     private function verifyAccessToken()
     {
