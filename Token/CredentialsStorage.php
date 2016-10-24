@@ -3,32 +3,30 @@
 namespace FL\GmailBundle\Token;
 
 /**
- * Interface TokenStorageInterface
+ * Interface CredentialsStorage
  *
  * Interface for the persistence of the auth code and the access token,
  * providing methods to get and persist them as needed.
  *
  * @package FL\GmailBundle\Token
  */
-interface TokenStorageInterface
+interface CredentialsStorage
 {
     /**
      * Persist access token.
      * @param array $accessToken
-     * @return void
      */
-    public function persistAccessToken(array $accessToken);
+    public function persistTokenArray(array $accessToken);
 
     /**
-     * Get the access token from storage as a json array.
+     * Get the access token from storage as an array.
      * @return array|null
      */
-    public function getAccessToken();
+    public function getTokenArray();
 
     /**
      * Persist the auth code.
      * @param string $authCode
-     * @return void
      */
     public function persistAuthCode(string $authCode);
 
@@ -41,7 +39,6 @@ interface TokenStorageInterface
     /**
      * The auth code can only be redeemed once, this is provided to be
      * able to delete once it's been used.
-     * @return void
      */
     public function deleteAuthCode();
 }
