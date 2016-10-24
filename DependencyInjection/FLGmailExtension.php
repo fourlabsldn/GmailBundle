@@ -26,13 +26,11 @@ class FLGmailExtension extends Extension
         $container->setParameter('fl_gmail.client_id', $config['client_id']);
         $container->setParameter('fl_gmail.client_secret', $config['client_secret']);
         $container->setParameter('fl_gmail.redirect_uri', $config['redirect_uri']);
-        $container->setParameter('fl_gmail.access_token_path', $config['access_token_path']);
-        $container->setParameter('fl_gmail.auth_code_path', $config['auth_code_path']);
         $container->setParameter('fl_gmail.gmail_message_class', $config['gmail_message_class']);
         $container->setParameter('fl_gmail.gmail_label_class', $config['gmail_label_class']);
         $container->setParameter('fl_gmail.gmail_history_class', $config['gmail_history_class']);
         $container->setParameter('fl_gmail.gmail_ids_class', $config['gmail_ids_class']);
-        $container->setParameter('fl_gmail.redirect_route_after_token_saved', $config['redirect_route_after_token_saved']);
+        $container->setParameter('fl_gmail.redirect_route_after_save_authorisation', $config['redirect_route_after_save_authorisation']);
 
         // The scopes to be used for the \Google_Client instance need to be set here
         // because we need access to the \Google_Service_Gmail constants.

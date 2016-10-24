@@ -1,11 +1,4 @@
 services:
-    'FL\GmailBundle\Action\SaveAccessTokenAction':
-        class: FL\GmailBundle\Action\SaveAccessTokenAction
-        arguments:
-          - "@router"
-          - "@fl_gmail.token_file_storage"
-          - "%fl_gmail.redirect_route_after_token_saved%"
-
     'FL\GmailBundle\Action\AuthoriseGoogleAction':
         class: FL\GmailBundle\Action\AuthoriseGoogleAction
         arguments:

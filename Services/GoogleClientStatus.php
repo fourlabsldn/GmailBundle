@@ -2,21 +2,21 @@
 
 namespace FL\GmailBundle\Services;
 
-use FL\GmailBundle\Token\TokenFileStorage;
+use FL\GmailBundle\Token\AccessToken;
 
 class GoogleClientStatus
 {
     /**
-     * @var TokenFileStorage
+     * @var AccessToken
      */
-    private $tokenFileStorage;
+    private $AccessToken;
 
     /**
-     * @param TokenFileStorage $tokenFileStorage
+     * @param AccessToken $AccessToken
      */
-    public function __construct(TokenFileStorage $tokenFileStorage)
+    public function __construct(AccessToken $AccessToken)
     {
-        $this->tokenFileStorage = $tokenFileStorage;
+        $this->AccessToken = $AccessToken;
     }
 
     /**
@@ -24,8 +24,7 @@ class GoogleClientStatus
      */
     public function isAuthenticated()
     {
-        $token = $this->tokenFileStorage->getAccessToken();
-        if ( $token !== null && $token !== '') {
+        if ( !empty($this->AccessToken->getToken())) {
             return true;
         }
         return false;

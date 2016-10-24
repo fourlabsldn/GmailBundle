@@ -2,7 +2,8 @@
 
 namespace FL\GmailBundle\Action;
 
-use FL\GmailBundle\Token\TokenStorageInterface;
+use FL\GmailBundle\Event\SaveAuthorisationEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,13 +11,10 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
- * Class SaveAccessTokenAction
- * Action that will process the auth code sent by Google in the request,
- * saving it in a file to make it available for the GoogleClient
- * service to obtain an auth token
+ * Class SaveAuthorisationAction
  * @package FL\GmailBundle\Action
  */
-class SaveAccessTokenAction
+class SaveAuthorisationAction
 {
     /**
      * @var RouterInterface
@@ -24,9 +22,9 @@ class SaveAccessTokenAction
     private $router;
 
     /**
-     * @var TokenStorageInterface
+     * @var EventDispatcherInterface
      */
-    private $storage;
+    private $dispatcher;
 
     /**
      * @var string
@@ -34,24 +32,22 @@ class SaveAccessTokenAction
     private $redirectRouteAfterTokenSaved;
 
     /**
-     * SaveAccessTokenAction constructor.
+     * SaveAuthorisationAction constructor.
      * @param RouterInterface $router
-     * @param TokenStorageInterface $storage
-     * @param string $redirectRouterAfterTokenSaved
+     * @param EventDispatcherInterface $dispatcher
+     * @param string $redirectRouteAfterSaveAuthorisation
      */
     public function __construct(
         RouterInterface $router,
-        TokenStorageInterface $storage,
-        string $redirectRouterAfterTokenSaved
+        EventDispatcherInterface $dispatcher,
+        string $redirectRouteAfterSaveAuthorisation
     ) {
         $this->router = $router;
-        $this->storage = $storage;
-        $this->redirectRouteAfterTokenSaved = $redirectRouterAfterTokenSaved;
+        $this->dispatcher = $dispatcher;
+        $this->redirectRouteAfterTokenSaved = $redirectRouteAfterSaveAuthorisation;
     }
 
     /**
-     * Process the auth code received from Google by adding it to
-     * a file that can be later accessed by the Google Client service.
      * @param Request $request
      * @return Response
      */
@@ -61,7 +57,7 @@ class SaveAccessTokenAction
             throw new BadRequestHttpException("No authorisation code in request.");
         }
 
-        $this->storage->persistAuthCode($code);
+        $this->dispatcher->dispatch(SaveAuthorisationEvent::EVENT_NAME, new SaveAuthorisationEvent($code));
 
         return new RedirectResponse(
             $this->router->generate($this->redirectRouteAfterTokenSaved),

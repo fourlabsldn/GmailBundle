@@ -16,15 +16,15 @@ class AuthoriseGoogleAction
      * Unauthorised Google Client used to generate the auth url.
      * @var \Google_Client
      */
-    private $client;
+    private $unauthorisedClient;
 
     /**
      * AuthoriseGoogleAction constructor.
-     * @param \Google_Client $client
+     * @param \Google_Client $unauthorisedClient
      */
-    public function __construct(\Google_Client $client)
+    public function __construct(\Google_Client $unauthorisedClient)
     {
-        $this->client = $client;
+        $this->unauthorisedClient = $unauthorisedClient;
     }
 
     /**
@@ -33,6 +33,6 @@ class AuthoriseGoogleAction
      */
     public function __invoke(Request $request): Response
     {
-        return new RedirectResponse($this->client->createAuthUrl());
+        return new RedirectResponse($this->unauthorisedClient->createAuthUrl());
     }
 }

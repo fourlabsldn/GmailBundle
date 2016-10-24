@@ -1,11 +1,4 @@
 services:
-    fl_gmail.token_file_storage:
-        class: FL\GmailBundle\Token\TokenFileStorage
-        arguments:
-            - "@filesystem"
-            - '%fl_gmail.access_token_path%'
-            - '%fl_gmail.auth_code_path%'
-
     fl_gmail.unauthorised_client:
         class: Google_Client
         calls:
@@ -17,22 +10,17 @@ services:
             - [setRedirectUri, ['%fl_gmail.redirect_uri%']]
             - [setScopes, ['%fl_gmail.gmail_scopes%']]
 
-    fl_gmail.access_token_factory:
-        class: FL\GmailBundle\Token\AccessTokenFactory
-        arguments:
-            - "@fl_gmail.unauthorised_client"
-            - "@fl_gmail.token_file_storage"
-
     fl_gmail.access_token:
         class: FL\GmailBundle\Token\AccessToken
-        factory: ['@fl_gmail.access_token_factory', createAccessToken]
+        calls:
+          - [setToken, '{"access_token":"ya29.Ci-GA6Y9t_cuXo56M_qoP3My-TbHmWCnMzJ5w7Fatcls2Jji09sUmAgILh9yYemn7A","token_type":"Bearer","expires_in":3600,"refresh_token":"1\/UuE0bWuLnmbGoaicbuH464kHSEo-eHxsjBHgEw2wxg4","id_token":"eyJhbGciOiJSUzI1NiIsImtpZCI6ImUzMjY2MWVlMTE0M2MzOTI3ZGQ5M2VjYTBhM2Y5MWI3MjE1Y2JkODUifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdF9oYXNoIjoib2Y0ZVFSRVhEWjM3WjFWNlRyNzBwQSIsImF1ZCI6IjkwNzQ3NTgzMDU1OC01MjZjbzNvMWhmM2twOXJ0NnVhc2o0a3UzczY2dWtxYi5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsInN1YiI6IjEwMTE3NTA4NTcyNzEwMzM5OTI0NSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJhenAiOiI5MDc0NzU4MzA1NTgtNTI2Y28zbzFoZjNrcDlydDZ1YXNqNGt1M3M2NnVrcWIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJoZCI6InNsdi5nbG9iYWwiLCJlbWFpbCI6InRlY2hAc2x2Lmdsb2JhbCIsImlhdCI6MTQ3NzMwODAzNiwiZXhwIjoxNDc3MzExNjM2LCJuYW1lIjoiSm9ubnkgU2NobWlkIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS8tNEdobmdMSFR6TncvQUFBQUFBQUFBQUkvQUFBQUFBQUFBQUEvQUtUYWVLOFJ1VFZaNTZUdk5JMjdveDI4dWFZZDF0bHZ2US9zOTYtYy9waG90by5qcGciLCJnaXZlbl9uYW1lIjoiSm9ubnkiLCJmYW1pbHlfbmFtZSI6IlNjaG1pZCIsImxvY2FsZSI6ImVuIn0.RcYgXVbGbpCUtTPGSOCYANnsJjnBb-LtFkKVmU6G-S7AwqM-enbCpqx6AHPN07ZUe1qg-cmGCE_e08742rqji5dGVifA_2RAP5DTTX8o-bkTpBY3JAZyuYC6dtjdBe4HyXugJf1n_IGiAOw9HLJQ0EwRUDSo_mv0wzw4CWrwRKtpihjgZeAl2rCjOqGuce9WTKalqDbtYAPZ3L7deV1u_aPitIzHSe5hZ9LgnVPdeqjucGE7hXb52alI9wwtgvMuJHSeEt1g4yiI0UUi09gTZVW6xyTRzqqcsonbsI2ieqsiSNLwrouSfWUBc1-TY77aLkz7bbvZ2Yj4HMPsyp05fg","created":1477308036}']
 
     fl_gmail.google_client:
         class: Google_Client
         parent: fl_gmail.unauthorised_client
         lazy: true
         calls:
-            - [setAccessToken, ["@=service('fl_gmail.access_token').getAccessToken()"]]
+            - [setAccessToken, ["@=service('fl_gmail.access_token').getToken()"]]
 
     fl_gmail.gmail_service:
         class: Google_Service_Gmail
