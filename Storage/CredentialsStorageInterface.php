@@ -1,6 +1,6 @@
 <?php
 
-namespace FL\GmailBundle\Token;
+namespace FL\GmailBundle\Storage;
 
 /**
  * Interface CredentialsStorage
@@ -10,7 +10,7 @@ namespace FL\GmailBundle\Token;
  *
  * @package FL\GmailBundle\Token
  */
-interface CredentialsStorage
+interface CredentialsStorageInterface
 {
     /**
      * Persist access token.
