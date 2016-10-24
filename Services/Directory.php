@@ -24,11 +24,6 @@ class Directory
     private $directory;
 
     /**
-     * @var OAuth
-     */
-    private $oAuth;
-
-    /**
      * @var GmailDomain
      */
     private $gmailDomain;
@@ -41,7 +36,7 @@ class Directory
     public function __construct(\Google_Service_Directory $directory, OAuth $oAuth)
     {
         $this->directory = $directory;
-        $this->oAuth = $oAuth;
+        $this->gmailDomain = $this->resolveDomain($oAuth->resolveDomain());
     }
 
     /**
@@ -78,15 +73,6 @@ class Directory
         return $gmailDomain;
     }
 
-    private function getGmailDomain()
-    {
-        if (!$this->gmailDomain) {
-            $this->gmailDomain = $this->resolveDomain($this->oAuth->resolveDomain());
-        }
-
-        return $this->gmailDomain;
-    }
-
     /**
      * @param string $userId
      * @param int $mode
@@ -99,7 +85,7 @@ class Directory
     public function resolveEmailsFromUserId(string $userId, int $mode)
     {
         $emails = [];
-        $gmailUser = $this->getGmailDomain()->findGmailUserById($userId);
+        $gmailUser = $this->gmailDomain->findGmailUserById($userId);
 
         switch ($mode) {
             case self::MODE_RESOLVE_PRIMARY_ONLY:
@@ -144,7 +130,7 @@ class Directory
         /**
          * @var $gmailUser GmailUserInterface
          */
-        foreach ($this->getGmailDomain()->getGmailUsers() as $gmailUser) {
+        foreach ($this->gmailDomain->getGmailUsers() as $gmailUser) {
             $gmailUserEmails = $this->resolveEmailsFromUserId($gmailUser->getUserId(), $mode);
             foreach ($gmailUserEmails as $email) {
                 $emails[] = $email;
@@ -165,13 +151,13 @@ class Directory
 
         switch ($mode) {
             case self::MODE_RESOLVE_PRIMARY_ONLY:
-                $gmailUser = $this->getGmailDomain()->findGmailUserByPrimaryEmail($email);
+                $gmailUser = $this->gmailDomain->findGmailUserByPrimaryEmail($email);
                 break;
             case self::MODE_RESOLVE_ALIASES_ONLY:
-                $gmailUser = $this->getGmailDomain()->findGmailUserByEmailAlias($email);
+                $gmailUser = $this->gmailDomain->findGmailUserByEmailAlias($email);
                 break;
             case self::MODE_RESOLVE_PRIMARY_PLUS_ALIASES:
-                $gmailUser = $this->getGmailDomain()->findGmailUserByEmail($email);
+                $gmailUser = $this->gmailDomain->findGmailUserByEmail($email);
                 break;
             default:
                 throw new \InvalidArgumentException();
@@ -193,7 +179,7 @@ class Directory
         $userIds = [];
 
         /** @var $gmailUser GmailUserInterface */
-        foreach ($this->getGmailDomain()->getGmailUsers() as $gmailUser) {
+        foreach ($this->gmailDomain->getGmailUsers() as $gmailUser) {
             $userIds[] = $gmailUser->getUserId();
         }
 
