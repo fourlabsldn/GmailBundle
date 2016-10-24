@@ -14,9 +14,9 @@ interface CredentialsStorageInterface
 {
     /**
      * Persist access token.
-     * @param array $accessToken
+     * @param array $tokenArray
      */
-    public function persistTokenArray(array $accessToken);
+    public function persistTokenArray(array $tokenArray);
 
     /**
      * Get the access token from storage as an array.
