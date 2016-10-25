@@ -2,7 +2,6 @@
 namespace FL\GmailBundle\Token;
 
 use FL\GmailBundle\Storage\CredentialsStorageInterface;
-use FL\GmailBundle\Storage\HoldsCredentialsStorage;
 
 /**
  * Class AccessTokenFactory
@@ -18,17 +17,17 @@ class AccessTokenFactory
     /**
      * @var CredentialsStorageInterface
      */
-    private $credentialsStorage;
+    private $storage;
 
     /**
      * AccessTokenFactory constructor.
      * @param \Google_Client $unauthorisedClient
-     * @param HoldsCredentialsStorage $holdsCredentialsStorage
+     * @param CredentialsStorageInterface $storage
      */
-    public function __construct(\Google_Client $unauthorisedClient, HoldsCredentialsStorage $holdsCredentialsStorage)
+    public function __construct(\Google_Client $unauthorisedClient, CredentialsStorageInterface $storage)
     {
         $this->unauthorisedClient = $unauthorisedClient;
-        $this->credentialsStorage = $holdsCredentialsStorage->getCredentialsStorageService();
+        $this->storage = $storage;
     }
 
     /**
@@ -36,8 +35,8 @@ class AccessTokenFactory
      */
     public function createAccessToken(): AccessToken
     {
-        $persistedAuthCode = $this->credentialsStorage->getAuthCode();
-        $persistedTokenArray = $this->credentialsStorage->getTokenArray();
+        $persistedAuthCode = $this->storage->getAuthCode();
+        $persistedTokenArray = $this->storage->getTokenArray();
 
         if (empty($persistedAuthCode) && is_null($persistedTokenArray)) {
             return new AccessToken();
@@ -52,9 +51,9 @@ class AccessTokenFactory
 
         $newTokenArray = $this->refreshTokenArray($newTokenArray);
         if ($newTokenArray !== $persistedTokenArray) {
-            $this->credentialsStorage->persistTokenArray($newTokenArray);
+            $this->storage->persistTokenArray($newTokenArray);
         }
-        $this->credentialsStorage->deleteAuthCode();
+        $this->storage->deleteAuthCode();
 
         return (new AccessToken())->setJsonToken(json_encode($newTokenArray));
     }

@@ -14,7 +14,7 @@ services:
         class: FL\GmailBundle\Token\AccessTokenFactory
         arguments:
             - "@fl_gmail.unauthorised_client"
-            - "@fl_gmail.holds_credentials_storage"
+            - "@fl_gmail.credentials_storage_service"
             - "@service_container"
 
     fl_gmail.access_token:
@@ -25,8 +25,14 @@ services:
         class: Google_Client
         parent: fl_gmail.unauthorised_client
         lazy: true
-        calls:
-            - [setAccessToken, ["@=service('fl_gmail.access_token').getJsonToken()"]]
+        factory: ['@fl_gmail.google_client_factory', createGoogleClient]
+
+    fl_gmail.google_client_factory:
+        class: FL\GmailBundle\Services\GoogleClientFactory
+        arguments:
+            - "@service_container"
+            - "@fl_gmail.access_token"
+            - "%fl_gmail.psr6_caching_service%"
 
     fl_gmail.gmail_service:
         class: Google_Service_Gmail
