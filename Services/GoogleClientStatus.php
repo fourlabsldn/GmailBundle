@@ -24,7 +24,7 @@ class GoogleClientStatus
      */
     public function isAuthenticated()
     {
-        if ( !empty($this->accessToken->getJsonToken())) {
+        if (!empty($this->accessToken->getJsonToken())) {
             return true;
         }
         return false;

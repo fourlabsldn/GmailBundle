@@ -15,6 +15,16 @@ class OAuth
     private $oAuth;
 
     /**
+     * @var string
+     */
+    private $domainCache;
+
+    /**
+     * @var string
+     */
+    private $userIdCache;
+
+    /**
      * Oauth constructor.
      * @param \Google_Service_Oauth2 $oAuth
      */
@@ -28,7 +38,10 @@ class OAuth
      */
     public function resolveDomain()
     {
-        return $this->oAuth->userinfo_v2_me->get()->getHd();
+        if (!isset($this->domainCache)) {
+            $this->domainCache = $this->oAuth->userinfo_v2_me->get()->getHd();
+        }
+        return $this->domainCache;
     }
 
     /**
@@ -36,6 +49,9 @@ class OAuth
      */
     public function resolveUserId()
     {
-        return $this->oAuth->userinfo_v2_me->get()->getId();
+        if (!isset($this->userIdCache)) {
+            $this->userIdCache = $this->oAuth->userinfo_v2_me->get()->getId();
+        }
+        return $this->userIdCache;
     }
 }
