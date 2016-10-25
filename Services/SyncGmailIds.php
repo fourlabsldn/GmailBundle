@@ -83,16 +83,19 @@ class SyncGmailIds
 
             foreach ($apiEmailsResponse as $idAndThreadId) {
                 $gmailIds[] = $idAndThreadId['id'];
+                if (isset($newHistoryId)) {
+                    continue;
+                }
+                // We need to get the History ID from the very first existing message
+                // so we can know up to which point the sync has been done for this user.
+                $latestMessage = $this->email->get($userId, $idAndThreadId['id']); // (one more API call)
+                if ($latestMessage instanceof \Google_Service_Gmail_Message) {
+                    /** @var \Google_Service_Gmail_Message $latestMessage */
+                    $newHistoryId = $latestMessage->getHistoryId();
+                }
             }
 
-            // We need to get the History ID from the very first message in the first batch
-            // so we can know up to which point the sync has been done for this user.
-            if ( (!isset($historyId)) && count($apiEmailsResponse) > 0) {
-                /** @var \Google_Service_Gmail_Message $latestMessage */
-                $latestMessage = $apiEmailsResponse[0];
-                $latestMessage = $this->email->get($userId, $latestMessage->getId()); // populates historyId (one extra API call)
-                $newHistoryId = $latestMessage->getHistoryId();
-            }
+
         } while (($nextPage = $apiEmailsResponse->getNextPageToken()));
         if (count($gmailIds) > 0) {
             $this->dispatchGmailIdsEvent($userId, $gmailIds);

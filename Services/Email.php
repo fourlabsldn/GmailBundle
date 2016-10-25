@@ -50,11 +50,22 @@ class Email
      * @param string $userId
      * @param string $emailId
      * @param array $options
-     * @return \Google_Service_Gmail_Message
+     * @return \Google_Service_Gmail_Message|null
+     * @throws \Google_Service_Exception
      */
     public function get(string $userId, string $emailId, array $options = []): \Google_Service_Gmail_Message
     {
-        return $this->service->users_messages->get($userId, $emailId, $options);
+        try {
+            return $this->service->users_messages->get($userId, $emailId, $options);
+        } catch (\Google_Service_Exception $exception) {
+            // message does not exist
+            if ($exception->getCode() === 404) {
+                return null;
+            }
+            else{
+                throw $exception;
+            }
+        }
     }
 
     /**
@@ -69,11 +80,12 @@ class Email
     {
         $fetchedApiMessage = $this->get($userId, $emailId, $options);
 
-        $isNotNote = $this->hasHeader($fetchedApiMessage, 'To') && $this->hasHeader($fetchedApiMessage, 'From');
-        if ($isNotNote) {
-            return $fetchedApiMessage;
+        $isNotApiMessage = !($fetchedApiMessage instanceof \Google_Service_Gmail_Message);
+        $isNote = !($this->hasHeader($fetchedApiMessage, 'To') && $this->hasHeader($fetchedApiMessage, 'From'));
+        if ($isNotApiMessage || $isNote) {
+            return null;
         }
-        return null;
+        return $fetchedApiMessage;
     }
 
     /**
