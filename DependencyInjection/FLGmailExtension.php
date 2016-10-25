@@ -33,8 +33,8 @@ class FLGmailExtension extends Extension
         $container->setParameter('fl_gmail.redirect_route_after_save_authorisation', $config['redirect_route_after_save_authorisation']);
         $container->setParameter('fl_gmail.credentials_storage_service', $config['credentials_storage_service']);
         $container->setAlias('fl_gmail.credentials_storage_service', $config['credentials_storage_service']);
-        $container->setParameter('fl_gmail.psr6_caching_service', $config['psr6_caching_service']);
         if ($config['psr6_caching_service']) {
+            $container->setParameter('fl_gmail.psr6_caching_service', $config['psr6_caching_service']);
             $container->setAlias('fl_gmail.psr6_caching_service', $config['psr6_caching_service']);
         }
 

@@ -62,6 +62,7 @@ class Configuration implements ConfigurationInterface
                     ->cannotBeEmpty()
                 ->end()
                 ->scalarNode('psr6_caching_service')
+                    ->defaultValue(null)
                 ->end()
             ->end()
         ;
