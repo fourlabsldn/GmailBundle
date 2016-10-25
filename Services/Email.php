@@ -53,7 +53,7 @@ class Email
      * @return \Google_Service_Gmail_Message|null
      * @throws \Google_Service_Exception
      */
-    public function get(string $userId, string $emailId, array $options = []): \Google_Service_Gmail_Message
+    public function get(string $userId, string $emailId, array $options = [])
     {
         try {
             return $this->service->users_messages->get($userId, $emailId, $options);
@@ -81,8 +81,12 @@ class Email
         $fetchedApiMessage = $this->get($userId, $emailId, $options);
 
         $isNotApiMessage = !($fetchedApiMessage instanceof \Google_Service_Gmail_Message);
-        $isNote = !($this->hasHeader($fetchedApiMessage, 'To') && $this->hasHeader($fetchedApiMessage, 'From'));
-        if ($isNotApiMessage || $isNote) {
+        if($isNotApiMessage) {
+            return null;
+        }
+
+        $isApiMessageANote = !($this->hasHeader($fetchedApiMessage, 'To') && $this->hasHeader($fetchedApiMessage, 'From'));
+        if ($isApiMessageANote) {
             return null;
         }
         return $fetchedApiMessage;
