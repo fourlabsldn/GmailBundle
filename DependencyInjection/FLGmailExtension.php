@@ -34,8 +34,9 @@ class FLGmailExtension extends Extension
         $container->setParameter('fl_gmail.credentials_storage_service', $config['credentials_storage_service']);
         $container->setAlias('fl_gmail.credentials_storage_service', $config['credentials_storage_service']);
         $container->setParameter('fl_gmail.psr6_caching_service', $config['psr6_caching_service']);
-
-
+        if ($config['psr6_caching_service']) {
+            $container->setAlias('fl_gmail.psr6_caching_service', $config['psr6_caching_service']);
+        }
 
         // The scopes to be used for the \Google_Client instance need to be set here
         // because we need access to the \Google_Service_Gmail constants.

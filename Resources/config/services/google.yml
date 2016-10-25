@@ -32,7 +32,7 @@ services:
         arguments:
             - "@service_container"
             - "@fl_gmail.access_token"
-            - "%fl_gmail.psr6_caching_service%"
+            - "@?fl_gmail.psr6_caching_service"
 
     fl_gmail.gmail_service:
         class: Google_Service_Gmail

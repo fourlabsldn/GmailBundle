@@ -5,7 +5,6 @@ namespace FL\GmailBundle\Services;
 use FL\GmailBundle\Token\AccessToken;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 /**
  * Class GoogleClientFactory
@@ -32,27 +31,13 @@ class GoogleClientFactory
      * GoogleClientFactory constructor.
      * @param ContainerInterface $container
      * @param AccessToken $accessToken
-     * @param string $cacheServiceName
+     * @param CacheItemPoolInterface $cache
      */
-    public function __construct(ContainerInterface $container, AccessToken $accessToken, string $cacheServiceName)
+    public function __construct(ContainerInterface $container, AccessToken $accessToken, CacheItemPoolInterface $cache = null)
     {
         $this->container = $container;
         $this->accessToken = $accessToken;
-        // doing this in construction, so that the validation occurs while creating the container
-        try {
-            $cache = $this->container->get($cacheServiceName);
-            if ($cache instanceof CacheItemPoolInterface) {
-                $this->cache = $cache;
-            }
-            else {
-                throw new \InvalidArgumentException(sprintf(
-                    "Caching Service in GmailBundle expected to be an instance of ",
-                    CacheItemPoolInterface::class
-                ));
-            }
-        } catch (ServiceNotFoundException $exception) {
-            $this->cache = null;
-        }
+        $this->cache = $cache;
     }
 
     /**
