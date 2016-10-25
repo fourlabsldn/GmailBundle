@@ -487,16 +487,16 @@ class GmailMessage implements GmailMessageInterface
         /** @var \Google_Service_Gmail_MessagePart $payload */
         $payload = $gmailApiMessage->getPayload();
 
-        /** @var \Google_Service_Gmail_MessagePart $part */
-        foreach ($payload->getParts() as $part) {
-            if ($part->getMimeType() === 'text/html') {
-                /** @var  \Google_Service_Gmail_MessagePartBody $body */
-                $body = $part->getBody();
-                $sanitizedData = strtr($body->getData(),'-_', '+/');
-                return base64_decode($sanitizedData);
+        if ($payload->getMimeType() === 'multipart/alternative') {
+            /** @var \Google_Service_Gmail_MessagePart $part */
+            foreach ($payload->getParts() as $part) {
+                if ($part->getMimeType() === 'text/html') {
+                    return static::bodyToText($part->getBody());
+                }
             }
         }
-        return null;
+
+        return static::bodyToText($payload->getBody());
     }
 
     /**
@@ -510,12 +510,19 @@ class GmailMessage implements GmailMessageInterface
         /** @var \Google_Service_Gmail_MessagePart $part */
         foreach ($payload->getParts() as $part) {
             if ($part->getMimeType() === 'text/plain') {
-                /** @var  \Google_Service_Gmail_MessagePartBody $body */
-                $body = $part->getBody();
-                $sanitizedData = strtr($body->getData(),'-_', '+/');
-                return base64_decode($sanitizedData);
+                 return static::bodyToText($part->getBody());
             }
         }
         return null;
+    }
+
+    /**
+     * @param \Google_Service_Gmail_MessagePartBody $body
+     * @return string
+     */
+    private static function bodyToText(\Google_Service_Gmail_MessagePartBody $body)
+    {
+        $sanitizedData = strtr($body->getData(),'-_', '+/');
+        return base64_decode($sanitizedData);
     }
 }
