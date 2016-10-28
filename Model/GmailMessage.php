@@ -13,11 +13,6 @@ use FL\GmailBundle\Util\EmailTransformations;
  */
 class GmailMessage implements GmailMessageInterface
 {
-    const LABEL_UNREAD = 'UNERAD';
-    const LABEL_INBOX = 'INBOX';
-    const LABEL_SENT = 'SENT';
-    const LABEL_TRASH = 'TRASH';
-
     /**
      * Gmail ID for the email.
      * @var string

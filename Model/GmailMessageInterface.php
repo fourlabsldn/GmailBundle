@@ -8,6 +8,11 @@ namespace FL\GmailBundle\Model;
  */
 interface GmailMessageInterface
 {
+    const LABEL_UNREAD = 'UNREAD';
+    const LABEL_INBOX = 'INBOX';
+    const LABEL_SENT = 'SENT';
+    const LABEL_TRASH = 'TRASH';
+
     /**
      * Set email recipient
      * @param string $to
