@@ -162,6 +162,12 @@ interface GmailMessageInterface
     public function clearLabels(): GmailMessageInterface;
 
     /**
+     * @param string $name
+     * @return bool
+     */
+    public function hasLabel(string $name): bool;
+
+    /**
      * Set the Gmail ID for this email
      * @param string $gmailId
      * @return GmailMessageInterface
@@ -223,6 +229,26 @@ interface GmailMessageInterface
      * @return GmailMessageInterface
      */
     public function setDomain(string $domain): GmailMessageInterface;
+
+    /**
+     * @return bool
+     */
+    public function isUnread(): bool;
+
+    /**
+     * @return bool
+     */
+    public function isInbox(): bool;
+
+    /**
+     * @return bool
+     */
+    public function isSent(): bool;
+
+    /**
+     * @return bool
+     */
+    public function isTrash(): bool;
 
     /**
      * Returns a new GmailMessageInterface instance initiated from the passed Google_Service_Gmail_Message instance.

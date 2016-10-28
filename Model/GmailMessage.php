@@ -13,6 +13,11 @@ use FL\GmailBundle\Util\EmailTransformations;
  */
 class GmailMessage implements GmailMessageInterface
 {
+    const LABEL_UNREAD = 'UNERAD';
+    const LABEL_INBOX = 'INBOX';
+    const LABEL_SENT = 'SENT';
+    const LABEL_TRASH = 'TRASH';
+
     /**
      * Gmail ID for the email.
      * @var string
@@ -357,6 +362,21 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function hasLabel(string $name): bool
+    {
+        /** @var GmailLabelInterface $label */
+        foreach ($this->labels as $label) {
+            if ($label->getName() === $name) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @inheritdoc
      */
     public function setUserId(string $userId): GmailMessageInterface
@@ -408,6 +428,38 @@ class GmailMessage implements GmailMessageInterface
         $this->domain = $domain;
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUnread(): bool
+    {
+        return $this->hasLabel(static::LABEL_UNREAD);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInbox(): bool
+    {
+        return $this->hasLabel(static::LABEL_INBOX);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSent(): bool
+    {
+        return $this->hasLabel(static::LABEL_SENT);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTrash(): bool
+    {
+        return $this->hasLabel(static::LABEL_TRASH);
     }
 
     /**
