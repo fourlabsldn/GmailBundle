@@ -107,10 +107,13 @@ class Email
      * Delete an email given its ID.
      * @param string $userId
      * @param string $emailId
-     * @return \Google_Service_Gmail_Message
+     * @return \Google_Service_Gmail_Message|null
      */
     public function trash(string $userId, string $emailId): \Google_Service_Gmail_Message
     {
+        if($this->get($userId, $emailId)) {
+            return null;
+        }
         return $this->service->users_messages->trash($userId, $emailId);
     }
 
@@ -118,10 +121,13 @@ class Email
      * Un-delete an email given its ID.
      * @param string $userId
      * @param string $emailId
-     * @return \Google_Service_Gmail_Message
+     * @return \Google_Service_Gmail_Message|null
      */
     public function untrash(string $userId, string $emailId): \Google_Service_Gmail_Message
     {
+        if($this->get($userId, $emailId)) {
+            return null;
+        }
         return $this->service->users_messages->untrash($userId, $emailId);
     }
 
