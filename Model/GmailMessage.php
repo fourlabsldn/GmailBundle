@@ -339,6 +339,21 @@ class GmailMessage implements GmailMessageInterface
     /**
      * @inheritdoc
      */
+    public function getLabelByName(string $name)
+    {
+        /** @var GmailLabelInterface $label */
+        foreach ($this->labels as $label) {
+            if ($label->getName() === $name) {
+                return $label;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function removeLabel(GmailLabelInterface $label): GmailMessageInterface
     {
         $this->labels->detach($label);
@@ -361,14 +376,7 @@ class GmailMessage implements GmailMessageInterface
      */
     public function hasLabel(string $name): bool
     {
-        /** @var GmailLabelInterface $label */
-        foreach ($this->labels as $label) {
-            if ($label->getName() === $name) {
-                return true;
-            }
-        }
-
-        return false;
+        return ($this->getLabelByName($name) instanceof GmailLabelInterface) ? true : false;
     }
 
     /**

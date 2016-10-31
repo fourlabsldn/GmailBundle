@@ -154,6 +154,14 @@ interface GmailMessageInterface
     public function getLabels();
 
     /**
+     * Return a label with a particular name (first found)
+     *
+     * @param string $name
+     * @return GmailLabelInterface|null
+     */
+    public function getLabelByName(string $name);
+
+    /**
      * Removes a label element
      *
      * @param GmailLabelInterface $label
