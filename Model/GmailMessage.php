@@ -45,7 +45,17 @@ class GmailMessage implements GmailMessageInterface
     /**
      * @var string
      */
+    protected $toCanonical;
+
+    /**
+     * @var string
+     */
     protected $from;
+
+    /**
+     * @var string
+     */
+    protected $fromCanonical;
 
     /**
      * @var \DateTimeInterface
@@ -127,11 +137,31 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
+     * Will convert even somewhat broken strings to an array of emails. E.g.:
+     * email@example.com Miles <miles@example.com>, Mila <mila@example.com, Charles charles@example.com,,,,, <Mick> mick@example.com
+     *
+     * @param string $email
+     * @return array
+     */
+    private function sanitizeEmailString(string $email)
+    {
+        $emails = [];
+        foreach (preg_split("/(,|<|>|,|\\s)/", $string) as $possibleEmail) {
+            if (filter_var($possibleEmail, FILTER_VALIDATE_EMAIL)) {
+                $emails[] = strtolower($possibleEmail);
+            }
+        }
+
+        return implode(',', $emails);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function setTo(string $to): GmailMessageInterface
     {
         $this->to = $to;
+        $this->toCanonical = $this->sanitizeEmailString($to);
 
         return $this;
     }
@@ -145,24 +175,11 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function getToEmails()
+    public function getToCanonical()
     {
-        return EmailTransformations::getMultipleEmailsFromString($this->to, false);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getToEmailsCSV()
-    {
-        $emails = $this->getToEmails();
-        if (count($emails) === 0) {
-            return null;
-        }
-
-        return implode(',', $emails);
+        return $this->getToCanonical();
     }
 
     /**
@@ -171,6 +188,7 @@ class GmailMessage implements GmailMessageInterface
     public function setFrom(string $from): GmailMessageInterface
     {
         $this->from = $from;
+        $this->fromCanonical = $this->sanitizeEmailString($from);
 
         return $this;
     }
@@ -184,48 +202,11 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function getFromEmail()
+    public function getFromCanonical()
     {
-        $emails = EmailTransformations::getMultipleEmailsFromString($this->from, false);
-        if (array_key_exists(0, $emails) && is_string($emails[0])) {
-            return $emails[0];
-        }
-
-        return null;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getAll()
-    {
-        return array_merge($this->getTo(), [$this->getFrom()]);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getAllEmails()
-    {
-        if ($this->getFromEmail() === null) {
-            return $this->getToEmails();
-        }
-
-        return array_merge($this->getToEmails(), [$this->getFromEmail()]);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getAllEmailsCSV()
-    {
-        $emails = $this->getAllEmails();
-        if (count($emails) === 0) {
-            return null;
-        }
-        return implode(',', $emails);
+        return $this->fromCanonical;
     }
 
     /**

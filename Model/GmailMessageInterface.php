@@ -21,22 +21,17 @@ interface GmailMessageInterface
     public function setTo(string $to): GmailMessageInterface;
 
     /**
-     * Get email recipient
+     * Get email recipients string
      * @return string|null
      */
     public function getTo();
 
     /**
-     * Returns an array of valid email strings, instead of a string that might contain multiple emails, names, '<', and '>'
-     * @return string[]
-     */
-    public function getToEmails();
-
-    /**
-     * Returns comma separated emails, instead of a string that might contain multiple emails, names, '<', and '>'
+     * Returns a canonicalized comma-separated email recipients string
+     *
      * @return string|null
      */
-    public function getToEmailsCSV();
+    public function getToCanonical();
 
     /**
      * Set email sender
@@ -52,28 +47,11 @@ interface GmailMessageInterface
     public function getFrom();
 
     /**
-     * Returns a single valid email, instead of a string that might contain a name, '<', and '>'
+     * Returns the sender's canonicalized email address
+     *
      * @return string|null
      */
-    public function getFromEmail();
-
-    /**
-     * Returns an array that merges getTo and getFrom
-     * @return string[]
-     */
-    public function getAll();
-
-    /**
-     * Returns an array of valid email strings, instead of a string that might contain multiple emails, names, '<', and '>'
-     * @return string[]
-     */
-    public function getAllEmails();
-
-    /**
-     * Returns comma separated emails, instead of a string that might contain multiple emails, names, '<', and '>'
-     * @return string|null
-     */
-    public function getAllEmailsCSV();
+    public function getFromCanonical();
 
     /**
      * Set email sent datetime
