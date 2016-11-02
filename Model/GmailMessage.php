@@ -146,7 +146,7 @@ class GmailMessage implements GmailMessageInterface
     private function sanitizeEmailString(string $email)
     {
         $emails = [];
-        foreach (preg_split("/(,|<|>|,|\\s)/", $string) as $possibleEmail) {
+        foreach (preg_split("/(,|<|>|,|\\s)/", $email) as $possibleEmail) {
             if (filter_var($possibleEmail, FILTER_VALIDATE_EMAIL)) {
                 $emails[] = strtolower($possibleEmail);
             }
