@@ -179,7 +179,7 @@ class GmailMessage implements GmailMessageInterface
      */
     public function getToCanonical()
     {
-        return $this->getToCanonical();
+        return $this->toCanonical;
     }
 
     /**
@@ -207,6 +207,16 @@ class GmailMessage implements GmailMessageInterface
     public function getFromCanonical()
     {
         return $this->fromCanonical;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getReplyAllRecipients()
+    {
+        return $this->fromCanonical && $this->toCanonical
+            ? $this->fromCanonical.','.$this->toCanonical
+            : null;
     }
 
     /**
@@ -546,7 +556,7 @@ class GmailMessage implements GmailMessageInterface
         /** @var \Google_Service_Gmail_MessagePart $part */
         foreach ($payload->getParts() as $part) {
             if ($part->getMimeType() === 'text/plain') {
-                 return static::bodyToText($part->getBody());
+                return static::bodyToText($part->getBody());
             }
         }
         return null;

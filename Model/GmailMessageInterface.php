@@ -54,6 +54,11 @@ interface GmailMessageInterface
     public function getFromCanonical();
 
     /**
+     * @return null|string
+     */
+    public function getReplyAllRecipients();
+
+    /**
      * Set email sent datetime
      * @param \DateTimeInterface $sentAt
      * @return GmailMessageInterface
