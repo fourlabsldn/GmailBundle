@@ -4,7 +4,6 @@ namespace FL\GmailBundle\Services;
 
 use FL\GmailBundle\Token\AccessToken;
 use Psr\Cache\CacheItemPoolInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class GoogleClientFactory
@@ -12,11 +11,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class GoogleClientFactory
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
     /**
      * @var AccessToken
      */
@@ -28,16 +22,22 @@ class GoogleClientFactory
     private $cache;
 
     /**
-     * GoogleClientFactory constructor.
-     * @param ContainerInterface $container
      * @param AccessToken $accessToken
-     * @param CacheItemPoolInterface $cache
      */
-    public function __construct(ContainerInterface $container, AccessToken $accessToken, CacheItemPoolInterface $cache = null)
+    public function __construct(AccessToken $accessToken)
     {
-        $this->container = $container;
         $this->accessToken = $accessToken;
+    }
+
+    /**
+     * @param CacheItemPoolInterface|null $cache
+     * @return $this
+     */
+    public function setCache(CacheItemPoolInterface $cache = null)
+    {
         $this->cache = $cache;
+
+        return $this;
     }
 
     /**
@@ -47,9 +47,11 @@ class GoogleClientFactory
     {
         $client = new \Google_Client();
         $client->setAccessToken($this->accessToken->getJsonToken());
+
         if ($this->cache) {
             $client->setCache($this->cache);
         }
+
         return $client;
     }
 }
