@@ -12,8 +12,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * Class SyncHelper:
  * 1. Resolves GmailIds
  * 2. Informs of this, by dispatching a @see GmailSyncIdsEvent
- * 3. Informs how caught up we are with historyIds, by dispatching @see GmailSyncHistoryEvent
- * @package FL\GmailBundle\Services
+ * 3. Informs how caught up we are with historyIds, by dispatching @see GmailSyncHistoryEvent.
  */
 class SyncGmailIds
 {
@@ -44,10 +43,11 @@ class SyncGmailIds
 
     /**
      * SyncManager constructor.
-     * @param Email $email
+     *
+     * @param Email                    $email
      * @param EventDispatcherInterface $dispatcher
-     * @param string $historyClass
-     * @param string $gmailIdsClass
+     * @param string                   $historyClass
+     * @param string                   $gmailIdsClass
      */
     public function __construct(
         Email $email,
@@ -90,12 +90,10 @@ class SyncGmailIds
                 // so we can know up to which point the sync has been done for this user.
                 $latestMessage = $this->email->get($userId, $idAndThreadId['id']); // (one more API call)
                 if ($latestMessage instanceof \Google_Service_Gmail_Message) {
-                    /** @var \Google_Service_Gmail_Message $latestMessage */
+                    /* @var \Google_Service_Gmail_Message $latestMessage */
                     $newHistoryId = $latestMessage->getHistoryId();
                 }
             }
-
-
         } while (($nextPage = $apiEmailsResponse->getNextPageToken()));
         if (count($gmailIds) > 0) {
             $this->dispatchGmailIdsEvent($userId, $gmailIds);
@@ -107,7 +105,7 @@ class SyncGmailIds
 
     /**
      * @param string $userId
-     * @param int $currentHistoryId
+     * @param int    $currentHistoryId
      */
     public function syncFromHistoryId(string $userId, int $currentHistoryId)
     {
@@ -115,7 +113,7 @@ class SyncGmailIds
             $gmailIds = [];
             $nextPage = null;
             do {
-                /** @var \Google_Service_Gmail_ListHistoryResponse $response */
+                /* @var \Google_Service_Gmail_ListHistoryResponse $response */
                 $historyList = $this->email->historyList(
                     $userId,
                     [
@@ -129,7 +127,7 @@ class SyncGmailIds
                 foreach ($historyList->getHistory() as $apiHistory) {
                     $histories[] = $apiHistory;
                     /**
-                     * @var \Google_Service_Gmail_Message $historyMessage
+                     * @var \Google_Service_Gmail_Message
                      *
                      * @see \Google_Service_Gmail_History::getMessages() does not make another API call
                      * @link https://developers.google.com/gmail/api/v1/reference/users/history/list?authuser=1
@@ -140,7 +138,7 @@ class SyncGmailIds
                 }
                 // We need to get the History ID in the first batch
                 // so we can know up to which point the sync has been done for this user.
-                if (! isset($newHistoryId)) {
+                if (!isset($newHistoryId)) {
                     $newHistoryId = $historyList->getHistoryId();
                 }
             } while (($nextPage = $historyList->getNextPageToken()));
@@ -151,7 +149,7 @@ class SyncGmailIds
                 $this->dispatchHistoryEvent($userId, intval($newHistoryId));
             }
         } catch (\Google_Service_Exception $e) {
-            /**
+            /*
              * A historyId is typically valid for at least a week, but in some rare circumstances may be valid
              * for only a few hours. If you receive an HTTP 404 error response, your application should perform
              * a full sync.
@@ -163,15 +161,16 @@ class SyncGmailIds
 
     /**
      * @param string $userId
-     * @param int $historyId
+     * @param int    $historyId
      */
     private function dispatchHistoryEvent(string $userId, int $historyId)
     {
         /**
-         * Dispatch History Event
-         * @var GmailHistoryInterface $history
+         * Dispatch History Event.
+         *
+         * @var GmailHistoryInterface
          */
-        $history = new $this->historyClass;
+        $history = new $this->historyClass();
         $history
             ->setUserId($userId)
             ->setHistoryId($historyId)
@@ -182,16 +181,17 @@ class SyncGmailIds
     }
 
     /**
-     * @param string $userId
+     * @param string   $userId
      * @param string[] $gmailIdsArray
      */
     private function dispatchGmailIdsEvent(string $userId, array $gmailIdsArray)
     {
         /**
-         * Dispatch GmailIds Event
-         * @var GmailIdsInterface $gmailIdsObject
+         * Dispatch GmailIds Event.
+         *
+         * @var GmailIdsInterface
          */
-        $gmailIdsObject = new $this->gmailIdsClass;
+        $gmailIdsObject = new $this->gmailIdsClass();
         $gmailIdsObject
             ->setUserId($userId)
             ->setGmailIds($gmailIdsArray)

@@ -27,6 +27,7 @@ class GoogleClientStatus
         if (!empty($this->accessToken->getJsonToken())) {
             return true;
         }
+
         return false;
     }
 }

@@ -14,8 +14,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Class SyncManager
  * 1. Resolves Messages and their Labels
- * 2. Informs of this, by dispatching a @see GmailSyncMessagesEvent
- * @package FL\GmailBundle\Services
+ * 2. Informs of this, by dispatching a @see GmailSyncMessagesEvent.
  */
 class SyncMessages
 {
@@ -45,37 +44,42 @@ class SyncMessages
     private $gmailLabelTransformer;
 
     /**
-     * Keys are $userId
+     * Keys are $userId.
+     *
      * @var string[]
      */
     private $apiLabelCache = [];
 
     /**
      * Keys are $userId
-     * Values are $messageId
+     * Values are $messageId.
+     *
      * @var string[]
      */
     private $apiMessageCache = [];
 
     /**
-     * Keys are $userId
+     * Keys are $userId.
+     *
      * @var GmailLabelCollection[]
      */
     private $gmailLabelCache = [];
 
     /**
-     * Keys are $userId
+     * Keys are $userId.
+     *
      * @var GmailMessageCollection[]
      */
     private $gmailMessageCache = [];
 
     /**
      * SyncManager constructor.
-     * @param Email $email
-     * @param OAuth $oAuth
+     *
+     * @param Email                    $email
+     * @param OAuth                    $oAuth
      * @param EventDispatcherInterface $dispatcher
-     * @param GmailMessageTransformer $gmailMessageTransformer
-     * @param GmailLabelTransformer $gmailLabelTransformer
+     * @param GmailMessageTransformer  $gmailMessageTransformer
+     * @param GmailLabelTransformer    $gmailLabelTransformer
      */
     public function __construct(
         Email $email,
@@ -100,7 +104,7 @@ class SyncMessages
         $this->verifyCaches($userId);
 
         foreach ($gmailIds->getGmailIds() as $id) {
-            if (! in_array($id, $this->apiMessageCache[$userId])){
+            if (!in_array($id, $this->apiMessageCache[$userId])) {
                 $this->apiMessageCache[$userId][] = $id;
                 $apiMessage = $this->email->getIfNotNote($userId, $id);
                 if ($apiMessage instanceof \Google_Service_Gmail_Message) {
@@ -113,15 +117,17 @@ class SyncMessages
 
     /**
      * Get label names from the API based on given $labelIds.
-     * @param string $userId
+     *
+     * @param string        $userId
      * @param string[]|null $labelIds
+     *
      * @return string[]
      */
     private function resolveLabelNames(string $userId, array $labelIds = null)
     {
         $this->verifyCaches($userId);
 
-        if (! is_array($labelIds)) {
+        if (!is_array($labelIds)) {
             $labelIds = [];
         }
 
@@ -142,8 +148,9 @@ class SyncMessages
     /**
      * When converting and placing a batch of $apiMessages into $allGmailMessages,
      * we must not create a new $gmailLabel, if the label's name has been used previously.
-     * @param string $userId
-     * @param string $domain
+     *
+     * @param string                        $userId
+     * @param string                        $domain
      * @param \Google_Service_Gmail_Message $apiMessage
      */
     private function processApiMessage(string $userId, string $domain, \Google_Service_Gmail_Message $apiMessage)
@@ -188,13 +195,12 @@ class SyncMessages
 
     /**
      * @param string $userId
-     * @return void
      */
     private function dispatchSyncEndEvent(string $userId)
     {
         $this->verifyCaches($userId);
 
-        /**
+        /*
          * Dispatch Sync End Event
          * @var GmailHistoryInterface $history
          */

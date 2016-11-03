@@ -5,8 +5,7 @@ namespace FL\GmailBundle\Model\Collection;
 use FL\GmailBundle\Model\GmailLabelInterface;
 
 /**
- * Class GmailLabelCollection
- * @package FL\GmailBundle\Model
+ * Class GmailLabelCollection.
  */
 class GmailLabelCollection
 {
@@ -25,6 +24,7 @@ class GmailLabelCollection
 
     /**
      * @param GmailLabelInterface $label
+     *
      * @return GmailLabelCollection
      */
     public function addLabel(GmailLabelInterface $label): GmailLabelCollection
@@ -36,6 +36,7 @@ class GmailLabelCollection
 
     /**
      * @param GmailLabelInterface $label
+     *
      * @return GmailLabelCollection
      */
     public function removeLabel(GmailLabelInterface $label): GmailLabelCollection
@@ -55,6 +56,7 @@ class GmailLabelCollection
 
     /**
      * @param GmailLabelInterface $label
+     *
      * @return bool
      */
     public function hasLabel(GmailLabelInterface $label): bool
@@ -62,11 +64,13 @@ class GmailLabelCollection
         if ($this->labels->contains($label)) {
             return true;
         }
+
         return false;
     }
 
     /**
      * @param string $labelName
+     *
      * @return GmailLabelInterface|null
      */
     public function getLabelOfName(string $labelName)
@@ -77,11 +81,13 @@ class GmailLabelCollection
                 return $label;
             }
         }
-        return null;
+
+        return;
     }
 
     /**
      * @param string $userId
+     *
      * @return GmailLabelInterface|null
      */
     public function getLabelOfUserId(string $userId)
@@ -92,12 +98,14 @@ class GmailLabelCollection
                 return $label;
             }
         }
-        return null;
+
+        return;
     }
 
     /**
      * @param string $labelName
      * @param string $userId
+     *
      * @return GmailLabelInterface|null
      */
     public function getLabelOfNameAndUserId(string $labelName, string $userId)
@@ -108,46 +116,53 @@ class GmailLabelCollection
                 return $label;
             }
         }
-        return null;
+
+        return;
     }
 
     /**
      * @param string $labelName
+     *
      * @return bool
      */
     public function hasLabelOfName(string $labelName): bool
     {
-        /** @var GmailLabelInterface $label */
+        /* @var GmailLabelInterface $label */
         if ($this->getLabelOfName($labelName) instanceof GmailLabelInterface) {
             return true;
         }
+
         return false;
     }
 
     /**
      * @param string $userId
+     *
      * @return bool
      */
     public function hasLabelOfUserId(string $userId): bool
     {
-        /** @var GmailLabelInterface $label */
+        /* @var GmailLabelInterface $label */
         if ($this->getLabelOfUserId($userId) instanceof GmailLabelInterface) {
             return true;
         }
+
         return false;
     }
 
     /**
      * @param string $labelName
      * @param string $userId
+     *
      * @return bool
      */
     public function hasLabelOfNameAndUserId(string $labelName, string $userId) : bool
     {
-        /** @var GmailLabelInterface $label */
+        /* @var GmailLabelInterface $label */
         if ($this->getLabelOfNameAndUserId($labelName, $userId) instanceof GmailLabelInterface) {
             return true;
         }
+
         return false;
     }
 }

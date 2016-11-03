@@ -1,11 +1,11 @@
 <?php
+
 namespace FL\GmailBundle\Token;
 
 use FL\GmailBundle\Storage\CredentialsStorageInterface;
 
 /**
- * Class AccessTokenFactory
- * @package FL\GmailBundle\Token
+ * Class AccessTokenFactory.
  */
 class AccessTokenFactory
 {
@@ -21,7 +21,8 @@ class AccessTokenFactory
 
     /**
      * AccessTokenFactory constructor.
-     * @param \Google_Client $unauthorisedClient
+     *
+     * @param \Google_Client              $unauthorisedClient
      * @param CredentialsStorageInterface $storage
      */
     public function __construct(\Google_Client $unauthorisedClient, CredentialsStorageInterface $storage)
@@ -44,8 +45,7 @@ class AccessTokenFactory
 
         if (!empty($persistedAuthCode)) { // There's a new auth code
             $newTokenArray = $this->unauthorisedClient->fetchAccessTokenWithAuthCode($persistedAuthCode);
-        }
-        else { // There's an access token available
+        } else { // There's an access token available
             $newTokenArray = $persistedTokenArray;
         }
 
@@ -59,8 +59,10 @@ class AccessTokenFactory
     }
 
     /**
-     * If the token has expired, obtain a new one
+     * If the token has expired, obtain a new one.
+     *
      * @param array $tokenArray
+     *
      * @return array
      */
     private function refreshTokenArray(array $tokenArray)
@@ -73,6 +75,7 @@ class AccessTokenFactory
             // the rest of the access token in function fetchAccessTokenWithRefreshToken()
             $tokenArray['refresh_token'] = $refreshToken;
         }
+
         return $tokenArray;
     }
 }

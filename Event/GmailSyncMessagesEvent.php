@@ -7,12 +7,11 @@ use FL\GmailBundle\Model\Collection\GmailMessageCollection;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Class GmailSyncMessagesEvent
- * @package FL\GmailBundle\Event
+ * Class GmailSyncMessagesEvent.
  */
 class GmailSyncMessagesEvent extends Event
 {
-    const EVENT_NAME = "fl_gmail.sync.messages";
+    const EVENT_NAME = 'fl_gmail.sync.messages';
 
     /**
      * @var GmailMessageCollection
@@ -26,8 +25,9 @@ class GmailSyncMessagesEvent extends Event
 
     /**
      * GmailSyncMessagesEvent constructor.
+     *
      * @param GmailMessageCollection $messageCollection
-     * @param GmailLabelCollection $labelCollection
+     * @param GmailLabelCollection   $labelCollection
      */
     public function __construct(GmailMessageCollection $messageCollection, GmailLabelCollection $labelCollection)
     {
@@ -36,7 +36,8 @@ class GmailSyncMessagesEvent extends Event
     }
 
     /**
-     * Get messages present at the end of a sync
+     * Get messages present at the end of a sync.
+     *
      * @return GmailMessageCollection
      */
     public function getMessageCollection()
@@ -45,7 +46,8 @@ class GmailSyncMessagesEvent extends Event
     }
 
     /**
-     * Get labels present at the end of a sync
+     * Get labels present at the end of a sync.
+     *
      * @return GmailLabelCollection
      */
     public function getLabelCollection()

@@ -3,8 +3,7 @@
 namespace FL\GmailBundle\Model;
 
 /**
- * Class GmailIds
- * @package FL\GmailBundle\Model
+ * Class GmailIds.
  */
 class GmailIds implements GmailIdsInterface
 {
@@ -43,6 +42,7 @@ class GmailIds implements GmailIdsInterface
 
     /**
      * @param string $domain
+     *
      * @return GmailIdsInterface
      */
     public function setDomain(string $domain): GmailIdsInterface
@@ -76,8 +76,9 @@ class GmailIds implements GmailIdsInterface
     public function getGmailIds(int $limit = null)
     {
         if (!is_array($this->gmailIds)) {
-            return null;
+            return;
         }
+
         return array_slice($this->gmailIds, 0, $limit);
     }
 }

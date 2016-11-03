@@ -6,8 +6,7 @@ use FL\GmailBundle\Token\AccessToken;
 use Psr\Cache\CacheItemPoolInterface;
 
 /**
- * Class GoogleClientFactory
- * @package FL\GmailBundle\Services
+ * Class GoogleClientFactory.
  */
 class GoogleClientFactory
 {
@@ -31,6 +30,7 @@ class GoogleClientFactory
 
     /**
      * @param CacheItemPoolInterface|null $cache
+     *
      * @return $this
      */
     public function setCache(CacheItemPoolInterface $cache = null)

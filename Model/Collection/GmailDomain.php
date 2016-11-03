@@ -5,8 +5,7 @@ namespace FL\GmailBundle\Model\Collection;
 use FL\GmailBundle\Model\GmailUserInterface;
 
 /**
- * Class GmailDomain
- * @package FL\GmailBundle\Model
+ * Class GmailDomain.
  */
 class GmailDomain
 {
@@ -22,6 +21,7 @@ class GmailDomain
 
     /**
      * LabelCollection constructor.
+     *
      * @param string
      */
     public function __construct(string $domain)
@@ -32,6 +32,7 @@ class GmailDomain
 
     /**
      * @param GmailUserInterface $user
+     *
      * @return GmailDomain
      */
     public function addGmailUser(GmailUserInterface $user): GmailDomain
@@ -43,6 +44,7 @@ class GmailDomain
 
     /**
      * @param GmailUserInterface $user
+     *
      * @return GmailDomain
      */
     public function removeGmailUser(GmailUserInterface $user): GmailDomain
@@ -62,6 +64,7 @@ class GmailDomain
 
     /**
      * @param string $userId
+     *
      * @return GmailUserInterface|null
      */
     public function findGmailUserById(string $userId)
@@ -72,11 +75,13 @@ class GmailDomain
                 return $user;
             }
         }
-        return null;
+
+        return;
     }
 
     /**
      * @param string $primaryEmailAddress
+     *
      * @return GmailUserInterface|null
      */
     public function findGmailUserByPrimaryEmail(string $primaryEmailAddress)
@@ -87,11 +92,13 @@ class GmailDomain
                 return $user;
             }
         }
-        return null;
+
+        return;
     }
 
     /**
      * @param string $emailAliasAddress
+     *
      * @return GmailUserInterface|null
      */
     public function findGmailUserByEmailAlias(string $emailAliasAddress)
@@ -104,11 +111,13 @@ class GmailDomain
                 }
             }
         }
-        return null;
+
+        return;
     }
 
     /**
      * @param string $primaryOrAliasAddress
+     *
      * @return GmailUserInterface|null
      */
     public function findGmailUserByEmail(string $primaryOrAliasAddress)
@@ -121,6 +130,7 @@ class GmailDomain
                 }
             }
         }
-        return null;
+
+        return;
     }
 }

@@ -10,8 +10,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
- * Class SaveAuthorisationAction
- * @package FL\GmailBundle\Action
+ * Class SaveAuthorisationAction.
  */
 class SaveAuthorisationAction
 {
@@ -32,9 +31,10 @@ class SaveAuthorisationAction
 
     /**
      * SaveAuthorisationAction constructor.
-     * @param RouterInterface $router
+     *
+     * @param RouterInterface             $router
      * @param CredentialsStorageInterface $storage
-     * @param string $redirectRoute
+     * @param string                      $redirectRoute
      */
     public function __construct(
         RouterInterface $router,
@@ -48,12 +48,13 @@ class SaveAuthorisationAction
 
     /**
      * @param Request $request
+     *
      * @return Response
      */
     public function __invoke(Request $request): Response
     {
         if (!$code = $request->query->get('code')) {
-            throw new BadRequestHttpException("No authorisation code in request.");
+            throw new BadRequestHttpException('No authorisation code in request.');
         }
 
         $this->storage->persistAuthCode($code);

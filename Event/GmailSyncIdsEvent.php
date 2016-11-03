@@ -6,12 +6,11 @@ use FL\GmailBundle\Model\GmailIdsInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Class GmailMessageUpdatedEvent
- * @package FL\GmailBundle\Event
+ * Class GmailMessageUpdatedEvent.
  */
 class GmailSyncIdsEvent extends Event
 {
-    const EVENT_NAME = "fl_gmail.sync.ids";
+    const EVENT_NAME = 'fl_gmail.sync.ids';
 
     /**
      * @var GmailIdsInterface
@@ -25,6 +24,7 @@ class GmailSyncIdsEvent extends Event
 
     /**
      * GmailSyncEndEvent constructor.
+     *
      * @param GmailIdsInterface $gmailIdsObject
      */
     public function __construct(GmailIdsInterface $gmailIdsObject)
@@ -33,10 +33,12 @@ class GmailSyncIdsEvent extends Event
     }
 
     /**
-     * Get gmailIds that have been resolved
+     * Get gmailIds that have been resolved.
+     *
      * @return GmailIdsInterface
      */
-    public function getGmailIdsObject() {
+    public function getGmailIdsObject()
+    {
         return $this->gmailIdsObject;
     }
 }

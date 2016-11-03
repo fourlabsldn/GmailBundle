@@ -10,7 +10,6 @@ use FL\GmailBundle\Model\GmailLabelInterface;
  * We are unable to provide a function for reverseTransform() due to the
  * fact that we're only saving the attributes of interest from
  * \Google_Service_Gmail_Message.
- * @package FL\GmailBundle\DataTransformer
  */
 class GmailMessageTransformer
 {
@@ -21,6 +20,7 @@ class GmailMessageTransformer
 
     /**
      * GmailMessageTransformer constructor.
+     *
      * @param string $gmailMessageClass
      */
     public function __construct(string $gmailMessageClass)
@@ -29,7 +29,7 @@ class GmailMessageTransformer
             throw new \InvalidArgumentException();
         }
 
-        $gmailMessageObject = new $gmailMessageClass;
+        $gmailMessageObject = new $gmailMessageClass();
         if (!$gmailMessageObject instanceof GmailMessageInterface) {
             throw new \InvalidArgumentException();
         }
@@ -40,10 +40,12 @@ class GmailMessageTransformer
     /**
      * Transform a \Google_Service_Gmail_Message into a GmailMessage.
      * The GmailMessage class is defined by $this->gmailClass.
+     *
      * @param \Google_Service_Gmail_Message $message
-     * @param GmailLabelInterface[] $labels
-     * @param string $userId
-     * @param string $domain
+     * @param GmailLabelInterface[]         $labels
+     * @param string                        $userId
+     * @param string                        $domain
+     *
      * @return GmailMessageInterface
      */
     public function transform(\Google_Service_Gmail_Message $message, array $labels, string $userId, string $domain): GmailMessageInterface

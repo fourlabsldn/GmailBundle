@@ -3,18 +3,15 @@
 namespace FL\GmailBundle\Form\Type;
 
 use FL\GmailBundle\Services\Directory;
-use FL\GmailBundle\Services\OAuth;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class InboxType
- * @package FL\GmailBundle
+ * Class InboxType.
  */
 class InboxType extends AbstractType
 {
-
     /**
      * @var string[]
      */
@@ -22,11 +19,12 @@ class InboxType extends AbstractType
 
     /**
      * InboxType constructor.
+     *
      * @param Directory $directory
      */
     public function __construct(Directory $directory)
     {
-        $this->emailToUserId = $directory->resolveInboxesToUserIdArray(", ", Directory::MODE_RESOLVE_PRIMARY_ONLY);
+        $this->emailToUserId = $directory->resolveInboxesToUserIdArray(', ', Directory::MODE_RESOLVE_PRIMARY_ONLY);
     }
 
     /**

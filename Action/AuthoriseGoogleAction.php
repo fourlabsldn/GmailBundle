@@ -7,19 +7,20 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class AuthoriseGoogleAction
- * @package FL\GmailBundle\Action
+ * Class AuthoriseGoogleAction.
  */
 class AuthoriseGoogleAction
 {
     /**
      * Unauthorised Google Client used to generate the auth url.
+     *
      * @var \Google_Client
      */
     private $unauthorisedClient;
 
     /**
      * AuthoriseGoogleAction constructor.
+     *
      * @param \Google_Client $unauthorisedClient
      */
     public function __construct(\Google_Client $unauthorisedClient)
@@ -29,6 +30,7 @@ class AuthoriseGoogleAction
 
     /**
      * @param Request $request
+     *
      * @return Response
      */
     public function __invoke(Request $request): Response

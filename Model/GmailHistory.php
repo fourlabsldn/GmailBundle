@@ -5,7 +5,6 @@ namespace FL\GmailBundle\Model;
 /**
  * Class GmailHistory
  * Latest Gmail history ID for the user, set when syncing with Gmail.
- * @package FL\GmailBundle\Model
  */
 class GmailHistory implements GmailHistoryInterface
 {
@@ -48,7 +47,7 @@ class GmailHistory implements GmailHistoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setDomain(string $domain): GmailHistoryInterface
     {
@@ -58,7 +57,7 @@ class GmailHistory implements GmailHistoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getDomain(): string
     {

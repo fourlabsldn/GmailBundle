@@ -3,8 +3,7 @@
 namespace FL\GmailBundle\Model;
 
 /**
- * Interface GmailMessageInterface
- * @package FL\GmailBundle\Model
+ * Interface GmailMessageInterface.
  */
 interface GmailMessageInterface
 {
@@ -14,40 +13,46 @@ interface GmailMessageInterface
     const LABEL_TRASH = 'TRASH';
 
     /**
-     * Set email recipient
+     * Set email recipient.
+     *
      * @param string $to
+     *
      * @return GmailMessageInterface
      */
     public function setTo(string $to): GmailMessageInterface;
 
     /**
-     * Get email recipients string
+     * Get email recipients string.
+     *
      * @return string|null
      */
     public function getTo();
 
     /**
-     * Returns a canonicalized comma-separated email recipients string
+     * Returns a canonicalized comma-separated email recipients string.
      *
      * @return string|null
      */
     public function getToCanonical();
 
     /**
-     * Set email sender
+     * Set email sender.
+     *
      * @param string $from
+     *
      * @return GmailMessageInterface
      */
     public function setFrom(string $from): GmailMessageInterface;
 
     /**
-     * Get email sender
+     * Get email sender.
+     *
      * @return string|null
      */
     public function getFrom();
 
     /**
-     * Returns the sender's canonicalized email address
+     * Returns the sender's canonicalized email address.
      *
      * @return string|null
      */
@@ -59,95 +64,115 @@ interface GmailMessageInterface
     public function getReplyAllRecipients();
 
     /**
-     * Set email sent datetime
+     * Set email sent datetime.
+     *
      * @param \DateTimeInterface $sentAt
+     *
      * @return GmailMessageInterface
      */
     public function setSentAt(\DateTimeInterface  $sentAt): GmailMessageInterface;
 
     /**
-     * Get email sent date
+     * Get email sent date.
+     *
      * @return \Datetime|null
      */
     public function getSentAt();
 
     /**
-     * Set email subject
+     * Set email subject.
+     *
      * @param string $subject
+     *
      * @return GmailMessageInterface
      */
     public function setSubject(string $subject): GmailMessageInterface;
 
     /**
-     * Get email subject
+     * Get email subject.
+     *
      * @return string|null
      */
     public function getSubject();
 
     /**
      * Set email snippet in plain text.
+     *
      * @param string $snippet
+     *
      * @return GmailMessageInterface
      */
     public function setSnippet(string $snippet): GmailMessageInterface;
 
     /**
      * Get email snippet in plain text.
+     *
      * @return string|null
      */
     public function getSnippet();
 
     /**
      * Set email body in plain text.
+     *
      * @param string|null $bodyPlainText
+     *
      * @return GmailMessageInterface
      */
     public function setBodyPlainText(string $bodyPlainText = null): GmailMessageInterface;
 
     /**
      * Get email body in plain text.
+     *
      * @return string|null
      */
     public function getBodyPlainText();
 
     /**
      * Set email body in HTML.
+     *
      * @param string|null $bodyHtml
+     *
      * @return GmailMessageInterface
      */
     public function setBodyHtml(string $bodyHtml = null): GmailMessageInterface;
 
     /**
      * Get email body in HTML.
+     *
      * @return string|null
      */
     public function getBodyHtml();
 
     /**
      * Add a label to the Gmail Message.
+     *
      * @param GmailLabelInterface $label
-     * @return  GmailMessageInterface
+     *
+     * @return GmailMessageInterface
      */
     public function addLabel(GmailLabelInterface $label): GmailMessageInterface;
 
     /**
      * Return the labels for this message.
+     *
      * @return array|\SplObjectStorage or other collection holders
      */
     public function getLabels();
 
     /**
-     * Return a label with a particular name (first found)
+     * Return a label with a particular name (first found).
      *
      * @param string $name
+     *
      * @return GmailLabelInterface|null
      */
     public function getLabelByName(string $name);
 
     /**
-     * Removes a label element
+     * Removes a label element.
      *
      * @param GmailLabelInterface $label
+     *
      * @return GmailMessageInterface
      */
     public function removeLabel(GmailLabelInterface $label): GmailMessageInterface;
@@ -159,58 +184,71 @@ interface GmailMessageInterface
 
     /**
      * @param string $name
+     *
      * @return bool
      */
     public function hasLabel(string $name): bool;
 
     /**
-     * Set the Gmail ID for this email
+     * Set the Gmail ID for this email.
+     *
      * @param string $gmailId
+     *
      * @return GmailMessageInterface
      */
     public function setGmailId(string $gmailId): GmailMessageInterface;
 
     /**
-     * Get the Gmail ID for this email
+     * Get the Gmail ID for this email.
+     *
      * @return string|null
      */
     public function getGmailId();
 
     /**
-     * Set the Gmail Thread ID for this email
+     * Set the Gmail Thread ID for this email.
+     *
      * @param string $threadId
+     *
      * @return GmailMessageInterface
      */
     public function setThreadId(string $threadId): GmailMessageInterface;
 
     /**
-     * Get the Gmail Thread ID for this email
+     * Get the Gmail Thread ID for this email.
+     *
      * @return string|null
      */
     public function getThreadId();
 
     /**
-     * Set the Gmail History ID for this email
+     * Set the Gmail History ID for this email.
+     *
      * @param string $historyId
+     *
      * @return GmailMessageInterface
      */
     public function setHistoryId(string $historyId): GmailMessageInterface;
 
     /**
-     * Get the Gmail History ID for this email
+     * Get the Gmail History ID for this email.
+     *
      * @return string|null
      */
     public function getHistoryId();
 
     /**
-     * Set the Gmail User ID for this email
+     * Set the Gmail User ID for this email.
+     *
      * @param string $userId
+     *
      * @return GmailMessageInterface
      */
     public function setUserId(string $userId): GmailMessageInterface;
 
     /**
-     * Get the Gmail User ID for this email
+     * Get the Gmail User ID for this email.
+     *
      * @return string|null
      */
     public function getUserId();
@@ -222,6 +260,7 @@ interface GmailMessageInterface
 
     /**
      * @param string $domain
+     *
      * @return GmailMessageInterface
      */
     public function setDomain(string $domain): GmailMessageInterface;
@@ -248,11 +287,13 @@ interface GmailMessageInterface
 
     /**
      * Returns a new GmailMessageInterface instance initiated from the passed Google_Service_Gmail_Message instance.
-     * The userId is done separately, because we cannot get it from \Google_Service_Gmail_Message
+     * The userId is done separately, because we cannot get it from \Google_Service_Gmail_Message.
+     *
      * @param \Google_Service_Gmail_Message $gmailApiMessage
-     * @param GmailLabelInterface[] $labels
-     * @param string $userId
-     * @param string $domain
+     * @param GmailLabelInterface[]         $labels
+     * @param string                        $userId
+     * @param string                        $domain
+     *
      * @return GmailMessageInterface
      *
      * NOTE:
@@ -269,24 +310,28 @@ interface GmailMessageInterface
 
     /**
      * @param \Google_Service_Gmail_Message $gmailApiMessage
+     *
      * @return GmailMessageInterface
      */
     public function setBodyHtmlFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage): GmailMessageInterface;
 
     /**
      * @param \Google_Service_Gmail_Message $gmailApiMessage
+     *
      * @return GmailMessageInterface
      */
     public function setBodyPlainTextFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage): GmailMessageInterface;
 
     /**
      * @param \Google_Service_Gmail_Message $gmailApiMessage
+     *
      * @return null|string
      */
     public static function resolveBodyHtmlFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage);
 
     /**
      * @param \Google_Service_Gmail_Message $gmailApiMessage
+     *
      * @return null|string
      */
     public static function resolveBodyPlainTextFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage);
