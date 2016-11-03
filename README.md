@@ -1,5 +1,7 @@
 # GmailBundle
 
+[![StyleCI](https://styleci.io/repos/70251410/shield?branch=master)](https://styleci.io/repos/70251410)
+
 ## Installation
 
 ```bash
