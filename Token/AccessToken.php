@@ -3,8 +3,7 @@
 namespace FL\GmailBundle\Token;
 
 /**
- * Class AccessToken
- * @package FL\GmailBundle\Token
+ * Class AccessToken.
  */
 class AccessToken
 {
@@ -15,6 +14,7 @@ class AccessToken
 
     /**
      * Get the current access token as a json string.
+     *
      * @return string|null
      */
     public function getJsonToken()
@@ -24,6 +24,7 @@ class AccessToken
 
     /**
      * @param string $jsonToken
+     *
      * @return AccessToken
      */
     public function setJsonToken(string $jsonToken)

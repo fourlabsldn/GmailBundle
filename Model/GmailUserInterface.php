@@ -3,8 +3,7 @@
 namespace FL\GmailBundle\Model;
 
 /**
- * Class GmailUserInterface
- * @package FL\GmailBundle\Model
+ * Class GmailUserInterface.
  */
 interface GmailUserInterface
 {
@@ -15,6 +14,7 @@ interface GmailUserInterface
 
     /**
      * @param string $userId
+     *
      * @return GmailUserInterface
      */
     public function setUserId(string $userId) : GmailUserInterface;
@@ -26,6 +26,7 @@ interface GmailUserInterface
 
     /**
      * @param string $primaryEmailAddress
+     *
      * @return GmailUserInterface
      */
     public function setPrimaryEmailAddress(string $primaryEmailAddress) : GmailUserInterface;
@@ -37,18 +38,21 @@ interface GmailUserInterface
 
     /**
      * @param string $emailAlias
+     *
      * @return GmailUserInterface
      */
     public function addEmailAlias(string $emailAlias) : GmailUserInterface;
 
     /**
      * @param string $emailAlias
+     *
      * @return GmailUserInterface
      */
     public function removeEmailAlias(string $emailAlias) : GmailUserInterface;
 
     /**
-     * Should return email aliases, plus primary email address
+     * Should return email aliases, plus primary email address.
+     *
      * @return string[]
      */
     public function getAllEmailAddresses() : array;

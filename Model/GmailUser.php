@@ -3,8 +3,7 @@
 namespace FL\GmailBundle\Model;
 
 /**
- * Class GmailUserInterface
- * @package FL\GmailBundle\Model
+ * Class GmailUserInterface.
  */
 class GmailUser implements GmailUserInterface
 {
@@ -32,7 +31,7 @@ class GmailUser implements GmailUserInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getUserId() : string
     {
@@ -40,7 +39,7 @@ class GmailUser implements GmailUserInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setUserId(string $userId) : GmailUserInterface
     {
@@ -50,7 +49,7 @@ class GmailUser implements GmailUserInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getPrimaryEmailAddress() : string
     {
@@ -58,7 +57,7 @@ class GmailUser implements GmailUserInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setPrimaryEmailAddress(string $primaryEmailAddress) : GmailUserInterface
     {
@@ -68,7 +67,7 @@ class GmailUser implements GmailUserInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getEmailAliases() : array
     {
@@ -76,7 +75,7 @@ class GmailUser implements GmailUserInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addEmailAlias(string $emailAlias) : GmailUserInterface
     {
@@ -86,7 +85,7 @@ class GmailUser implements GmailUserInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function removeEmailAlias(string $emailAlias) : GmailUserInterface
     {
@@ -96,12 +95,13 @@ class GmailUser implements GmailUserInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getAllEmailAddresses() : array
     {
         $emails = $this->getEmailAliases();
         $emails[] = $this->primaryEmailAddress;
+
         return $emails;
     }
 }

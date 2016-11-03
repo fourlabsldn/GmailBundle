@@ -4,9 +4,6 @@ namespace FL\GmailBundle\DataTransformer;
 
 use FL\GmailBundle\Model\GmailLabelInterface;
 
-/**
- * @package FL\GmailBundle\DataTransformer
- */
 class GmailLabelTransformer
 {
     /**
@@ -23,7 +20,7 @@ class GmailLabelTransformer
             throw new \InvalidArgumentException();
         }
 
-        $gmailLabelObject = new $gmailLabelClass;
+        $gmailLabelObject = new $gmailLabelClass();
         if (!$gmailLabelObject instanceof GmailLabelInterface) {
             throw new \InvalidArgumentException();
         }
@@ -34,14 +31,16 @@ class GmailLabelTransformer
     /**
      * Transform a string $labelName into a Label.
      * The Label class is defined by $this->labelClass.
+     *
      * @param string $labelName
      * @param string $userId
+     *
      * @return GmailLabelInterface
      */
     public function transform(string $labelName, string $userId): GmailLabelInterface
     {
         /** @var GmailLabelInterface $label */
-        $label = new $this->gmailLabelClass;
+        $label = new $this->gmailLabelClass();
         $label->setName($labelName)
             ->setUserId($userId);
 

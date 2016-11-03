@@ -5,15 +5,14 @@ namespace FL\GmailBundle\Swift;
 use FL\GmailBundle\Services\Email;
 
 /**
- * Class GmailApiTransport
- * @package FL\GmailBundle\Swift
+ * Class GmailApiTransport.
+ *
  * @see \Swift_Transport_NullTransport for sample
  */
 class GmailApiTransport implements \Swift_Transport
 {
-
     /**
-     * The event dispatcher from the plugin API
+     * The event dispatcher from the plugin API.
      */
     private $_eventDispatcher;
 
@@ -24,7 +23,8 @@ class GmailApiTransport implements \Swift_Transport
 
     /**
      * GmailApiTransport constructor.
-     * @param Email $email
+     *
+     * @param Email                         $email
      * @param \Swift_Events_EventDispatcher $eventDispatcher
      */
     public function __construct(Email $email, \Swift_Events_EventDispatcher $eventDispatcher)
@@ -34,7 +34,7 @@ class GmailApiTransport implements \Swift_Transport
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isStarted()
     {
@@ -42,21 +42,21 @@ class GmailApiTransport implements \Swift_Transport
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function start()
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function stop()
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function send(\Swift_Mime_Message $swiftMessage, &$failedRecipients = null)
     {
@@ -100,7 +100,7 @@ class GmailApiTransport implements \Swift_Transport
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function registerPlugin(\Swift_Events_EventListener $plugin)
     {
@@ -118,6 +118,7 @@ class GmailApiTransport implements \Swift_Transport
      * Function obtained from: http://stackoverflow.com/questions/29893570
      *
      * @param $data
+     *
      * @return string
      */
     private function base64url_encode($data)
@@ -127,8 +128,9 @@ class GmailApiTransport implements \Swift_Transport
 
     /**
      * @param array $fromArray
+     *
      * @return string
-     * The Gmail API can only take one address at a time, let's get the very first one
+     *                The Gmail API can only take one address at a time, let's get the very first one
      */
     private function fromArray_ToString(array $fromArray): string
     {
@@ -136,15 +138,17 @@ class GmailApiTransport implements \Swift_Transport
         if (count($fromArray) > 0) {
             reset($fromArray);
             $fromString = key($fromArray);
+
             return $fromString;
         }
-        throw new \InvalidArgumentException('Set at least one \'from\' address when using ' . self::class);
+        throw new \InvalidArgumentException('Set at least one \'from\' address when using '.self::class);
     }
 
     /**
      * @param array $fromArray
+     *
      * @return array
-     * Also @see GmailApiTransport::fromArray_ToString()
+     *               Also @see GmailApiTransport::fromArray_ToString()
      */
     private function fromArray_ToFailedReceipients(array $fromArray): array
     {
@@ -152,8 +156,10 @@ class GmailApiTransport implements \Swift_Transport
             reset($fromArray);
             $keyOfFirstElement = key($fromArray); // john_doe@example.com
             unset($fromArray[$keyOfFirstElement]);
+
             return $fromArray;
         }
+
         return [];
     }
 }

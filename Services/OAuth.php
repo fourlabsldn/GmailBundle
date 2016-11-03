@@ -4,8 +4,7 @@ namespace FL\GmailBundle\Services;
 
 /**
  * Class OAuth
- * This class lets us communicate with \Google_Service_Oauth2
- * @package FL\GmailBundle\Services
+ * This class lets us communicate with \Google_Service_Oauth2.
  */
 class OAuth
 {
@@ -26,6 +25,7 @@ class OAuth
 
     /**
      * Oauth constructor.
+     *
      * @param \Google_Service_Oauth2 $oAuth
      */
     public function __construct(\Google_Service_Oauth2 $oAuth)
@@ -41,6 +41,7 @@ class OAuth
         if (!isset($this->domainCache)) {
             $this->domainCache = $this->oAuth->userinfo_v2_me->get()->getHd();
         }
+
         return $this->domainCache;
     }
 
@@ -52,6 +53,7 @@ class OAuth
         if (!isset($this->userIdCache)) {
             $this->userIdCache = $this->oAuth->userinfo_v2_me->get()->getId();
         }
+
         return $this->userIdCache;
     }
 }

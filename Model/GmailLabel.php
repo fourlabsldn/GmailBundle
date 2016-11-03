@@ -5,7 +5,6 @@ namespace FL\GmailBundle\Model;
 /**
  * Class GmailLabel
  * Contains the labels applied to a Gmail Message.
- * @package FL\GmailBundle\Model
  */
 class GmailLabel implements GmailLabelInterface
 {

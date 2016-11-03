@@ -2,37 +2,39 @@
 
 namespace FL\GmailBundle\Model;
 
-use FL\GmailBundle\Util\EmailTransformations;
-
 /**
  * Class GmailMessage
  * Contains the relevant fields of a Gmail email.
+ *
  * @link https://developers.google.com/gmail/api/v1/reference/users/messages#resource
  * @see Google_Service_Gmail_Message
- * @package FL\GmailBundle\Model
  */
 class GmailMessage implements GmailMessageInterface
 {
     /**
      * Gmail ID for the email.
+     *
      * @var string
      */
     protected $gmailId;
 
     /**
      * Gmail thread ID for the email.
+     *
      * @var string
      */
     protected $threadId;
 
     /**
      * Gmail history ID for the email.
+     *
      * @var string
      */
     protected $historyId;
 
     /**
      * Gmail user ID for the email.
+     *
      * @var string
      */
     protected $userId;
@@ -101,7 +103,7 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setGmailId(string $gmailId): GmailMessageInterface
     {
@@ -111,7 +113,7 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getGmailId()
     {
@@ -119,7 +121,7 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setThreadId(string $threadId): GmailMessageInterface
     {
@@ -129,7 +131,7 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getThreadId()
     {
@@ -138,15 +140,16 @@ class GmailMessage implements GmailMessageInterface
 
     /**
      * Will convert even somewhat broken strings to an array of emails. E.g.:
-     * email@example.com Miles <miles@example.com>, Mila <mila@example.com, Charles charles@example.com,,,,, <Mick> mick@example.com
+     * email@example.com Miles <miles@example.com>, Mila <mila@example.com, Charles charles@example.com,,,,, <Mick> mick@example.com.
      *
      * @param string $email
+     *
      * @return array
      */
     private function sanitizeEmailString(string $email)
     {
         $emails = [];
-        foreach (preg_split("/(,|<|>|,|\\s)/", $email) as $possibleEmail) {
+        foreach (preg_split('/(,|<|>|,|\\s)/', $email) as $possibleEmail) {
             if (filter_var($possibleEmail, FILTER_VALIDATE_EMAIL)) {
                 $emails[] = strtolower($possibleEmail);
             }
@@ -310,7 +313,7 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addLabel(GmailLabelInterface $label): GmailMessageInterface
     {
@@ -320,7 +323,7 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getLabels()
     {
@@ -328,7 +331,7 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getLabelByName(string $name)
     {
@@ -339,11 +342,11 @@ class GmailMessage implements GmailMessageInterface
             }
         }
 
-        return null;
+        return;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function removeLabel(GmailLabelInterface $label): GmailMessageInterface
     {
@@ -353,7 +356,7 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function clearLabels(): GmailMessageInterface
     {
@@ -371,7 +374,7 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setUserId(string $userId): GmailMessageInterface
     {
@@ -381,7 +384,7 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getUserId()
     {
@@ -389,7 +392,7 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setHistoryId(string $historyId): GmailMessageInterface
     {
@@ -399,7 +402,7 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getHistoryId()
     {
@@ -407,7 +410,7 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getDomain(): string
     {
@@ -415,7 +418,7 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setDomain(string $domain): GmailMessageInterface
     {
@@ -457,12 +460,12 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function createFromGmailApiMessage(\Google_Service_Gmail_Message $gmailApiMessage, array $labels, string $userId, string $domain): GmailMessageInterface
     {
         /** @var GmailMessageInterface $message */
-        $message =  new static();
+        $message = new static();
 
         /** @var \Google_Service_Gmail_MessagePart $payload */
         $payload = $gmailApiMessage->getPayload();
@@ -471,16 +474,16 @@ class GmailMessage implements GmailMessageInterface
 
         foreach ($headers as $header) {
             switch ($header->getName()) {
-                case "From":
+                case 'From':
                     $message->setFrom($header->getValue());
                     break;
-                case "To":
+                case 'To':
                     $message->setTo($header->getValue());
                     break;
-                case "Date":
+                case 'Date':
                     $message->setSentAt(new \DateTime($header->getValue()));
                     break;
-                case "Subject":
+                case 'Subject':
                     $message->setSubject($header->getValue());
                     break;
             }
@@ -506,7 +509,7 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setBodyPlainTextFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage): GmailMessageInterface
     {
@@ -516,7 +519,7 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setBodyHtmlFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage): GmailMessageInterface
     {
@@ -526,7 +529,7 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function resolveBodyHtmlFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage)
     {
@@ -546,7 +549,7 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function resolveBodyPlainTextFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage)
     {
@@ -559,16 +562,19 @@ class GmailMessage implements GmailMessageInterface
                 return static::bodyToText($part->getBody());
             }
         }
-        return null;
+
+        return;
     }
 
     /**
      * @param \Google_Service_Gmail_MessagePartBody $body
+     *
      * @return string
      */
     private static function bodyToText(\Google_Service_Gmail_MessagePartBody $body)
     {
-        $sanitizedData = strtr($body->getData(),'-_', '+/');
+        $sanitizedData = strtr($body->getData(), '-_', '+/');
+
         return base64_decode($sanitizedData);
     }
 }

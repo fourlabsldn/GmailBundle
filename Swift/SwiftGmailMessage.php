@@ -19,6 +19,7 @@ class SwiftGmailMessage extends \Swift_Message
 
     /**
      * @param string|null $threadId
+     *
      * @return SwiftGmailMessage
      */
     public function setThreadId($threadId)

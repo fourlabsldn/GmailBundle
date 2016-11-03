@@ -9,8 +9,7 @@ use FL\GmailBundle\Model\GmailUserInterface;
 /**
  * Class Directory
  * This class allows us to resolve userIds and emails in a domain,
- * by communicating with an instance of @see \Google_Service_Directory
- * @package FL\GmailBundle\Services
+ * by communicating with an instance of @see \Google_Service_Directory.
  */
 class Directory
 {
@@ -35,8 +34,9 @@ class Directory
 
     /**
      * Directory constructor.
+     *
      * @param \Google_Service_Directory $directory
-     * @param OAuth $oAuth
+     * @param OAuth                     $oAuth
      */
     public function __construct(\Google_Service_Directory $directory, OAuth $oAuth)
     {
@@ -46,6 +46,7 @@ class Directory
 
     /**
      * @param string $domain
+     *
      * @return GmailDomain
      */
     private function resolveDomain(string $domain) : GmailDomain
@@ -57,10 +58,10 @@ class Directory
 
         do {
             $usersResponse = $this->directory->users->listUsers([
-                'domain'=>$domain,
-                'pageToken'=> $nextPage,
+                'domain' => $domain,
+                'pageToken' => $nextPage,
             ]);
-            /** @var \Google_Service_Directory_User  $user*/
+            /** @var \Google_Service_Directory_User $user */
             foreach ($usersResponse->getUsers() as $user) {
                 $primaryEmailAddress = $user->getPrimaryEmail();
                 $gmailUser = new GmailUser();
@@ -89,12 +90,13 @@ class Directory
 
     /**
      * @param string $userId
-     * @param int $mode
+     * @param int    $mode
+     *
      * @return string[] E.g.
-     * [
-     *  0 => "test@example.com",
-     *  1 => "test_alias@example.com",
-     * ]
+     *                  [
+     *                  0 => "test@example.com",
+     *                  1 => "test_alias@example.com",
+     *                  ]
      */
     public function resolveEmailsFromUserId(string $userId, int $mode)
     {
@@ -130,19 +132,20 @@ class Directory
 
     /**
      * @param int $mode
+     *
      * @return string[] E.g.
-     * [
-     *  0 => "test@example.com",
-     *  1 => "test_alias@example.com",
-     *  2 => "test2@example.com"
-     * ]
+     *                  [
+     *                  0 => "test@example.com",
+     *                  1 => "test_alias@example.com",
+     *                  2 => "test2@example.com"
+     *                  ]
      */
     public function resolveEmails(int $mode)
     {
         $emails = [];
 
         /**
-         * @var $gmailUser GmailUserInterface
+         * @var GmailUserInterface
          */
         foreach ($this->getGmailDomain()->getGmailUsers() as $gmailUser) {
             $gmailUserEmails = $this->resolveEmailsFromUserId($gmailUser->getUserId(), $mode);
@@ -156,7 +159,8 @@ class Directory
 
     /**
      * @param string $email
-     * @param int $mode
+     * @param int    $mode
+     *
      * @return string|null E.g. "12831283123123"
      */
     public function resolveUserIdFromEmail(string $email, int $mode)
@@ -182,11 +186,11 @@ class Directory
 
     /**
      * @return string[] E.g.
-     * [
-     *  0 => "12831283123123",
-     *  1 => "12831283123123",
-     *  2 => "1045618888777"
-     * ]
+     *                  [
+     *                  0 => "12831283123123",
+     *                  1 => "12831283123123",
+     *                  2 => "1045618888777"
+     *                  ]
      */
     public function resolveUserIds()
     {
@@ -203,19 +207,20 @@ class Directory
     /**
      * @param string $separator
      * @param string $mode
+     *
      * @return string[] E.g. for ", " $separator
-     * [
-     *  "12831283123123" => "test@example.com, test_alias@example.com",
-     *  "1045618888777" => "test2@example.com"
-     * ]
+     *                  [
+     *                  "12831283123123" => "test@example.com, test_alias@example.com",
+     *                  "1045618888777" => "test2@example.com"
+     *                  ]
      */
     public function resolveUserIdToInboxesArray(string $separator, string $mode)
     {
         $return = [];
         foreach ($this->resolveUserIds() as $userId) {
-            $return[$userId] = "";
+            $return[$userId] = '';
             foreach ($this->resolveEmailsFromUserId($userId, $mode) as $email) {
-                $return[$userId] .= $email . $separator;
+                $return[$userId] .= $email.$separator;
             }
             $return[$userId] = rtrim($return[$userId], $separator);
         }
@@ -226,11 +231,12 @@ class Directory
     /**
      * @param string $separator
      * @param string $mode
+     *
      * @return string[] E.g. for ", " $separator
-     * [
-     *  "test@example.com, test_alias@example.com" => "12831283123123",
-     *  "test2@example.com" => "1045618888777"
-     * ]
+     *                  [
+     *                  "test@example.com, test_alias@example.com" => "12831283123123",
+     *                  "test2@example.com" => "1045618888777"
+     *                  ]
      */
     public function resolveInboxesToUserIdArray(string $separator, string $mode)
     {

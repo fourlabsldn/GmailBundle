@@ -5,8 +5,7 @@ namespace FL\GmailBundle\Model\Collection;
 use FL\GmailBundle\Model\GmailMessageInterface;
 
 /**
- * Class MessageCollection
- * @package FL\GmailBundle\Model
+ * Class MessageCollection.
  */
 class GmailMessageCollection
 {
@@ -25,6 +24,7 @@ class GmailMessageCollection
 
     /**
      * @param GmailMessageInterface $message
+     *
      * @return GmailMessageCollection
      */
     public function addMessage(GmailMessageInterface $message): GmailMessageCollection
@@ -36,6 +36,7 @@ class GmailMessageCollection
 
     /**
      * @param GmailMessageInterface $message
+     *
      * @return GmailMessageCollection
      */
     public function removeMessage(GmailMessageInterface $message): GmailMessageCollection
@@ -55,6 +56,7 @@ class GmailMessageCollection
 
     /**
      * @param GmailMessageInterface $message
+     *
      * @return bool
      */
     public function hasMessage(GmailMessageInterface $message): bool
@@ -62,6 +64,7 @@ class GmailMessageCollection
         if ($this->messages->contains($message)) {
             return true;
         }
+
         return false;
     }
 }
