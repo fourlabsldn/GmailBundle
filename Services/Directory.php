@@ -135,9 +135,7 @@ class Directory
     {
         $emails = [];
 
-        /**
-         * @var GmailUserInterface
-         */
+        /** @var GmailUserInterface $gmailUser */
         foreach ($this->getGmailDomain()->getGmailUsers() as $gmailUser) {
             $gmailUserEmails = $this->resolveEmailsFromUserId($gmailUser->getUserId(), $mode);
             foreach ($gmailUserEmails as $email) {
