@@ -100,34 +100,25 @@ class Directory
      */
     public function resolveEmailsFromUserId(string $userId, int $mode)
     {
-        $emails = [];
         $gmailUser = $this->getGmailDomain()->findGmailUserById($userId);
+
+        if (!($gmailUser instanceof GmailUserInterface)) {
+            return [];
+        }
 
         switch ($mode) {
             case self::MODE_RESOLVE_PRIMARY_ONLY:
-                if ($gmailUser instanceof GmailUserInterface) {
-                    $emails[] = $gmailUser->getPrimaryEmailAddress();
-                }
-                break;
+                return [$gmailUser->getPrimaryEmailAddress()];
+
             case self::MODE_RESOLVE_ALIASES_ONLY:
-                if ($gmailUser instanceof GmailUserInterface) {
-                    foreach ($gmailUser->getEmailAliases() as $emailAddress) {
-                        $emails[] = $emailAddress;
-                    }
-                }
-                break;
+                return $gmailUser->getEmailAliases();
+
             case self::MODE_RESOLVE_PRIMARY_PLUS_ALIASES:
-                if ($gmailUser instanceof GmailUserInterface) {
-                    foreach ($gmailUser->getAllEmailAddresses() as $emailAddress) {
-                        $emails[] = $emailAddress;
-                    }
-                }
-                break;
+                return $gmailUser->getAllEmailAddresses();
+
             default:
                 throw new \InvalidArgumentException();
         }
-
-        return $emails;
     }
 
     /**
@@ -171,12 +162,15 @@ class Directory
             case self::MODE_RESOLVE_PRIMARY_ONLY:
                 $gmailUser = $this->getGmailDomain()->findGmailUserByPrimaryEmail($email);
                 break;
+
             case self::MODE_RESOLVE_ALIASES_ONLY:
                 $gmailUser = $this->getGmailDomain()->findGmailUserByEmailAlias($email);
                 break;
+
             case self::MODE_RESOLVE_PRIMARY_PLUS_ALIASES:
                 $gmailUser = $this->getGmailDomain()->findGmailUserByEmail($email);
                 break;
+
             default:
                 throw new \InvalidArgumentException();
         }
@@ -218,11 +212,7 @@ class Directory
     {
         $return = [];
         foreach ($this->resolveUserIds() as $userId) {
-            $return[$userId] = '';
-            foreach ($this->resolveEmailsFromUserId($userId, $mode) as $email) {
-                $return[$userId] .= $email.$separator;
-            }
-            $return[$userId] = rtrim($return[$userId], $separator);
+            $return[$userId] = implode($separator, $this->resolveEmailsFromUserId($userId, $mode));
         }
 
         return $return;
