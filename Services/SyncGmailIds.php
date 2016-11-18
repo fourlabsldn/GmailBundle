@@ -125,7 +125,6 @@ class SyncGmailIds
 
                 /** @var \Google_Service_Gmail_History $apiHistory */
                 foreach ($historyList->getHistory() as $apiHistory) {
-                    $histories[] = $apiHistory;
                     /*
                      * @var \Google_Service_Gmail_Message
                      *
@@ -165,11 +164,7 @@ class SyncGmailIds
      */
     private function dispatchHistoryEvent(string $userId, int $historyId)
     {
-        /*
-         * Dispatch History Event.
-         *
-         * @var GmailHistoryInterface
-         */
+        /** @var GmailHistoryInterface $history */
         $history = new $this->historyClass();
         $history
             ->setUserId($userId)
@@ -186,11 +181,7 @@ class SyncGmailIds
      */
     private function dispatchGmailIdsEvent(string $userId, array $gmailIdsArray)
     {
-        /*
-         * Dispatch GmailIds Event.
-         *
-         * @var GmailIdsInterface
-         */
+        /** @var GmailIdsInterface $gmailIdsObject */
         $gmailIdsObject = new $this->gmailIdsClass();
         $gmailIdsObject
             ->setUserId($userId)

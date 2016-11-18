@@ -6,7 +6,6 @@ use FL\GmailBundle\DataTransformer\GmailMessageTransformer;
 use FL\GmailBundle\DataTransformer\GmailLabelTransformer;
 use FL\GmailBundle\Event\GmailSyncMessagesEvent;
 use FL\GmailBundle\Model\Collection\GmailMessageCollection;
-use FL\GmailBundle\Model\GmailHistoryInterface;
 use FL\GmailBundle\Model\Collection\GmailLabelCollection;
 use FL\GmailBundle\Model\GmailIdsInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -135,11 +134,6 @@ class SyncMessages
             $this->apiLabelCache[$userId][$label->id] = $label->name;
         }
 
-        $labelNames = [];
-        foreach ($labelIds as $id) {
-            $labelNames[] = $this->apiLabelCache[$userId][$id];
-        }
-
         return array_filter($this->apiLabelCache[$userId], function ($labelName, $labelId) use ($labelIds) {
             return in_array($labelId, $labelIds);
         }, ARRAY_FILTER_USE_BOTH);
@@ -200,10 +194,6 @@ class SyncMessages
     {
         $this->verifyCaches($userId);
 
-        /*
-         * Dispatch Sync End Event
-         * @var GmailHistoryInterface $history
-         */
         $syncEvent = new GmailSyncMessagesEvent($this->gmailMessageCache[$userId], $this->gmailLabelCache[$userId]);
         $this->dispatcher->dispatch(GmailSyncMessagesEvent::EVENT_NAME, $syncEvent);
     }

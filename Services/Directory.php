@@ -153,8 +153,6 @@ class Directory
      */
     public function resolveUserIdFromEmail(string $email, int $mode)
     {
-        $userId = null;
-
         switch ($mode) {
             case self::MODE_RESOLVE_PRIMARY_ONLY:
                 $gmailUser = $this->getGmailDomain()->findGmailUserByPrimaryEmail($email);
