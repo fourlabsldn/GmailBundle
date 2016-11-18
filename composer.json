@@ -1,6 +1,5 @@
 {
   "name": "fourlabs/gmail-bundle",
-  "version": "1.0",
   "description": "Gmail API Wrapper for Symfony",
   "license": "MIT",
   "homepage": "https://github.com/fourlabsldn/GmailBundle",

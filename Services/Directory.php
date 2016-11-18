@@ -52,7 +52,6 @@ class Directory
     private function resolveDomain(string $domain) : GmailDomain
     {
         $nextPage = null;
-        $historyId = null;
 
         $gmailDomain = new GmailDomain($domain);
 
