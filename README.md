@@ -1,6 +1,7 @@
 # GmailBundle
 
 [![StyleCI](https://styleci.io/repos/70251410/shield?branch=master)](https://styleci.io/repos/70251410)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/2113fe3d-8256-4009-8d0c-8a84f21a7b59/mini.png)](https://insight.sensiolabs.com/projects/2113fe3d-8256-4009-8d0c-8a84f21a7b59)
 
 GmailBundle allows you to manage a Google Apps domain's inboxes (you can pick which). In order to do this, you must authorize 
 your Symfony application, with a Google Apps admin account. Domain-wide delegation must be authorized, [What is domain-wide delegation?](https://developers.google.com/+/domains/authentication/delegation)
