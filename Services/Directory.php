@@ -57,7 +57,7 @@ class Directory
 
         do {
             $usersResponse = $this->directory->users->listUsers([
-                'domain' => $domain,
+                'domain' => $gmailDomain->getDomain(),
                 'pageToken' => $nextPage,
             ]);
             /** @var \Google_Service_Directory_User $user */

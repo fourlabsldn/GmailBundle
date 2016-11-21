@@ -133,4 +133,12 @@ class GmailDomain
 
         return;
     }
+
+    /**
+     * @return string
+     */
+    public function getDomain(): string
+    {
+        return $this->domain;
+    }
 }
