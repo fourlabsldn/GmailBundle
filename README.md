@@ -24,7 +24,7 @@ fl_gmail:
     gmail_label_class: \AppBundle\Entity\GmailLabel
     gmail_history_class: \AppBundle\Entity\GmailHistory
     gmail_ids_class: TriprHqBundle\Entity\GmailIds
-    credentials_storage_service: fl_gmail_doctrine.credentials_storage
+    credentials_storage_service: some_credentials_storage_service
     
 swiftmailer:
     default_mailer: general_mailer
@@ -51,28 +51,41 @@ fl_gmail:
 - `FL\GmailBundle\Action\AuthoriseGoogleAction` redirects the end-user (Google Apps admin) to a Google page where they authorize the Symfony application.
 - `FL\GmailBundle\Action\SaveAuthorisationAction` saves the authorization, once the user is redirected from the aforementioned Google page.
 - It is your responsibility, to provide a service that saves this authorization. See `credentials_storage_service` key in configuration.
-- This service, must implement `FL\GmailBundle\Storage\CredentialsStorageInterface`.
+    - `credentials_storage_service`, must be a service that implements `FL\GmailBundle\Storage\CredentialsStorageInterface`.
+    - This service will allow you to save authorization tokens, and to retrieve them at a later time.
 
 #### Syncing Gmail Ids (i.e. Which emails need to be synced?)
-- `FL\GmailBundle\Services\SyncGmailIds`
-    - Gets a list of all the Gmail Ids, or the subset of Gmail Ids according to a history Id.  [What is a history Id?](https://developers.google.com/gmail/api/guides/sync)
-    - Dispatches `FL\GmailBundle\Event\GmailSyncIdsEvent` with a list of all the new / updated ids. (Updated Gmail Ids = change of label)
-    - It is your responsibility to save the Gmail Ids coming from this event.
-    - Dispatches `FL\GmailBundle\Event\GmailSyncHistoryEvent`, such that next time, you can perform a Partial Sync. [What is a Partial Sync?](https://developers.google.com/gmail/api/guides/sync)
-    - It is your responsibility to save the History Id coming from this event.
+`FL\GmailBundle\Services\SyncGmailIds`
+- Takes a `$userId` parameter. 
+- Gets a list of all the Gmail Ids, or the subset of Gmail Ids according to a history Id.  [What is a history Id?](https://developers.google.com/gmail/api/guides/sync)
+- Dispatches `FL\GmailBundle\Event\GmailSyncIdsEvent` with a list of all the new / updated ids. (Updated Gmail Ids = change of label)
+- It is your responsibility to save the Gmail Ids coming from this event.
+- Dispatches `FL\GmailBundle\Event\GmailSyncHistoryEvent`, such that next time, you can perform a Partial Sync. [What is a Partial Sync?](https://developers.google.com/gmail/api/guides/sync)
+- It is your responsibility to save the History Id coming from this event.
 
 #### Syncing Messages using Gmail Ids (i.e. I know which emails need to be synced, let's fetch them.)
-- `FL\GmailBundle\Services\SyncMessages`
-    - This service, takes a list of gmail ids and resolves all the new/updated messages for you. 
-    - I.e. use the ids you are fetching from `FL\GmailBundle\Services\SyncGmailIds`
-    - Dispatches `FL\GmailBundle\Event\GmailSyncMessagesEvent`.
-    - It is your responsibility to save the Gmail Messages coming from this event.
-    - It is your responsibility to remove the newly synced Gmail Ids, you had previously saved at `FL\GmailBundle\Services\SyncGmailIds`.
+`FL\GmailBundle\Services\SyncMessages`
+- This service, takes a list of gmail ids and resolves all the new/updated messages for you. 
+- I.e. use the ids you are fetching from `FL\GmailBundle\Services\SyncGmailIds`
+- Dispatches `FL\GmailBundle\Event\GmailSyncMessagesEvent`.
+- It is your responsibility to save the Gmail Messages coming from this event.
+- It is your responsibility to remove the newly synced Gmail Ids, you had previously saved at `FL\GmailBundle\Services\SyncGmailIds`.
 
 #### All this responsibility? :cry: :sob:
 
 Why are there so many `It is your responsibility` statements? Because this bundle is storage agnostic. But don't fret! There 
 is a [GmailDoctrineBundle](https://github.com/fourlabsldn/GmailDoctrineBundle) that implements all of this in Doctrine for you. 
+
+### How do I dive into this bundle?
+
+- For starters, in every request, if one of the bundle's services is requested, the `fl_gmail.google_client` will be instantiated.
+- Keep in mind that `fl_gmail.google_client` depends on the `credentials_storage_service` from the configuration.
+- More details at `Resources/config/services/google.yml`. This is a good point to start.
+
+### What else is going on?
+
+- You can send swiftmailer emails through `FL\GmailBundle\Swift\GmailApiTransport`. Simply make sure the from is in your domain.
+- `FL\GmailBundle\Form\Type\InboxType` contains a choice type, with all the inboxes in the authenticated domain.
 
 ## License
 
