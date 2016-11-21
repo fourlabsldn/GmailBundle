@@ -86,6 +86,7 @@ is a [GmailDoctrineBundle](https://github.com/fourlabsldn/GmailDoctrineBundle) t
 
 - You can send swiftmailer emails through `FL\GmailBundle\Swift\GmailApiTransport`. Simply make sure the from is in your domain.
 - `FL\GmailBundle\Form\Type\InboxType` contains a choice type, with all the inboxes in the authenticated domain.
+- The service::method `FL\GmailBundle\Services\GoogleClientStatus::isAuthenticated` lets you know if there is a valid authentication token in `credentials_storage_service`.
 
 ## License
 
