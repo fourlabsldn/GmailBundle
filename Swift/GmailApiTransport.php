@@ -61,7 +61,7 @@ class GmailApiTransport implements \Swift_Transport
     public function send(\Swift_Mime_Message $swiftMessage, &$failedRecipients = null)
     {
         $gmailMessage = new \Google_Service_Gmail_Message();
-        $gmailMessage->setRaw($this->base64url_encode($swiftMessage));
+        $gmailMessage->setRaw($this->base64UrlEncode($swiftMessage));
         if ($swiftMessage instanceof SwiftGmailMessage) {
             $gmailMessage->setThreadId($swiftMessage->getThreadId());
         }
@@ -69,8 +69,8 @@ class GmailApiTransport implements \Swift_Transport
 
         // when sending, we can use email addresses, instead of a $userId
         // but we will only use the first email address, so everyone else will be a failed recipient
-        $fromAddress = $this->fromArray_ToString($fromArray);
-        $failedRecipients = $this->fromArray_ToFailedReceipients($fromArray);
+        $fromAddress = $this->fromArrayToString($fromArray);
+        $failedRecipients = $this->fromArrayToFailedReceipients($fromArray);
 
         if ($evt = $this->_eventDispatcher->createSendEvent($this, $swiftMessage)) {
             $evt->setResult(0);
@@ -121,7 +121,7 @@ class GmailApiTransport implements \Swift_Transport
      *
      * @return string
      */
-    private function base64url_encode($data)
+    private function base64UrlEncode($data)
     {
         return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
     }
@@ -132,7 +132,7 @@ class GmailApiTransport implements \Swift_Transport
      * @return string
      *                The Gmail API can only take one address at a time, let's get the very first one
      */
-    private function fromArray_ToString(array $fromArray): string
+    private function fromArrayToString(array $fromArray): string
     {
         // $fromArray = [ 'john.doe@example.com' => 'John Doe', 'jane.doe@example.com' => 'Jane Doe' ]; // sample
         if (count($fromArray) > 0) {
@@ -148,9 +148,9 @@ class GmailApiTransport implements \Swift_Transport
      * @param array $fromArray
      *
      * @return array
-     *               Also @see GmailApiTransport::fromArray_ToString()
+     *               Also @see GmailApiTransport::fromArrayToString()
      */
-    private function fromArray_ToFailedReceipients(array $fromArray): array
+    private function fromArrayToFailedReceipients(array $fromArray): array
     {
         if (count($fromArray) > 0) {
             reset($fromArray);
