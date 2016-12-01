@@ -15,7 +15,7 @@ class InboxType extends AbstractType
     /**
      * @var string[]
      */
-    private $emailToUserId;
+    protected $emailToUserId;
 
     /**
      * InboxType constructor.
