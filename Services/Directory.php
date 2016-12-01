@@ -195,7 +195,7 @@ class Directory
 
     /**
      * @param string $separator
-     * @param string $mode
+     * @param int    $mode
      *
      * @return string[] E.g. for ", " $separator
      *                  [
@@ -203,7 +203,7 @@ class Directory
      *                  "1045618888777" => "test2@example.com"
      *                  ]
      */
-    public function resolveUserIdToInboxesArray(string $separator, string $mode)
+    public function resolveUserIdToInboxesArray(string $separator, int $mode)
     {
         $return = [];
         foreach ($this->resolveUserIds() as $userId) {
@@ -215,7 +215,7 @@ class Directory
 
     /**
      * @param string $separator
-     * @param string $mode
+     * @param int    $mode
      *
      * @return string[] E.g. for ", " $separator
      *                  [
@@ -223,7 +223,7 @@ class Directory
      *                  "test2@example.com" => "1045618888777"
      *                  ]
      */
-    public function resolveInboxesToUserIdArray(string $separator, string $mode)
+    public function resolveInboxesToUserIdArray(string $separator, int $mode)
     {
         return array_flip($this->resolveUserIdToInboxesArray($separator, $mode));
     }
