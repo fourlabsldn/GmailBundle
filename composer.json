@@ -23,7 +23,7 @@
     "symfony/event-dispatcher": "~2.8|~3.0|~3.1",
     "symfony/form": "~2.8|~3.0|~3.1",
     "symfony/options-resolver": "~2.8|~3.0|~3.1",
-    "swiftmailer/swiftmailer": ">=4.2.0,~5.0",
+    "swiftmailer/swiftmailer": "~5.4",
     "google/apiclient": ">=2.1"
   },
   "autoload": {
