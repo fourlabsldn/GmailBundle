@@ -3,31 +3,30 @@
 namespace FL\GmailBundle\Services;
 
 /**
- * Class Thread
- * This class allows us to communicate with @see Google_Service_Gmail.
+ * This service communicates with thread
+ * related methods in @see Google_Service_Gmail.
  */
 class Thread
 {
     /**
-     * @var \Google_Service_Gmail
+     * @var GoogleServices
      */
-    private $service;
+    private $googleServices;
 
     /**
-     * Email constructor.
-     *
-     * @param \Google_Service_Gmail $service
+     * @param GoogleServices $googleClients
      */
-    public function __construct(\Google_Service_Gmail $service)
-    {
-        $this->service = $service;
+    public function __construct(
+        GoogleServices $googleClients
+    ) {
+        $this->googleServices = $googleClients;
     }
 
     /**
      * @param string $userId
      * @param string $threadId
      *
-     * @return \Google_Service_Gmail_Thread|null
+     * @return \Google_Service_Gmail_Thread|null (null if the thread no longer exists in GMail)
      *
      * @throws \Google_Service_Exception
      */
@@ -43,7 +42,7 @@ class Thread
      * @param string $userId
      * @param string $threadId
      *
-     * @return \Google_Service_Gmail_Thread|null
+     * @return \Google_Service_Gmail_Thread|null (null if the thread no longer exists in GMail)
      *
      * @throws \Google_Service_Exception
      */
@@ -59,7 +58,7 @@ class Thread
      * @param string $userId
      * @param string $threadId
      *
-     * @return \Google_Service_Gmail_Thread|null
+     * @return \Google_Service_Gmail_Thread|null (null if the thread no longer exists in GMail)
      *
      * @throws \Google_Service_Exception
      */
@@ -83,7 +82,7 @@ class Thread
     private function modifyThread(string $userId, string $threadId, \Google_Service_Gmail_ModifyThreadRequest $postBody)
     {
         try {
-            return $this->service->users_threads->modify($userId, $threadId, $postBody);
+            return $this->googleServices->getGoogleServiceGmailForUserId($userId)->users_threads->modify($userId, $threadId, $postBody);
         } catch (\Google_Service_Exception $exception) {
             // thread does not exist
             if ($exception->getCode() === 404) {

@@ -3,13 +3,14 @@
 namespace FL\GmailBundle\Model;
 
 /**
- * Interface GmailHistoryInterface.
+ * Concrete classes help you persist the latest Gmail historyId,
+ * for a userId, in a domain, when syncing with Gmail.
+ *
+ * @see https://developers.google.com/gmail/api/guides/sync#partial_synchronization
  */
 interface GmailHistoryInterface
 {
     /**
-     * Set the user ID.
-     *
      * @param string $userId
      *
      * @return GmailHistoryInterface
@@ -17,11 +18,9 @@ interface GmailHistoryInterface
     public function setUserId(string $userId): GmailHistoryInterface;
 
     /**
-     * Get the user ID.
-     *
-     * @return string|null
+     * @return string
      */
-    public function getUserId();
+    public function getUserId(): string;
 
     /**
      * @param string $domain
@@ -36,8 +35,6 @@ interface GmailHistoryInterface
     public function getDomain(): string;
 
     /**
-     * Set the history ID.
-     *
      * @param int $historyId
      *
      * @return GmailHistoryInterface
@@ -45,9 +42,7 @@ interface GmailHistoryInterface
     public function setHistoryId(int $historyId): GmailHistoryInterface;
 
     /**
-     * Get the history ID.
-     *
-     * @return int|null
+     * @return int
      */
-    public function getHistoryId();
+    public function getHistoryId(): int;
 }

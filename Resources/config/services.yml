@@ -1,43 +1,64 @@
 imports:
-    - { resource: 'services/actions.yml' }
-    - { resource: 'services/google.yml' }
     - { resource: 'services/form.yml' }
     - { resource: 'services/swift.yml' }
 
 services:
-    fl_gmail.message_transformer:
-        class: FL\GmailBundle\DataTransformer\GmailMessageTransformer
-        arguments:
-            - "%fl_gmail.gmail_message_class%"
 
-    fl_gmail.label_transformer:
-        class: FL\GmailBundle\DataTransformer\GmailLabelTransformer
+## ADMIN ACCOUNT
+    fl_gmail.service_account:
+        class: FL\GmailBundle\Services\ServiceAccount
         arguments:
-            - "%fl_gmail.gmail_label_class%"
-
-    fl_gmail.client_status:
-        class: FL\GmailBundle\Services\GoogleClientStatus
+            - "%fl_gmail.admin_user_email%"
+            - "%fl_gmail.json_key_location%"
         lazy: true
-        arguments: ["@fl_gmail.access_token"]
 
-    fl_gmail.email:
-        class: FL\GmailBundle\Services\Email
-        arguments: ["@fl_gmail.gmail_service"]
+    fl_gmail.directory_service:
+        class: Google_Service_Directory
+        arguments:
+            - "@=service('fl_gmail.service_account').getGoogleClientForAdmin()"
+        lazy: true
 
-    fl_gmail.thread:
-        class: FL\GmailBundle\Services\Thread
-        arguments: ["@fl_gmail.gmail_service"]
+    fl_gmail.oauth_service:
+        class: Google_Service_Oauth2
+        arguments:
+            - "@=service('fl_gmail.service_account').getGoogleClientForAdmin()"
+        lazy: true
 
     fl_gmail.directory:
         class: FL\GmailBundle\Services\Directory
         arguments:
-          - "@fl_gmail.directory_service"
-          - "@fl_gmail.oauth"
+            - "@fl_gmail.directory_service"
+            - "@fl_gmail.oauth"
 
     fl_gmail.oauth:
-            class: FL\GmailBundle\Services\OAuth
-            arguments: ["@fl_gmail.oauth_service"]
+        class: FL\GmailBundle\Services\OAuth
+        arguments:
+            - "@fl_gmail.oauth_service"
 
+    fl_gmail.client_status:
+        class: FL\GmailBundle\Services\GoogleClientStatus
+        arguments:
+            - "%fl_gmail.json_key_location%"
+
+# GOOGLE SERVICES (FOR ANY ACCOUNT)
+    fl_gmail.google_services:
+        class: FL\GmailBundle\Services\GoogleServices
+        arguments:
+            - "@fl_gmail.directory"
+            - "@fl_gmail.service_account"
+
+# EMAIL WRAPPERS
+    fl_gmail.email:
+        class: FL\GmailBundle\Services\Email
+        arguments:
+            - "@fl_gmail.google_services"
+
+    fl_gmail.thread:
+        class: FL\GmailBundle\Services\Thread
+        arguments:
+            - "@fl_gmail.google_services"
+
+# EMAIL SYNCERS
     fl_gmail.sync_gmail_ids:
         class: FL\GmailBundle\Services\SyncGmailIds
         arguments:
@@ -53,5 +74,16 @@ services:
             - "@fl_gmail.email"
             - "@fl_gmail.oauth"
             - "@event_dispatcher"
-            - "@fl_gmail.message_transformer"
-            - "@fl_gmail.label_transformer"
+            - "@fl_gmail.message_factory"
+            - "@fl_gmail.label_factory"
+
+# FACTORIES
+    fl_gmail.message_factory:
+        class: FL\GmailBundle\Factory\GmailMessageFactory
+        arguments:
+            - "%fl_gmail.gmail_message_class%"
+
+    fl_gmail.label_factory:
+        class: FL\GmailBundle\Factory\GmailLabelFactory
+        arguments:
+            - "%fl_gmail.gmail_label_class%"

@@ -1,10 +1,10 @@
 <?php
 
-namespace FL\GmailBundle\DataTransformer;
+namespace FL\GmailBundle\Factory;
 
 use FL\GmailBundle\Model\GmailLabelInterface;
 
-class GmailLabelTransformer
+class GmailLabelFactory
 {
     /**
      * @var string
@@ -29,19 +29,27 @@ class GmailLabelTransformer
     }
 
     /**
-     * Transform a string $labelName into a Label.
+     * Transform $labelName, $userId, $domain into a Label.
      * The Label class is defined by $this->labelClass.
      *
-     * @param string $labelName
+     * Returns a new GmailLabelInterface instance from the passed arguments.
+     * We don't create from an email \Google_Service_Gmail_Message, because we need to fetch label names.
+     * We don't create from a labels \Google_Service_Gmail_Message, because we need to cache labels
+     * such that they are not fetched twice.
+     *
+     * @param string $name
+     * @param string $domain
      * @param string $userId
      *
      * @return GmailLabelInterface
      */
-    public function transform(string $labelName, string $userId): GmailLabelInterface
+    public function createFromProperties(string $name, string $domain, string $userId): GmailLabelInterface
     {
         /** @var GmailLabelInterface $label */
         $label = new $this->gmailLabelClass();
-        $label->setName($labelName)
+        $label
+            ->setName($name)
+            ->setDomain($domain)
             ->setUserId($userId);
 
         return $label;

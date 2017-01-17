@@ -2,14 +2,21 @@
 
 namespace FL\GmailBundle\Model;
 
-/**
- * Class GmailLabel
- * Contains the labels applied to a Gmail Message.
- */
 class GmailLabel implements GmailLabelInterface
 {
+    /**
+     * @var string
+     */
     protected $name;
 
+    /**
+     * @var string
+     */
+    protected $domain;
+
+    /**
+     * @var string
+     */
     protected $userId;
 
     /**
@@ -25,9 +32,27 @@ class GmailLabel implements GmailLabelInterface
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDomain(string $domain): GmailLabelInterface
+    {
+        $this->domain = $domain;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDomain(): string
+    {
+        return $this->domain;
     }
 
     /**
@@ -43,7 +68,7 @@ class GmailLabel implements GmailLabelInterface
     /**
      * {@inheritdoc}
      */
-    public function getUserId()
+    public function getUserId(): string
     {
         return $this->userId;
     }

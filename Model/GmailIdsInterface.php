@@ -3,13 +3,14 @@
 namespace FL\GmailBundle\Model;
 
 /**
- * Interface GmailIdsInterface.
+ * Concrete classes help you persist which gmail message ids are in need of sync,
+ * for a userId, in a domain, when syncing with Gmail.
+ *
+ * @see https://developers.google.com/gmail/api/v1/reference/users/messages/get
  */
 interface GmailIdsInterface
 {
     /**
-     * Set the user ID.
-     *
      * @param string $userId
      *
      * @return GmailIdsInterface
@@ -17,11 +18,9 @@ interface GmailIdsInterface
     public function setUserId(string $userId): GmailIdsInterface;
 
     /**
-     * Get the user ID.
-     *
-     * @return string|null
+     * @return string
      */
-    public function getUserId();
+    public function getUserId(): string;
 
     /**
      * @param string $domain
@@ -36,21 +35,21 @@ interface GmailIdsInterface
     public function getDomain(): string;
 
     /**
-     * Set the gmail IDs.
-     * By convention, place latestIds first.
+     * By convention, place latestIds first in the array.
      *
-     * @param string[]|null $gmailIds
+     * @param string[] $gmailIds
      *
      * @return GmailIdsInterface
      */
-    public function setGmailIds(array $gmailIds = null): GmailIdsInterface;
+    public function setGmailIds(array $gmailIds): GmailIdsInterface;
 
     /**
-     * Get the gmail IDs.
+     * The limit parameter allows you to retrieve a slice of the gmailIds.
+     * If the parameter is null, all  gmailIds are returned.
      *
      * @param int $limit
      *
-     * @return string[]|null
+     * @return string[]
      */
-    public function getGmailIds(int $limit = null);
+    public function getGmailIds(int $limit = null): array;
 }

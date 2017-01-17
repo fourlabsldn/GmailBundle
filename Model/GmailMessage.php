@@ -2,39 +2,29 @@
 
 namespace FL\GmailBundle\Model;
 
-/**
- * Class GmailMessage
- * Contains the relevant fields of a Gmail email.
- *
- * @link https://developers.google.com/gmail/api/v1/reference/users/messages#resource
- * @see Google_Service_Gmail_Message
- */
 class GmailMessage implements GmailMessageInterface
 {
     /**
-     * Gmail ID for the email.
-     *
      * @var string
      */
     protected $gmailId;
 
     /**
-     * Gmail thread ID for the email.
-     *
+     * @var string
+     */
+    protected $domain;
+
+    /**
      * @var string
      */
     protected $threadId;
 
     /**
-     * Gmail history ID for the email.
-     *
      * @var string
      */
     protected $historyId;
 
     /**
-     * Gmail user ID for the email.
-     *
      * @var string
      */
     protected $userId;
@@ -85,18 +75,10 @@ class GmailMessage implements GmailMessageInterface
     protected $bodyHtml;
 
     /**
-     * @var string
-     */
-    protected $domain = '';
-
-    /**
      * @var \SplObjectStorage
      */
     protected $labels;
 
-    /**
-     * GmailMessage constructor.
-     */
     public function __construct()
     {
         $this->labels = new \SplObjectStorage();
@@ -115,9 +97,27 @@ class GmailMessage implements GmailMessageInterface
     /**
      * {@inheritdoc}
      */
-    public function getGmailId()
+    public function getGmailId(): string
     {
         return $this->gmailId;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDomain(): string
+    {
+        return $this->domain;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDomain(string $domain): GmailMessageInterface
+    {
+        $this->domain = $domain;
+
+        return $this;
     }
 
     /**
@@ -133,29 +133,45 @@ class GmailMessage implements GmailMessageInterface
     /**
      * {@inheritdoc}
      */
-    public function getThreadId()
+    public function getThreadId(): string
     {
         return $this->threadId;
     }
 
     /**
-     * Will convert even somewhat broken strings to an array of emails. E.g.:
-     * email@example.com Miles <miles@example.com>, Mila <mila@example.com, Charles charles@example.com,,,,, <Mick> mick@example.com.
-     *
-     * @param string $email
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    private function sanitizeEmailString(string $email)
+    public function setHistoryId(string $historyId): GmailMessageInterface
     {
-        $emails = [];
-        foreach (preg_split('/(,|<|>|,|\\s)/', $email) as $possibleEmail) {
-            if (filter_var($possibleEmail, FILTER_VALIDATE_EMAIL)) {
-                $emails[] = strtolower($possibleEmail);
-            }
-        }
+        $this->historyId = $historyId;
 
-        return implode(',', $emails);
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHistoryId(): string
+    {
+        return $this->historyId;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setUserId(string $userId): GmailMessageInterface
+    {
+        $this->userId = $userId;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUserId(): string
+    {
+        return $this->userId;
     }
 
     /**
@@ -164,7 +180,7 @@ class GmailMessage implements GmailMessageInterface
     public function setTo(string $to): GmailMessageInterface
     {
         $this->to = $to;
-        $this->toCanonical = $this->sanitizeEmailString($to);
+        $this->toCanonical = $this->canonicalizeEmailString($to);
 
         return $this;
     }
@@ -172,7 +188,7 @@ class GmailMessage implements GmailMessageInterface
     /**
      * {@inheritdoc}
      */
-    public function getTo()
+    public function getTo(): string
     {
         return $this->to;
     }
@@ -180,7 +196,7 @@ class GmailMessage implements GmailMessageInterface
     /**
      * {@inheritdoc}
      */
-    public function getToCanonical()
+    public function getToCanonical(): string
     {
         return $this->toCanonical;
     }
@@ -191,7 +207,7 @@ class GmailMessage implements GmailMessageInterface
     public function setFrom(string $from): GmailMessageInterface
     {
         $this->from = $from;
-        $this->fromCanonical = $this->sanitizeEmailString($from);
+        $this->fromCanonical = $this->canonicalizeEmailString($from);
 
         return $this;
     }
@@ -199,7 +215,7 @@ class GmailMessage implements GmailMessageInterface
     /**
      * {@inheritdoc}
      */
-    public function getFrom()
+    public function getFrom(): string
     {
         return $this->from;
     }
@@ -207,7 +223,7 @@ class GmailMessage implements GmailMessageInterface
     /**
      * {@inheritdoc}
      */
-    public function getFromCanonical()
+    public function getFromCanonical(): string
     {
         return $this->fromCanonical;
     }
@@ -215,11 +231,30 @@ class GmailMessage implements GmailMessageInterface
     /**
      * {@inheritdoc}
      */
-    public function getReplyAllRecipients()
+    public function getReplyAllRecipients(): string
     {
-        return $this->fromCanonical && $this->toCanonical
-            ? $this->fromCanonical.','.$this->toCanonical
-            : null;
+        return $this->fromCanonical.','.$this->toCanonical;
+    }
+
+    /**
+     * Will convert even somewhat broken strings to a string of comma separated emails
+     * email@example.com Miles <miles@example.com>, Mila <mila@example.com, Charles charles@example.com,,,,, <Mick> mick@example.com.
+     * email@example.com, miles@example.com, mila@example.com, charles@example.com, mick@example.com.
+     *
+     * @param string $email
+     *
+     * @return array
+     */
+    private function canonicalizeEmailString(string $email)
+    {
+        $emails = [];
+        foreach (preg_split('/(,|<|>|,|\\s)/', $email) as $possibleEmail) {
+            if (filter_var($possibleEmail, FILTER_VALIDATE_EMAIL)) {
+                $emails[] = strtolower($possibleEmail);
+            }
+        }
+
+        return implode(',', $emails);
     }
 
     /**
@@ -235,7 +270,7 @@ class GmailMessage implements GmailMessageInterface
     /**
      * {@inheritdoc}
      */
-    public function getSentAt()
+    public function getSentAt(): \DateTimeInterface
     {
         return $this->sentAt;
     }
@@ -253,7 +288,7 @@ class GmailMessage implements GmailMessageInterface
     /**
      * {@inheritdoc}
      */
-    public function getSubject()
+    public function getSubject(): string
     {
         return $this->subject;
     }
@@ -271,7 +306,7 @@ class GmailMessage implements GmailMessageInterface
     /**
      * {@inheritdoc}
      */
-    public function getSnippet()
+    public function getSnippet(): string
     {
         return $this->snippet;
     }
@@ -279,9 +314,9 @@ class GmailMessage implements GmailMessageInterface
     /**
      * {@inheritdoc}
      */
-    public function setBodyPlainText(string $bodyPlainText = null): GmailMessageInterface
+    public function setBodyPlainTextFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage): GmailMessageInterface
     {
-        $this->bodyPlainText = $bodyPlainText;
+        $this->bodyPlainText = static::resolveBodyPlainTextFromApiMessage($gmailApiMessage) ?? '';
 
         return $this;
     }
@@ -289,7 +324,7 @@ class GmailMessage implements GmailMessageInterface
     /**
      * {@inheritdoc}
      */
-    public function getBodyPlainText()
+    public function getBodyPlainText(): string
     {
         return $this->bodyPlainText;
     }
@@ -297,9 +332,9 @@ class GmailMessage implements GmailMessageInterface
     /**
      * {@inheritdoc}
      */
-    public function setBodyHtml(string $bodyHtml = null): GmailMessageInterface
+    public function setBodyHtmlFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage): GmailMessageInterface
     {
-        $this->bodyHtml = $bodyHtml;
+        $this->bodyHtml = static::resolveBodyHtmlFromApiMessage($gmailApiMessage) ?? '';
 
         return $this;
     }
@@ -307,7 +342,7 @@ class GmailMessage implements GmailMessageInterface
     /**
      * {@inheritdoc}
      */
-    public function getBodyHtml()
+    public function getBodyHtml(): string
     {
         return $this->bodyHtml;
     }
@@ -325,24 +360,9 @@ class GmailMessage implements GmailMessageInterface
     /**
      * {@inheritdoc}
      */
-    public function getLabels()
+    public function getLabels(): \Traversable
     {
         return $this->labels;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getLabelByName(string $name)
-    {
-        /** @var GmailLabelInterface $label */
-        foreach ($this->labels as $label) {
-            if ($label->getName() === $name) {
-                return $label;
-            }
-        }
-
-        return;
     }
 
     /**
@@ -368,198 +388,12 @@ class GmailMessage implements GmailMessageInterface
     /**
      * {@inheritdoc}
      */
-    public function hasLabel(string $name): bool
+    public function getLabelByName(string $name)
     {
-        return ($this->getLabelByName($name) instanceof GmailLabelInterface) ? true : false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setUserId(string $userId): GmailMessageInterface
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getUserId()
-    {
-        return $this->userId;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setHistoryId(string $historyId): GmailMessageInterface
-    {
-        $this->historyId = $historyId;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getHistoryId()
-    {
-        return $this->historyId;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDomain(): string
-    {
-        return $this->domain;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setDomain(string $domain): GmailMessageInterface
-    {
-        $this->domain = $domain;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isUnread(): bool
-    {
-        return $this->hasLabel(static::LABEL_UNREAD);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isInbox(): bool
-    {
-        return $this->hasLabel(static::LABEL_INBOX);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSent(): bool
-    {
-        return $this->hasLabel(static::LABEL_SENT);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isTrash(): bool
-    {
-        return $this->hasLabel(static::LABEL_TRASH);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function createFromGmailApiMessage(\Google_Service_Gmail_Message $gmailApiMessage, array $labels, string $userId, string $domain): GmailMessageInterface
-    {
-        /** @var GmailMessageInterface $message */
-        $message = new static();
-
-        /** @var \Google_Service_Gmail_MessagePart $payload */
-        $payload = $gmailApiMessage->getPayload();
-        /** @var \Google_Service_Gmail_MessagePartHeader[] $headers */
-        $headers = $payload->getHeaders();
-
-        foreach ($headers as $header) {
-            switch ($header->getName()) {
-                case 'From':
-                    $message->setFrom($header->getValue());
-                    break;
-                case 'To':
-                    $message->setTo($header->getValue());
-                    break;
-                case 'Date':
-                    $message->setSentAt(new \DateTime($header->getValue()));
-                    break;
-                case 'Subject':
-                    $message->setSubject($header->getValue());
-                    break;
-            }
-        }
-
-        $message
-            ->setUserId($userId)
-            ->setGmailId($gmailApiMessage->getId())
-            ->setThreadId($gmailApiMessage->getThreadId())
-            ->setHistoryId($gmailApiMessage->getHistoryId())
-            ->setSnippet($gmailApiMessage->getSnippet())
-            ->setBodyHtmlFromApiMessage($gmailApiMessage)
-            ->setBodyPlainTextFromApiMessage($gmailApiMessage)
-            ->setDomain($domain)
-        ;
-
         /** @var GmailLabelInterface $label */
-        foreach ($labels as $label) {
-            $message->addLabel($label);
-        }
-
-        return $message;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setBodyPlainTextFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage): GmailMessageInterface
-    {
-        $this->bodyPlainText = static::resolveBodyPlainTextFromApiMessage($gmailApiMessage);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setBodyHtmlFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage): GmailMessageInterface
-    {
-        $this->bodyHtml = static::resolveBodyHtmlFromApiMessage($gmailApiMessage);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function resolveBodyHtmlFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage)
-    {
-        /** @var \Google_Service_Gmail_MessagePart $payload */
-        $payload = $gmailApiMessage->getPayload();
-
-        if ($payload->getMimeType() === 'multipart/alternative') {
-            /** @var \Google_Service_Gmail_MessagePart $part */
-            foreach ($payload->getParts() as $part) {
-                if ($part->getMimeType() === 'text/html') {
-                    return static::bodyToText($part->getBody());
-                }
-            }
-        }
-
-        return static::bodyToText($payload->getBody());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function resolveBodyPlainTextFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage)
-    {
-        /** @var \Google_Service_Gmail_MessagePart $payload */
-        $payload = $gmailApiMessage->getPayload();
-
-        /** @var \Google_Service_Gmail_MessagePart $part */
-        foreach ($payload->getParts() as $part) {
-            if ($part->getMimeType() === 'text/plain') {
-                return static::bodyToText($part->getBody());
+        foreach ($this->labels as $label) {
+            if ($label->getName() === $name) {
+                return $label;
             }
         }
 
@@ -567,14 +401,123 @@ class GmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @param \Google_Service_Gmail_MessagePartBody $body
+     * {@inheritdoc}
+     */
+    public function hasLabelByName(string $name): bool
+    {
+        return ($this->getLabelByName($name) instanceof GmailLabelInterface) ? true : false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUnread(): bool
+    {
+        return $this->hasLabelByName(static::LABEL_UNREAD);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInbox(): bool
+    {
+        return $this->hasLabelByName(static::LABEL_INBOX);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSent(): bool
+    {
+        return $this->hasLabelByName(static::LABEL_SENT);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTrash(): bool
+    {
+        return $this->hasLabelByName(static::LABEL_TRASH);
+    }
+
+    /**
+     * @param \Google_Service_Gmail_Message
+     *
+     * @return string|null
+     */
+    private static function resolveBodyHtmlFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage)
+    {
+        /** @var \Google_Service_Gmail_MessagePart $payload */
+        $payload = $gmailApiMessage->getPayload();
+
+        if ($partsBody = static::getBodyFromParts($payload->getParts(), 'text/html')) {
+            return $partsBody;
+        }
+
+        if ($payload->getBody() instanceof \Google_Service_Gmail_MessagePartBody) {
+            return static::bodyToText($payload->getBody());
+        }
+
+        return;
+    }
+
+    /**
+     * @param \Google_Service_Gmail_Message
+     *
+     * @return string|null
+     */
+    private static function resolveBodyPlainTextFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage)
+    {
+        /** @var \Google_Service_Gmail_MessagePart $payload */
+        $payload = $gmailApiMessage->getPayload();
+
+        if ($partsBody = static::getBodyFromParts($payload->getParts(), 'text/plain')) {
+            return $partsBody;
+        }
+
+        if ($payload->getBody() instanceof \Google_Service_Gmail_MessagePartBody) {
+            return static::bodyToText($payload->getBody());
+        }
+
+        return;
+    }
+
+    /**
+     * @param array  $parts
+     * @param string $bodyMimeType (E.g. 'text/plain', 'text/html')
+     *
+     * @return string|null
+     */
+    private static function getBodyFromParts(array $parts, string $bodyMimeType)
+    {
+        foreach ($parts as $part) {
+            if ($body = static::getBodyFromParts($part->getParts(), $bodyMimeType)) {
+                return $body;
+            }
+            if (
+                $part->getMimeType() === $bodyMimeType &&
+                $part->getBody() instanceof \Google_Service_Gmail_MessagePartBody &&
+                $body = static::bodyToText($part->getBody())
+            ) {
+                return $body;
+            }
+        }
+
+        return;
+    }
+
+    /**
+     * @param \Google_Service_Gmail_MessagePartBody|null $body
      *
      * @return string
      */
-    private static function bodyToText(\Google_Service_Gmail_MessagePartBody $body)
+    private static function bodyToText(\Google_Service_Gmail_MessagePartBody $body = null): string
     {
         $sanitizedData = strtr($body->getData(), '-_', '+/');
 
-        return base64_decode($sanitizedData);
+        // On fail base64_decode returns false.
+        // We can't know with certainty that getData() is ok.
+        // So fail gracefully.
+        return base64_decode($sanitizedData) ?? '';
     }
 }

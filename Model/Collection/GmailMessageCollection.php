@@ -5,7 +5,9 @@ namespace FL\GmailBundle\Model\Collection;
 use FL\GmailBundle\Model\GmailMessageInterface;
 
 /**
- * Class MessageCollection.
+ * Abstraction of a collection of GmailMessages.
+ *
+ * This class is not meant to be persisted.
  */
 class GmailMessageCollection
 {

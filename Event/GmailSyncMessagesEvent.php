@@ -7,7 +7,12 @@ use FL\GmailBundle\Model\Collection\GmailMessageCollection;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Class GmailSyncMessagesEvent.
+ * This event should be dispatched at the end of @see FL\GmailBundle\Services\SyncMessages.
+ * It will contain a GmailMessageCollection and a GmailLabelCollection.
+ *
+ * The GmailLabels are inside the GmailMessages,
+ * but having a separate collection for them helps with persistence,
+ * since it becomes easier to query existing Labels.
  */
 class GmailSyncMessagesEvent extends Event
 {
@@ -24,20 +29,18 @@ class GmailSyncMessagesEvent extends Event
     protected $labelCollection;
 
     /**
-     * GmailSyncMessagesEvent constructor.
-     *
      * @param GmailMessageCollection $messageCollection
      * @param GmailLabelCollection   $labelCollection
      */
-    public function __construct(GmailMessageCollection $messageCollection, GmailLabelCollection $labelCollection)
-    {
+    public function __construct(
+        GmailMessageCollection $messageCollection,
+        GmailLabelCollection $labelCollection
+    ) {
         $this->messageCollection = $messageCollection;
         $this->labelCollection = $labelCollection;
     }
 
     /**
-     * Get messages present at the end of a sync.
-     *
      * @return GmailMessageCollection
      */
     public function getMessageCollection()
@@ -46,8 +49,6 @@ class GmailSyncMessagesEvent extends Event
     }
 
     /**
-     * Get labels present at the end of a sync.
-     *
      * @return GmailLabelCollection
      */
     public function getLabelCollection()

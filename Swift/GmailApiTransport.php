@@ -5,7 +5,8 @@ namespace FL\GmailBundle\Swift;
 use FL\GmailBundle\Services\Email;
 
 /**
- * Class GmailApiTransport.
+ * Provides a SwiftMailer transport that enables
+ * using the Gmail API to send email.
  *
  * @see \Swift_Transport_NullTransport for sample
  */
@@ -22,8 +23,6 @@ class GmailApiTransport implements \Swift_Transport
     private $email;
 
     /**
-     * GmailApiTransport constructor.
-     *
      * @param Email                         $email
      * @param \Swift_Events_EventDispatcher $eventDispatcher
      */
@@ -67,10 +66,10 @@ class GmailApiTransport implements \Swift_Transport
         }
         $fromArray = $swiftMessage->getFrom();
 
-        // when sending, we can use email addresses, instead of a $userId
-        // but we will only use the first email address, so everyone else will be a failed recipient
+        // When sending, Google allows us to use $userIds. But we will use email addresses.
+        // And we will only use the first email address, so everyone else will be a failed recipient
         $fromAddress = $this->fromArrayToString($fromArray);
-        $failedRecipients = $this->fromArrayToFailedReceipients($fromArray);
+        $failedRecipients = $this->fromArrayToFailedRecipients($fromArray);
 
         if ($evt = $this->_eventDispatcher->createSendEvent($this, $swiftMessage)) {
             $evt->setResult(0);
@@ -81,9 +80,13 @@ class GmailApiTransport implements \Swift_Transport
             }
         }
 
-        $this->email->send($fromAddress, $gmailMessage);
+        $this->email->sendFromEmail($fromAddress, $gmailMessage);
         $evt->setResult(1);
-        $evt->fromEmailAddress = $fromAddress; // alternative to dispatching another event where we set fromEmailAddress
+        // When messages are sent, we might want to re-sync with the Google API.
+        // We will rely on SwiftMailer events to do this.
+        // The caveat is that the event cannot transmit the fromEmailAddress.
+        // So we'll have to do it with this hack.
+        $evt->fromEmailAddress = $fromAddress;
 
         if ($evt) {
             $evt->setResult(\Swift_Events_SendEvent::RESULT_SUCCESS);
@@ -127,10 +130,11 @@ class GmailApiTransport implements \Swift_Transport
     }
 
     /**
+     * The Gmail API can only take one address at a time, let's get the very first one.
+     *
      * @param array $fromArray
      *
      * @return string
-     *                The Gmail API can only take one address at a time, let's get the very first one
      */
     private function fromArrayToString(array $fromArray): string
     {
@@ -145,12 +149,13 @@ class GmailApiTransport implements \Swift_Transport
     }
 
     /**
+     * The Gmail API can only take one address at a time, the others are failed recipients.
+     *
      * @param array $fromArray
      *
      * @return array
-     *               Also @see GmailApiTransport::fromArrayToString()
      */
-    private function fromArrayToFailedReceipients(array $fromArray): array
+    private function fromArrayToFailedRecipients(array $fromArray): array
     {
         if (count($fromArray) > 0) {
             reset($fromArray);

@@ -2,10 +2,6 @@
 
 namespace FL\GmailBundle\Model;
 
-/**
- * Class GmailHistory
- * Latest Gmail history ID for the user, set when syncing with Gmail.
- */
 class GmailHistory implements GmailHistoryInterface
 {
     /**
@@ -16,12 +12,7 @@ class GmailHistory implements GmailHistoryInterface
     /**
      * @var string
      */
-    protected $domain = '';
-
-    /**
-     * @var string[]|null
-     */
-    protected $gmailIds = [];
+    protected $domain;
 
     /**
      * @var int
@@ -41,7 +32,7 @@ class GmailHistory implements GmailHistoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getUserId()
+    public function getUserId(): string
     {
         return $this->userId;
     }
@@ -77,7 +68,7 @@ class GmailHistory implements GmailHistoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getHistoryId()
+    public function getHistoryId(): int
     {
         return $this->historyId;
     }

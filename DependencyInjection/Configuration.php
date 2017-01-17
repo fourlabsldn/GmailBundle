@@ -6,9 +6,7 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
- * This is the class that validates and merges configuration from your app/config files.
- *
- * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/configuration.html}
+ * @see http://symfony.com/doc/current/cookbook/bundles/configuration.html}
  */
 class Configuration implements ConfigurationInterface
 {
@@ -22,19 +20,11 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->scalarNode('application_name')
+                ->scalarNode('admin_user_email')
                     ->isRequired()
                     ->cannotBeEmpty()
                 ->end()
-                ->scalarNode('client_id')
-                    ->isRequired()
-                    ->cannotBeEmpty()
-                ->end()
-                ->scalarNode('client_secret')
-                    ->isRequired()
-                    ->cannotBeEmpty()
-                ->end()
-                ->scalarNode('redirect_uri')
+                ->scalarNode('json_key_location')
                     ->isRequired()
                     ->cannotBeEmpty()
                 ->end()
@@ -52,13 +42,6 @@ class Configuration implements ConfigurationInterface
                 ->end()
                 ->scalarNode('gmail_ids_class')
                     ->isRequired()
-                    ->cannotBeEmpty()
-                ->end()
-                ->scalarNode('redirect_route_after_save_authorisation')
-                    ->isRequired()
-                    ->cannotBeEmpty()
-                ->end()
-                ->scalarNode('credentials_storage_service')
                     ->cannotBeEmpty()
                 ->end()
                 ->scalarNode('psr6_caching_service')

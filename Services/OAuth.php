@@ -3,8 +3,11 @@
 namespace FL\GmailBundle\Services;
 
 /**
- * Class OAuth
- * This class lets us communicate with \Google_Service_Oauth2.
+ * This service communicates with @see Google_Service_Oauth2.
+ *
+ * This service exists for a single \GoogleClient
+ *
+ * @see ServiceAccount::getGoogleClientForAdmin()
  */
 class OAuth
 {
@@ -24,8 +27,6 @@ class OAuth
     private $userIdCache;
 
     /**
-     * Oauth constructor.
-     *
      * @param \Google_Service_Oauth2 $oAuth
      */
     public function __construct(\Google_Service_Oauth2 $oAuth)

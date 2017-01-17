@@ -2,8 +2,8 @@
 
 namespace FL\GmailBundle\Services;
 
-use FL\GmailBundle\DataTransformer\GmailMessageTransformer;
-use FL\GmailBundle\DataTransformer\GmailLabelTransformer;
+use FL\GmailBundle\Factory\GmailMessageFactory;
+use FL\GmailBundle\Factory\GmailLabelFactory;
 use FL\GmailBundle\Event\GmailSyncMessagesEvent;
 use FL\GmailBundle\Model\Collection\GmailMessageCollection;
 use FL\GmailBundle\Model\Collection\GmailLabelCollection;
@@ -11,7 +11,6 @@ use FL\GmailBundle\Model\GmailIdsInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Class SyncManager
  * 1. Resolves Messages and their Labels
  * 2. Informs of this, by dispatching a @see GmailSyncMessagesEvent.
  */
@@ -33,19 +32,19 @@ class SyncMessages
     private $dispatcher;
 
     /**
-     * @var GmailMessageTransformer
+     * @var GmailMessageFactory
      */
-    private $gmailMessageTransformer;
+    private $gmailMessageFactory;
 
     /**
-     * @var GmailLabelTransformer
+     * @var GmailLabelFactory
      */
-    private $gmailLabelTransformer;
+    private $gmailLabelFactory;
 
     /**
-     * Keys are $userId.
+     * $this->apiLabelCache[$userId][$labelId] = $labelName.
      *
-     * @var string[]
+     * @var array
      */
     private $apiLabelCache = [];
 
@@ -77,21 +76,21 @@ class SyncMessages
      * @param Email                    $email
      * @param OAuth                    $oAuth
      * @param EventDispatcherInterface $dispatcher
-     * @param GmailMessageTransformer  $gmailMessageTransformer
-     * @param GmailLabelTransformer    $gmailLabelTransformer
+     * @param GmailMessageFactory      $gmailMessageFactory
+     * @param GmailLabelFactory        $gmailLabelFactory
      */
     public function __construct(
         Email $email,
         OAuth $oAuth,
         EventDispatcherInterface $dispatcher,
-        GmailMessageTransformer $gmailMessageTransformer,
-        GmailLabelTransformer $gmailLabelTransformer
+        GmailMessageFactory $gmailMessageFactory,
+        GmailLabelFactory $gmailLabelFactory
     ) {
         $this->email = $email;
         $this->dispatcher = $dispatcher;
         $this->oAuth = $oAuth;
-        $this->gmailMessageTransformer = $gmailMessageTransformer;
-        $this->gmailLabelTransformer = $gmailLabelTransformer;
+        $this->gmailMessageFactory = $gmailMessageFactory;
+        $this->gmailLabelFactory = $gmailLabelFactory;
     }
 
     /**
@@ -157,7 +156,7 @@ class SyncMessages
         // populate $gmailLabels
         foreach ($labelNames as $labelName) {
             if (!$this->gmailLabelCache[$userId]->hasLabelOfName($labelName)) {
-                $this->gmailLabelCache[$userId]->addLabel($this->gmailLabelTransformer->transform($labelName, $userId));
+                $this->gmailLabelCache[$userId]->addLabel($this->gmailLabelFactory->createFromProperties($labelName, $domain, $userId));
             }
 
             $gmailLabels[] = $this->gmailLabelCache[$userId]->getLabelOfName($labelName);
@@ -165,7 +164,7 @@ class SyncMessages
 
         // Convert the $apiMessage, with its $gmailLabels, into a GmailMessageInterface.
         // Then add it to the $allGmailMessages collection.
-        $this->gmailMessageCache[$userId]->addMessage($this->gmailMessageTransformer->transform($apiMessage, $gmailLabels, $userId, $domain));
+        $this->gmailMessageCache[$userId]->addMessage($this->gmailMessageFactory->createFromGmailApiMessage($apiMessage, $gmailLabels, $userId, $domain));
     }
 
     /**

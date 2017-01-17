@@ -5,7 +5,10 @@ namespace FL\GmailBundle\Model\Collection;
 use FL\GmailBundle\Model\GmailLabelInterface;
 
 /**
- * Class GmailLabelCollection.
+ * Abstraction of a collection of Labels
+ * This is useful to search a collection of Labels by name or userId.
+ *
+ * This class is not meant to be persisted.
  */
 class GmailLabelCollection
 {
@@ -156,7 +159,7 @@ class GmailLabelCollection
      *
      * @return bool
      */
-    public function hasLabelOfNameAndUserId(string $labelName, string $userId) : bool
+    public function hasLabelOfNameAndUserId(string $labelName, string $userId): bool
     {
         /* @var GmailLabelInterface $label */
         if ($this->getLabelOfNameAndUserId($labelName, $userId) instanceof GmailLabelInterface) {

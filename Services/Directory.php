@@ -7,9 +7,12 @@ use FL\GmailBundle\Model\GmailUser;
 use FL\GmailBundle\Model\GmailUserInterface;
 
 /**
- * Class Directory
  * This class allows us to resolve userIds and emails in a domain,
  * by communicating with an instance of @see \Google_Service_Directory.
+ *
+ * This service exists for a single \GoogleClient
+ *
+ * @see ServiceAccount::getGoogleClientForAdmin()
  */
 class Directory
 {
@@ -33,13 +36,13 @@ class Directory
     private $gmailDomain;
 
     /**
-     * Directory constructor.
-     *
      * @param \Google_Service_Directory $directory
      * @param OAuth                     $oAuth
      */
-    public function __construct(\Google_Service_Directory $directory, OAuth $oAuth)
-    {
+    public function __construct(
+        \Google_Service_Directory $directory,
+        OAuth $oAuth
+    ) {
         $this->directory = $directory;
         $this->oAuth = $oAuth;
     }
@@ -49,7 +52,7 @@ class Directory
      *
      * @return GmailDomain
      */
-    private function resolveDomain(string $domain) : GmailDomain
+    private function resolveDomain(string $domain): GmailDomain
     {
         $nextPage = null;
 
@@ -78,6 +81,9 @@ class Directory
         return $gmailDomain;
     }
 
+    /**
+     * @return GmailDomain
+     */
     private function getGmailDomain()
     {
         if (!$this->gmailDomain) {
@@ -118,6 +124,22 @@ class Directory
             default:
                 throw new \InvalidArgumentException();
         }
+    }
+
+    /**
+     * @param string $userId
+     *
+     * @return null|string
+     */
+    public function resolvePrimaryEmailFromUserId(string $userId)
+    {
+        $gmailUser = $this->getGmailDomain()->findGmailUserById($userId);
+
+        if (!($gmailUser instanceof GmailUserInterface)) {
+            return;
+        }
+
+        return $gmailUser->getPrimaryEmailAddress();
     }
 
     /**

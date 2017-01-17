@@ -2,9 +2,6 @@
 
 namespace FL\GmailBundle\Model;
 
-/**
- * Class GmailUserInterface.
- */
 class GmailUser implements GmailUserInterface
 {
     /**
@@ -22,9 +19,6 @@ class GmailUser implements GmailUserInterface
      */
     protected $emailAliases;
 
-    /**
-     * GmailUser constructor.
-     */
     public function __construct()
     {
         $this->emailAliases = [];
@@ -33,7 +27,7 @@ class GmailUser implements GmailUserInterface
     /**
      * {@inheritdoc}
      */
-    public function getUserId() : string
+    public function getUserId(): string
     {
         return $this->userId;
     }
@@ -41,7 +35,7 @@ class GmailUser implements GmailUserInterface
     /**
      * {@inheritdoc}
      */
-    public function setUserId(string $userId) : GmailUserInterface
+    public function setUserId(string $userId): GmailUserInterface
     {
         $this->userId = $userId;
 
@@ -51,7 +45,7 @@ class GmailUser implements GmailUserInterface
     /**
      * {@inheritdoc}
      */
-    public function getPrimaryEmailAddress() : string
+    public function getPrimaryEmailAddress(): string
     {
         return $this->primaryEmailAddress;
     }
@@ -59,7 +53,7 @@ class GmailUser implements GmailUserInterface
     /**
      * {@inheritdoc}
      */
-    public function setPrimaryEmailAddress(string $primaryEmailAddress) : GmailUserInterface
+    public function setPrimaryEmailAddress(string $primaryEmailAddress): GmailUserInterface
     {
         $this->primaryEmailAddress = $primaryEmailAddress;
 
@@ -69,7 +63,7 @@ class GmailUser implements GmailUserInterface
     /**
      * {@inheritdoc}
      */
-    public function getEmailAliases() : array
+    public function getEmailAliases(): array
     {
         return array_values($this->emailAliases);
     }
@@ -77,7 +71,7 @@ class GmailUser implements GmailUserInterface
     /**
      * {@inheritdoc}
      */
-    public function addEmailAlias(string $emailAlias) : GmailUserInterface
+    public function addEmailAlias(string $emailAlias): GmailUserInterface
     {
         $this->emailAliases[$emailAlias] = $emailAlias;
 
@@ -87,7 +81,7 @@ class GmailUser implements GmailUserInterface
     /**
      * {@inheritdoc}
      */
-    public function removeEmailAlias(string $emailAlias) : GmailUserInterface
+    public function removeEmailAlias(string $emailAlias): GmailUserInterface
     {
         unset($this->emailAliases[$emailAlias]);
 
@@ -97,7 +91,7 @@ class GmailUser implements GmailUserInterface
     /**
      * {@inheritdoc}
      */
-    public function getAllEmailAddresses() : array
+    public function getAllEmailAddresses(): array
     {
         $emails = $this->getEmailAliases();
         $emails[] = $this->primaryEmailAddress;

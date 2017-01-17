@@ -9,10 +9,9 @@ use FL\GmailBundle\Model\GmailIdsInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Class SyncHelper:
- * 1. Resolves GmailIds
- * 2. Informs of this, by dispatching a @see GmailSyncIdsEvent
- * 3. Informs how caught up we are with historyIds, by dispatching @see GmailSyncHistoryEvent.
+ * 1. Resolves gmail ids (all or some, depending on the type of sync), into a @see GmailIdsInterface.
+ * 2. Informs of the incoming gmail ids, by dispatching a @see GmailSyncIdsEvent.
+ * 3. Informs of how caught up we are with historyIds, by dispatching @see GmailSyncHistoryEvent.
  */
 class SyncGmailIds
 {
@@ -42,8 +41,6 @@ class SyncGmailIds
     private $gmailIdsClass;
 
     /**
-     * SyncManager constructor.
-     *
      * @param Email                    $email
      * @param EventDispatcherInterface $dispatcher
      * @param string                   $historyClass
@@ -54,8 +51,8 @@ class SyncGmailIds
         OAuth $oAuth,
         EventDispatcherInterface $dispatcher,
         string $historyClass,
-        string $gmailIdsClass)
-    {
+        string $gmailIdsClass
+    ) {
         $this->email = $email;
         $this->oAuth = $oAuth;
         $this->dispatcher = $dispatcher;
@@ -129,7 +126,7 @@ class SyncGmailIds
                      * @var \Google_Service_Gmail_Message
                      *
                      * @see \Google_Service_Gmail_History::getMessages() does not make another API call
-                     * @link https://developers.google.com/gmail/api/v1/reference/users/history/list?authuser=1
+                     * @link https://developers.google.com/gmail/api/v1/reference/users/history/list
                      */
                     foreach ($apiHistory->getMessages() as $historyMessage) {
                         $gmailIds[] = $historyMessage->getId();
@@ -186,8 +183,8 @@ class SyncGmailIds
         $gmailIdsObject
             ->setUserId($userId)
             ->setGmailIds($gmailIdsArray)
-            ->setDomain($this->oAuth->resolveDomain())
-        ;
+            ->setDomain($this->oAuth->resolveDomain());
+
         $gmailIdsEvent = new GmailSyncIdsEvent($gmailIdsObject);
         $this->dispatcher->dispatch(GmailSyncIdsEvent::EVENT_NAME, $gmailIdsEvent);
     }

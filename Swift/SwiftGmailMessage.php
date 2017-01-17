@@ -2,6 +2,10 @@
 
 namespace FL\GmailBundle\Swift;
 
+/**
+ * When sending Email using @see GmailApiTransport,
+ * use this class if you want to set a threadId.
+ */
 class SwiftGmailMessage extends \Swift_Message
 {
     /**
@@ -30,8 +34,6 @@ class SwiftGmailMessage extends \Swift_Message
     }
 
     /**
-     * Create a new Message.
-     *
      * @param string $subject
      * @param string $body
      * @param string $contentType
@@ -41,6 +43,6 @@ class SwiftGmailMessage extends \Swift_Message
      */
     public static function newInstance($subject = null, $body = null, $contentType = null, $charset = null)
     {
-        return new self($subject, $body, $contentType, $charset);
+        return new static($subject, $body, $contentType, $charset);
     }
 }

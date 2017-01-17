@@ -3,24 +3,23 @@
 namespace FL\GmailBundle\Services;
 
 /**
- * Class Email
- * This class allows us to communicate with @see Google_Service_Gmail.
+ * This service allows us to communicate with @see Google_Service_Gmail.
+ * It can send email for any user.
  */
 class Email
 {
     /**
-     * @var \Google_Service_Gmail
+     * @var GoogleServices
      */
-    private $service;
+    private $googleServices;
 
     /**
-     * Email constructor.
-     *
-     * @param \Google_Service_Gmail $service
+     * @param GoogleServices $googleClients
      */
-    public function __construct(\Google_Service_Gmail $service)
-    {
-        $this->service = $service;
+    public function __construct(
+        GoogleServices $googleClients
+    ) {
+        $this->googleServices = $googleClients;
     }
 
     /**
@@ -33,7 +32,7 @@ class Email
      */
     public function historyList(string $userId, array $options = []): \Google_Service_Gmail_ListHistoryResponse
     {
-        return $this->service->users_history->listUsersHistory($userId, $options);
+        return $this->googleServices->getGoogleServiceGmailForUserId($userId)->users_history->listUsersHistory($userId, $options);
     }
 
     /**
@@ -46,7 +45,7 @@ class Email
      */
     public function list(string $userId, array $options = []): \Google_Service_Gmail_ListMessagesResponse
     {
-        return $this->service->users_messages->listUsersMessages($userId, $options);
+        return $this->googleServices->getGoogleServiceGmailForUserId($userId)->users_messages->listUsersMessages($userId, $options);
     }
 
     /**
@@ -63,7 +62,7 @@ class Email
     public function get(string $userId, string $emailId, array $options = [])
     {
         try {
-            return $this->service->users_messages->get($userId, $emailId, $options);
+            return $this->googleServices->getGoogleServiceGmailForUserId($userId)->users_messages->get($userId, $emailId, $options);
         } catch (\Google_Service_Exception $exception) {
             // message does not exist
             if ($exception->getCode() === 404) {
@@ -110,7 +109,20 @@ class Email
      */
     public function send(string $userId, \Google_Service_Gmail_Message $message): \Google_Service_Gmail_Message
     {
-        return $this->service->users_messages->send($userId, $message);
+        return $this->googleServices->getGoogleServiceGmailForUserId($userId)->users_messages->send($userId, $message);
+    }
+
+    /**
+     * Send an email and return the full Gmail Message stored by Google as a response.
+     *
+     * @param string                        $email
+     * @param \Google_Service_Gmail_Message $message
+     *
+     * @return \Google_Service_Gmail_Message
+     */
+    public function sendFromEmail(string $email, \Google_Service_Gmail_Message $message): \Google_Service_Gmail_Message
+    {
+        return $this->googleServices->getGoogleServiceGmailForEmail($email)->users_messages->send($email, $message);
     }
 
     /**
@@ -127,7 +139,7 @@ class Email
             return;
         }
 
-        return $this->service->users_messages->trash($userId, $emailId);
+        return $this->googleServices->getGoogleServiceGmailForUserId($userId)->users_messages->trash($userId, $emailId);
     }
 
     /**
@@ -144,7 +156,7 @@ class Email
             return;
         }
 
-        return $this->service->users_messages->untrash($userId, $emailId);
+        return $this->googleServices->getGoogleServiceGmailForUserId($userId)->users_messages->untrash($userId, $emailId);
     }
 
     /**
@@ -156,7 +168,7 @@ class Email
      */
     public function getLabels(string $userId): \Google_Service_Gmail_ListLabelsResponse
     {
-        return $this->service->users_labels->listUsersLabels($userId);
+        return $this->googleServices->getGoogleServiceGmailForUserId($userId)->users_labels->listUsersLabels($userId);
     }
 
     /**

@@ -2,21 +2,24 @@
 
 namespace FL\GmailBundle\Services;
 
-use FL\GmailBundle\Token\AccessToken;
-
+/**
+ * This service predicts the status of @see ServiceAccount::getGoogleClientForAdmin()
+ * Thus it also predicts if @see Directory
+ * or @see OAuth can be called.
+ */
 class GoogleClientStatus
 {
     /**
-     * @var AccessToken
+     * @var string
      */
-    private $accessToken;
+    private $configFileLocation;
 
     /**
-     * @param AccessToken $accessToken
+     * @param string $configFileLocation
      */
-    public function __construct(AccessToken $accessToken)
+    public function __construct(string $configFileLocation)
     {
-        $this->accessToken = $accessToken;
+        $this->configFileLocation = $configFileLocation;
     }
 
     /**
@@ -24,10 +27,18 @@ class GoogleClientStatus
      */
     public function isAuthenticated()
     {
-        if (!empty($this->accessToken->getJsonToken())) {
-            return true;
+        if (is_string($this->configFileLocation)) {
+            if (!file_exists($this->configFileLocation)) {
+                return false;
+            }
+
+            $json = file_get_contents($this->configFileLocation);
+
+            if (!json_decode($json, true)) {
+                return false;
+            }
         }
 
-        return false;
+        return true;
     }
 }

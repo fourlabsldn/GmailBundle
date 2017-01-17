@@ -3,8 +3,8 @@
 [![StyleCI](https://styleci.io/repos/70251410/shield?branch=master)](https://styleci.io/repos/70251410)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/2113fe3d-8256-4009-8d0c-8a84f21a7b59/mini.png)](https://insight.sensiolabs.com/projects/2113fe3d-8256-4009-8d0c-8a84f21a7b59)
 
-GmailBundle allows you to manage a Google Apps domain's inboxes (you can pick which). In order to do this, you must authorize 
-your Symfony application, with a Google Apps admin account. Domain-wide delegation must be authorized, [What is domain-wide delegation?](https://developers.google.com/+/domains/authentication/delegation)
+GmailBundle allows you to manage a Google Apps domain's inboxes (you can pick which). In order to do this, 
+you must authorize a [service account with domain wide delegation](https://console.developers.google.com/iam-admin/serviceaccounts/serviceaccounts-zero)
 
 ## Installation
 
@@ -17,15 +17,12 @@ your Symfony application, with a Google Apps admin account. Domain-wide delegati
 ```yaml
 // app/config/config.yml
 fl_gmail:
-    application_name: YourGoogleApplicationName
-    client_id: numbers-and-letters-that-make-up-your-client-id.apps.googleusercontent.com
-    client_secret: clientSecret
-    redirect_route_after_save_authorisation: some_route_name__not_a_url
+    admin_user_email: tech@slv.global
+    json_key_location: /var/www/symfony/app/config/slv_service_account.json
     gmail_message_class: \AppBundle\Entity\GmailMessage
     gmail_label_class: \AppBundle\Entity\GmailLabel
     gmail_history_class: \AppBundle\Entity\GmailHistory
     gmail_ids_class: TriprHqBundle\Entity\GmailIds
-    credentials_storage_service: some_credentials_storage_service
     
 swiftmailer:
     default_mailer: general_mailer
@@ -39,21 +36,6 @@ swiftmailer:
         fl_gmail_api_mailer:
             transport: fl_gmail.swift_transport
 ```
-
-```yaml
-// app/config/routing.yml
-fl_gmail:
-    resource: "@FLGmailBundle/Resources/config/routing.yml"
-    prefix:   /your-prefix
-```
-
-#### Authorizing
-- This bundle comes with two controller services, which you can find a routing file for at `Resources/config/routing.yml`
-- `FL\GmailBundle\Action\AuthoriseGoogleAction` redirects the end-user (Google Apps admin) to a Google page where they authorize the Symfony application.
-- `FL\GmailBundle\Action\SaveAuthorisationAction` saves the authorization, once the user is redirected from the aforementioned Google page.
-- It is your responsibility, to provide a service that saves this authorization. See `credentials_storage_service` key in configuration.
-    - `credentials_storage_service`, must be a service that implements `FL\GmailBundle\Storage\CredentialsStorageInterface`.
-    - This service will allow you to save authorization tokens, and to retrieve them at a later time.
 
 #### Syncing Gmail Ids (i.e. Which emails need to be synced?)
 `FL\GmailBundle\Services\SyncGmailIds`
@@ -79,15 +61,13 @@ is a [GmailDoctrineBundle](https://github.com/fourlabsldn/GmailDoctrineBundle) t
 
 ### How do I dive into this bundle?
 
-- For starters, in every request, if one of the bundle's services is requested, the `fl_gmail.google_client` will be instantiated.
-- Keep in mind that `fl_gmail.google_client` depends on the `credentials_storage_service` from the configuration.
-- More details at `Resources/config/services/google.yml`. This is a good point to start.
+- Start by looking into the `Model` classes.
+- To understand the services, have a look at `Resources/config/services.yml`.
 
 ### What else is going on?
 
 - You can send swiftmailer emails through `FL\GmailBundle\Swift\GmailApiTransport`. Simply make sure the from is in your domain.
 - `FL\GmailBundle\Form\Type\InboxType` contains a choice type, with all the inboxes in the authenticated domain.
-- The service::method `FL\GmailBundle\Services\GoogleClientStatus::isAuthenticated` lets you know if there is a valid authentication token in `credentials_storage_service`.
 
 ## License
 

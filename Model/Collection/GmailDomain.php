@@ -5,7 +5,11 @@ namespace FL\GmailBundle\Model\Collection;
 use FL\GmailBundle\Model\GmailUserInterface;
 
 /**
- * Class GmailDomain.
+ * Abstraction of a Google Apps Domain:
+ * It consists of a string, for the account's domain
+ * and a list of GmailUsers.
+ *
+ * This class is not meant to be persisted.
  */
 class GmailDomain
 {

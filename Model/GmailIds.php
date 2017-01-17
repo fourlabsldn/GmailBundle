@@ -2,9 +2,6 @@
 
 namespace FL\GmailBundle\Model;
 
-/**
- * Class GmailIds.
- */
 class GmailIds implements GmailIdsInterface
 {
     /**
@@ -15,12 +12,12 @@ class GmailIds implements GmailIdsInterface
     /**
      * @var string
      */
-    protected $domain = '';
+    protected $domain;
 
     /**
-     * @var string[]|null
+     * @var string[]
      */
-    protected $gmailIds = [];
+    protected $gmailIds;
 
     /**
      * {@inheritdoc}
@@ -35,15 +32,13 @@ class GmailIds implements GmailIdsInterface
     /**
      * {@inheritdoc}
      */
-    public function getUserId()
+    public function getUserId(): string
     {
         return $this->userId;
     }
 
     /**
-     * @param string $domain
-     *
-     * @return GmailIdsInterface
+     * {@inheritdoc}
      */
     public function setDomain(string $domain): GmailIdsInterface
     {
@@ -53,7 +48,7 @@ class GmailIds implements GmailIdsInterface
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getDomain(): string
     {
@@ -73,12 +68,8 @@ class GmailIds implements GmailIdsInterface
     /**
      * {@inheritdoc}
      */
-    public function getGmailIds(int $limit = null)
+    public function getGmailIds(int $limit = null): array
     {
-        if (!is_array($this->gmailIds)) {
-            return;
-        }
-
         return array_slice($this->gmailIds, 0, $limit);
     }
 }
