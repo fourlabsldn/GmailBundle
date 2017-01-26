@@ -127,15 +127,21 @@ class SyncMessages
             $this->gmailLabelCache[$userId] = new GmailLabelCollection();
         }
 
+        $gmailIdsNotInCache = [];
         foreach ($gmailIds->getGmailIds() as $id) {
             if (!in_array($id, $this->apiMessageCache[$userId])) {
                 $this->apiMessageCache[$userId][] = $id;
-                $apiMessage = $this->email->getIfNotNote($userId, $id);
-                if ($apiMessage instanceof \Google_Service_Gmail_Message) {
-                    $this->processApiMessage($userId, $this->oAuth->resolveDomain(), $apiMessage);
-                }
+                $gmailIdsNotInCache[] = $id;
             }
         }
+
+        $apiMessages = $this->email->getBatch($userId, $gmailIdsNotInCache) ?? [];
+        foreach ($apiMessages as $apiMessage) {
+            if ($apiMessage instanceof \Google_Service_Gmail_Message) {
+                $this->processApiMessage($userId, $this->oAuth->resolveDomain(), $apiMessage);
+            }
+        }
+
         $syncEvent = new GmailSyncMessagesEvent($this->gmailMessageCache[$userId], $this->gmailLabelCache[$userId]);
         $this->dispatcher->dispatch(GmailSyncMessagesEvent::EVENT_NAME, $syncEvent);
     }

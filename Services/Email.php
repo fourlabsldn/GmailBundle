@@ -2,6 +2,8 @@
 
 namespace FL\GmailBundle\Services;
 
+use Psr\Http\Message\RequestInterface;
+
 /**
  * This service allows us to communicate with @see Google_Service_Gmail.
  * It can send email for any user.
@@ -71,6 +73,38 @@ class Email
                 throw $exception;
             }
         }
+    }
+
+    /**
+     * Will return a mixed array, because some $emailIds might have thrown errors.
+     * @see \Google_Service_Gmail_Resource_UsersMessages::get returns RequestInterface when its client is a batch client
+     * @see https://developers.google.com/api-client-library/php/guide/batch
+     *
+     * @see https://developers.google.com/gmail/api/guides/batch#overview If you need to make more than 100 calls, use multiple batch requests.
+     * @see https://developers.google.com/gmail/api/v1/reference/quota Sending batches larger than 50 requests is not recommended. (rate limiting)
+     *
+     * @param string $userId
+     * @param array $emailIds
+     * @param array $options
+     *
+     * @return \Google_Service_Gmail_Message[]|mixed[]|null
+     */
+    public function getBatch(string $userId, array $emailIds, array $options = [])
+    {
+        $gmailBatchService = $this->googleServices->getGoogleBatchServiceGmailForUserId($userId);
+        $gmailBatchClient = $gmailBatchService->getClient();
+
+        $batchResponses = [];
+        foreach (array_chunk($emailIds, 45)  as $gmailIds) {
+            $batchRequest = new \Google_Http_Batch($gmailBatchClient);
+            foreach ($gmailIds as $gmailId) {
+                /** @var RequestInterface $emailRequest */
+                $emailRequest = $gmailBatchService->users_messages->get($userId, $gmailId, $options);
+                $batchRequest->add($emailRequest);
+            }
+            $batchResponses = array_merge($batchResponses, $batchRequest->execute());
+        }
+        return $batchResponses;
     }
 
     /**
