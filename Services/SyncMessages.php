@@ -42,13 +42,8 @@ class SyncMessages
     private $gmailLabelFactory;
 
     /**
-     * $this->apiLabelCache[$userId][$labelId] = $labelName.
+     * This is used to ensure a user's message isn't retrieved from the API twice.
      *
-     * @var array
-     */
-    private $apiLabelCache = [];
-
-    /**
      * Keys are $userId
      * Values are $messageId.
      *
@@ -56,12 +51,15 @@ class SyncMessages
      */
     private $apiMessageCache = [];
 
+
     /**
-     * Keys are $userId.
+     * This is used to ensure a user's list of labels isn't retrieved from the API twice.
      *
-     * @var GmailLabelCollection[]
+     * $this->apiLabelCache[$userId][$labelId] = $labelName.
+     *
+     * @var array
      */
-    private $gmailLabelCache = [];
+    private $apiLabelCache = [];
 
     /**
      * Keys are $userId.
@@ -69,6 +67,13 @@ class SyncMessages
      * @var GmailMessageCollection[]
      */
     private $gmailMessageCache = [];
+
+    /**
+     * Keys are $userId.
+     *
+     * @var GmailLabelCollection[]
+     */
+    private $gmailLabelCache = [];
 
     /**
      * SyncManager constructor.
@@ -94,12 +99,34 @@ class SyncMessages
     }
 
     /**
+     * Processes emails using the API based on given $gmailIds.
+     *
      * @param GmailIdsInterface $gmailIds
      */
     public function syncFromGmailIds(GmailIdsInterface $gmailIds)
     {
         $userId = $gmailIds->getUserId();
-        $this->verifyCaches($userId);
+
+        // Initialize $this->apiMessageCache for this user
+        if (!array_key_exists($userId, $this->apiMessageCache)) {
+            $this->apiMessageCache[$userId] = [];
+        }
+        // Initialize $this->apiLabelCache for this user
+        // And populate it right away.
+        if (!array_key_exists($userId, $this->apiLabelCache)) {
+            $this->apiLabelCache[$userId] = [];
+            foreach ($this->email->getLabels($userId) as $label) {
+                $this->apiLabelCache[$userId][$label->id] = $label->name;
+            }
+        }
+        // Initialize $this->gmailMessageCache for this user
+        if (!array_key_exists($userId, $this->gmailMessageCache)) {
+            $this->gmailMessageCache[$userId] = new GmailMessageCollection();
+        }
+        // Initialize $this->gmailLabelCache for this user
+        if (!array_key_exists($userId, $this->gmailLabelCache)) {
+            $this->gmailLabelCache[$userId] = new GmailLabelCollection();
+        }
 
         foreach ($gmailIds->getGmailIds() as $id) {
             if (!in_array($id, $this->apiMessageCache[$userId])) {
@@ -110,90 +137,49 @@ class SyncMessages
                 }
             }
         }
-        $this->dispatchSyncEndEvent($userId);
+        $syncEvent = new GmailSyncMessagesEvent($this->gmailMessageCache[$userId], $this->gmailLabelCache[$userId]);
+        $this->dispatcher->dispatch(GmailSyncMessagesEvent::EVENT_NAME, $syncEvent);
     }
 
-    /**
-     * Get label names from the API based on given $labelIds.
-     *
-     * @param string        $userId
-     * @param string[]|null $labelIds
-     *
-     * @return string[]
-     */
-    private function resolveLabelNames(string $userId, array $labelIds = null)
-    {
-        $this->verifyCaches($userId);
-
-        if (!is_array($labelIds)) {
-            $labelIds = [];
-        }
-
-        foreach ($this->email->getLabels($userId) as $label) {
-            $this->apiLabelCache[$userId][$label->id] = $label->name;
-        }
-
-        return array_filter($this->apiLabelCache[$userId], function ($labelName, $labelId) use ($labelIds) {
-            return in_array($labelId, $labelIds);
-        }, ARRAY_FILTER_USE_BOTH);
-    }
 
     /**
-     * When converting and placing a batch of $apiMessages into $allGmailMessages,
-     * we must not create a new $gmailLabel, if the label's name has been used previously.
-     *
      * @param string                        $userId
      * @param string                        $domain
      * @param \Google_Service_Gmail_Message $apiMessage
      */
     private function processApiMessage(string $userId, string $domain, \Google_Service_Gmail_Message $apiMessage)
     {
-        $this->verifyCaches($userId);
+        $gmailLabelsInMessage = [];
 
-        $labelNames = $this->resolveLabelNames($userId, $apiMessage->getLabelIds());
-        $gmailLabels = [];
-
-        // populate $gmailLabels
-        foreach ($labelNames as $labelName) {
+        // Populate $this->gmailLabelCache[$userId] (which is a GmailLabelsCollection)
+        // A label with the same name, belonging to the same user will not be converted to a GmailLabel more than once.
+        // That way two messages with the same label, have the same instance of that GmailLabel.
+        foreach ($this->labelNames($userId, $apiMessage) as $labelName) {
             if (!$this->gmailLabelCache[$userId]->hasLabelOfName($labelName)) {
                 $this->gmailLabelCache[$userId]->addLabel($this->gmailLabelFactory->createFromProperties($labelName, $domain, $userId));
             }
 
-            $gmailLabels[] = $this->gmailLabelCache[$userId]->getLabelOfName($labelName);
+            $gmailLabelsInMessage[] = $this->gmailLabelCache[$userId]->getLabelOfName($labelName);
         }
 
-        // Convert the $apiMessage, with its $gmailLabels, into a GmailMessageInterface.
-        // Then add it to the $allGmailMessages collection.
-        $this->gmailMessageCache[$userId]->addMessage($this->gmailMessageFactory->createFromGmailApiMessage($apiMessage, $gmailLabels, $userId, $domain));
+        // Populate $this->gmailMessageCache[$userId] (which is a GmailMessageCollection)
+        $this->gmailMessageCache[$userId]->addMessage($this->gmailMessageFactory->createFromGmailApiMessage($apiMessage, $gmailLabelsInMessage, $userId, $domain));
     }
 
     /**
      * @param string $userId
+     * @param \Google_Service_Gmail_Message $apiMessage
+     * @return string[]
      */
-    private function verifyCaches(string $userId)
+    private function labelNames(string $userId, \Google_Service_Gmail_Message $apiMessage)
     {
-        if (!array_key_exists($userId, $this->apiLabelCache)) {
-            $this->apiLabelCache[$userId] = [];
+        $labelNames = [];
+        if (is_array($labelIds = $apiMessage->getLabelIds())) { // $labelIds might be null
+            $labelNames = array_filter($this->apiLabelCache[$userId], function ($labelName, $labelId) use ($labelIds) {
+                return in_array($labelId, $labelIds);
+            }, ARRAY_FILTER_USE_BOTH);
         }
-        if (!array_key_exists($userId, $this->apiMessageCache)) {
-            $this->apiMessageCache[$userId] = [];
-        }
-        if (!array_key_exists($userId, $this->gmailLabelCache)) {
-            $this->gmailLabelCache[$userId] = new GmailLabelCollection();
-        }
-        if (!array_key_exists($userId, $this->gmailMessageCache)) {
-            $this->gmailMessageCache[$userId] = new GmailMessageCollection();
-        }
-    }
 
-    /**
-     * @param string $userId
-     */
-    private function dispatchSyncEndEvent(string $userId)
-    {
-        $this->verifyCaches($userId);
-
-        $syncEvent = new GmailSyncMessagesEvent($this->gmailMessageCache[$userId], $this->gmailLabelCache[$userId]);
-        $this->dispatcher->dispatch(GmailSyncMessagesEvent::EVENT_NAME, $syncEvent);
+        return $labelNames;
     }
 }
