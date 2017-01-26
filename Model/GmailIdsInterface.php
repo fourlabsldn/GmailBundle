@@ -36,6 +36,7 @@ interface GmailIdsInterface
 
     /**
      * By convention, place latestIds first in the array.
+     * Make sure to filter out repeat gmailIds when implementing this method.
      *
      * @param string[] $gmailIds
      *
