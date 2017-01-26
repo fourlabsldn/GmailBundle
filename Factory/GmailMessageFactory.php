@@ -65,7 +65,11 @@ class GmailMessageFactory
                     $message->setTo($header->getValue());
                     break;
                 case 'Date':
-                    $date = new \DateTime($header->getValue());
+                    // Google Dates come with an extra timezone.
+                    // E.g. "Tue, 24 Jan 2017 12:00:02 +0000 (GMT Standard Time)" "Tue, 24 Jan 2017 12:00:02 +0000"
+                    $dateString = preg_replace('/\(.+\)/', '', $header->getValue());
+                    $date = new \DateTime($dateString);
+                    //convert the date to the system's default timezone
                     $date->setTimezone(new \DateTimeZone(date_default_timezone_get()));
                     $message->setSentAt($date);
                     break;

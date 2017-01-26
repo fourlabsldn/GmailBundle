@@ -52,7 +52,7 @@ swiftmailer:
 - I.e. use the ids you are fetching from `FL\GmailBundle\Services\SyncGmailIds`
 - Dispatches `FL\GmailBundle\Event\GmailSyncMessagesEvent`.
 - It is your responsibility to save the Gmail Messages coming from this event.
-- It is your responsibility to remove the newly synced Gmail Ids, you had previously saved at `FL\GmailBundle\Services\SyncGmailIds`.
+- It is your responsibility to remove the newly synced Gmail Ids, you had previously saved with `FL\GmailBundle\Services\SyncGmailIds`.
 
 #### All this responsibility? :cry: :sob:
 
