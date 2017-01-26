@@ -18,11 +18,11 @@ you must authorize a [service account with domain wide delegation](https://conso
 // app/config/config.yml
 fl_gmail:
     admin_user_email: tech@slv.global
-    json_key_location: /var/www/symfony/app/config/slv_service_account.json
+    json_key_location: /var/www/symfony/app/config/service_account_private_key.json
     gmail_message_class: \AppBundle\Entity\GmailMessage
     gmail_label_class: \AppBundle\Entity\GmailLabel
     gmail_history_class: \AppBundle\Entity\GmailHistory
-    gmail_ids_class: TriprHqBundle\Entity\GmailIds
+    gmail_ids_class: \AppBundle\Entity\GmailIds
     
 swiftmailer:
     default_mailer: general_mailer
