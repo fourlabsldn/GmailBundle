@@ -38,6 +38,13 @@ class ServiceAccount
     private $googleClients;
 
     /**
+     * User emails as keys.
+     *
+     * @var \Google_Client[]
+     */
+    private $googleBatchClients;
+
+    /**
      * This service should be lazy.
      * In order to check if this service can be called,.
      *
@@ -53,6 +60,7 @@ class ServiceAccount
         $this->adminUserEmail = $adminUserEmail;
         $this->configFileLocation = $configFileLocation;
         $this->googleClients = [];
+        $this->googleBatchClients = [];
     }
 
     /**
@@ -90,6 +98,46 @@ class ServiceAccount
         $googleClient->setSubject($userEmail);
 
         $this->googleClients[$userEmail] = $googleClient;
+
+        return $googleClient;
+    }
+
+    /**
+     * @return \Google_Client
+     */
+    public function getGoogleBatchClientForAdmin()
+    {
+        return $this->createGoogleBatchClient($this->adminUserEmail);
+    }
+
+    /**
+     * @param string $email
+     *
+     * @return \Google_Client
+     */
+    public function getGoogleBatchClientForEmail(string $email)
+    {
+        return $this->createGoogleBatchClient($email);
+    }
+
+    /**
+     * @param string $userEmail
+     *
+     * @return \Google_Client
+     */
+    private function createGoogleBatchClient(string $userEmail)
+    {
+        if (array_key_exists($userEmail, $this->googleBatchClients)) {
+            return $this->googleBatchClients[$userEmail];
+        }
+
+        $googleClient = new \Google_Client();
+        $googleClient->setScopes(static::SCOPES);
+        $googleClient->setAuthConfig($this->configFileLocation);
+        $googleClient->setSubject($userEmail);
+        $googleClient->setUseBatch(true);
+
+        $this->googleBatchClients[$userEmail] = $googleClient;
 
         return $googleClient;
     }
