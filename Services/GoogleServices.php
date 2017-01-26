@@ -98,7 +98,6 @@ class GoogleServices
         return $googleServiceGmail;
     }
 
-
     /**
      * @param string $email
      *

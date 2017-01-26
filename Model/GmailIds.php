@@ -59,6 +59,7 @@ class GmailIds implements GmailIdsInterface
      * Do not include a gmailId more than once.
      * This might be a large array, so do not use array_unique.
      * Note that this still preserves the order of the ids inside $gmailIds.
+     *
      * @see http://stackoverflow.com/questions/8321620/array-unique-vs-array-flip
      *
      * {@inheritdoc}
