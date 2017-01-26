@@ -142,6 +142,8 @@ class SyncMessages
                 $this->processApiMessage($userId, $this->oAuth->resolveDomain(), $apiMessage);
                 $processedGmailIds[] = $apiMessage->getId();
             }
+            // Todo Messages That Weren't Found should be marked as processed
+            // e.g. Messages that were deleted in gmail, but not in our application
         }
 
         $syncEvent = new GmailSyncMessagesEvent($this->gmailMessageCache[$userId], $this->gmailLabelCache[$userId], $processedGmailIds, $userId);
