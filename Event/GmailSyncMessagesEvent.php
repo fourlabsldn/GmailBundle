@@ -13,6 +13,10 @@ use Symfony\Component\EventDispatcher\Event;
  * The GmailLabels are inside the GmailMessages,
  * but having a separate collection for them helps with persistence,
  * since it becomes easier to query existing Labels.
+ *
+ * The GmailIds are also inside the GmailMessages,
+ * but having a separate array with them helps with persistence,
+ * since it becomes easier to get a list of $gmailIds that were synced.
  */
 class GmailSyncMessagesEvent extends Event
 {
@@ -29,15 +33,23 @@ class GmailSyncMessagesEvent extends Event
     protected $labelCollection;
 
     /**
+     * @var string[]
+     */
+    protected $gmailIds;
+
+    /**
      * @param GmailMessageCollection $messageCollection
      * @param GmailLabelCollection   $labelCollection
+     * @param string[]               $gmailIds
      */
     public function __construct(
         GmailMessageCollection $messageCollection,
-        GmailLabelCollection $labelCollection
+        GmailLabelCollection $labelCollection,
+        array $gmailIds
     ) {
         $this->messageCollection = $messageCollection;
         $this->labelCollection = $labelCollection;
+        $this->gmailIds = $gmailIds;
     }
 
     /**
@@ -54,5 +66,13 @@ class GmailSyncMessagesEvent extends Event
     public function getLabelCollection()
     {
         return $this->labelCollection;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getGmailIds()
+    {
+        return $this->gmailIds;
     }
 }
