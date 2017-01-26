@@ -77,15 +77,15 @@ class Email
 
     /**
      * Will return a mixed array, because some $emailIds might have thrown errors.
+     *
      * @see \Google_Service_Gmail_Resource_UsersMessages::get returns RequestInterface when its client is a batch client
      * @see https://developers.google.com/api-client-library/php/guide/batch
-     *
      * @see https://developers.google.com/gmail/api/guides/batch#overview If you need to make more than 100 calls, use multiple batch requests.
      * @see https://developers.google.com/gmail/api/v1/reference/quota Sending batches larger than 50 requests is not recommended. (rate limiting)
      *
      * @param string $userId
-     * @param array $emailIds
-     * @param array $options
+     * @param array  $emailIds
+     * @param array  $options
      *
      * @return \Google_Service_Gmail_Message[]|mixed[]|null
      */
@@ -104,6 +104,7 @@ class Email
             }
             $batchResponses = array_merge($batchResponses, $batchRequest->execute());
         }
+
         return $batchResponses;
     }
 
