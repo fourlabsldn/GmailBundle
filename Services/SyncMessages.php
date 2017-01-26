@@ -51,7 +51,6 @@ class SyncMessages
      */
     private $apiMessageCache = [];
 
-
     /**
      * This is used to ensure a user's list of labels isn't retrieved from the API twice.
      *
@@ -141,7 +140,6 @@ class SyncMessages
         $this->dispatcher->dispatch(GmailSyncMessagesEvent::EVENT_NAME, $syncEvent);
     }
 
-
     /**
      * @param string                        $userId
      * @param string                        $domain
@@ -167,8 +165,9 @@ class SyncMessages
     }
 
     /**
-     * @param string $userId
+     * @param string                        $userId
      * @param \Google_Service_Gmail_Message $apiMessage
+     *
      * @return string[]
      */
     private function labelNames(string $userId, \Google_Service_Gmail_Message $apiMessage)
