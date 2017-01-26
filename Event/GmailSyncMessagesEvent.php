@@ -17,6 +17,10 @@ use Symfony\Component\EventDispatcher\Event;
  * The GmailIds are also inside the GmailMessages,
  * but having a separate array with them helps with persistence,
  * since it becomes easier to get a list of $gmailIds that were synced.
+ *
+ * The UserId is also inside the GmailMessages,
+ * but having a separate property helps with persistence,
+ * since it becomes easier to get which $userId was synced.
  */
 class GmailSyncMessagesEvent extends Event
 {
@@ -38,18 +42,26 @@ class GmailSyncMessagesEvent extends Event
     protected $gmailIds;
 
     /**
+     * @var string
+     */
+    protected $userId;
+
+    /**
      * @param GmailMessageCollection $messageCollection
      * @param GmailLabelCollection   $labelCollection
      * @param string[]               $gmailIds
+     * @param string                 $userId
      */
     public function __construct(
         GmailMessageCollection $messageCollection,
         GmailLabelCollection $labelCollection,
-        array $gmailIds
+        array $gmailIds,
+        string $userId
     ) {
         $this->messageCollection = $messageCollection;
         $this->labelCollection = $labelCollection;
         $this->gmailIds = $gmailIds;
+        $this->userId = $userId;
     }
 
     /**
@@ -74,5 +86,13 @@ class GmailSyncMessagesEvent extends Event
     public function getGmailIds()
     {
         return $this->gmailIds;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUserId()
+    {
+        return $this->userId;
     }
 }

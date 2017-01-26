@@ -144,7 +144,7 @@ class SyncMessages
             }
         }
 
-        $syncEvent = new GmailSyncMessagesEvent($this->gmailMessageCache[$userId], $this->gmailLabelCache[$userId], $processedGmailIds);
+        $syncEvent = new GmailSyncMessagesEvent($this->gmailMessageCache[$userId], $this->gmailLabelCache[$userId], $processedGmailIds, $userId);
         $this->dispatcher->dispatch(GmailSyncMessagesEvent::EVENT_NAME, $syncEvent);
     }
 
