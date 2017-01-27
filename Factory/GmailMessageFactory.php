@@ -53,16 +53,16 @@ class GmailMessageFactory
         /** @var \Google_Service_Gmail_MessagePart $payload */
         $payload = $gmailApiMessage->getPayload();
         /** @var \Google_Service_Gmail_MessagePartHeader[] $headers */
-        $headers = $payload->getHeaders();
+        $headers = $payload->getHeaders() ?? [];
 
         $headerNames = [];
         foreach ($headers as $header) {
             switch ($header->getName()) {
                 case 'From':
-                    $message->setFrom($header->getValue());
+                    $message->setFrom($header->getValue() ?? '');
                     break;
                 case 'To':
-                    $message->setTo($header->getValue());
+                    $message->setTo($header->getValue() ?? '');
                     break;
                 case 'Subject':
                     $message->setSubject($header->getValue() ?? '');
@@ -71,7 +71,7 @@ class GmailMessageFactory
             $headerNames[] = $header->getName();
         }
 
-        // If From / To Headers aren't there, fail gracefully
+        // If From / To / Subject Headers aren't there, fail gracefully
         if (!in_array('From', $headerNames)) {
             $message->setFrom('');
         }
