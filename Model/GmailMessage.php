@@ -324,6 +324,16 @@ class GmailMessage implements GmailMessageInterface
     /**
      * {@inheritdoc}
      */
+    public function setBodyPlainText(string $bodyPlainText): GmailMessageInterface
+    {
+        $this->bodyPlainText = $bodyPlainText;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getBodyPlainText(): string
     {
         return $this->bodyPlainText;
@@ -335,6 +345,16 @@ class GmailMessage implements GmailMessageInterface
     public function setBodyHtmlFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage): GmailMessageInterface
     {
         $this->bodyHtml = static::resolveBodyHtmlFromApiMessage($gmailApiMessage) ?? '';
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setBodyHtml(string $bodyHtml): GmailMessageInterface
+    {
+        $this->bodyHtml = $bodyHtml;
 
         return $this;
     }

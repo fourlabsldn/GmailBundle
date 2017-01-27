@@ -188,6 +188,13 @@ interface GmailMessageInterface
     public function getBodyPlainText(): string;
 
     /**
+     * @param string $bodyPlainText
+     *
+     * @return GmailMessageInterface
+     */
+    public function setBodyPlainText(string $bodyPlainText): GmailMessageInterface;
+
+    /**
      * Set from a \Google_Service_Gmail_Message (from the API).
      *
      * This method is used the first time a message is resolved.
@@ -199,6 +206,13 @@ interface GmailMessageInterface
      * @return GmailMessageInterface
      */
     public function setBodyHtmlFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage): GmailMessageInterface;
+
+    /**
+     * @param string $bodyHtml
+     *
+     * @return GmailMessageInterface
+     */
+    public function setBodyHtml(string $bodyHtml): GmailMessageInterface;
 
     /**
      * @return string
