@@ -64,15 +64,6 @@ class GmailMessageFactory
                 case 'To':
                     $message->setTo($header->getValue());
                     break;
-                case 'Date':
-                    // Google Dates come with an extra timezone.
-                    // E.g. "Tue, 24 Jan 2017 12:00:02 +0000 (GMT Standard Time)" "Tue, 24 Jan 2017 12:00:02 +0000"
-                    $dateString = preg_replace('/\(.+\)/', '', $header->getValue());
-                    $date = new \DateTime($dateString);
-                    //convert the date to the system's default timezone
-                    $date->setTimezone(new \DateTimeZone(date_default_timezone_get()));
-                    $message->setSentAt($date);
-                    break;
                 case 'Subject':
                     $message->setSubject($header->getValue() ?? '');
                     break;
@@ -87,14 +78,16 @@ class GmailMessageFactory
         if (!in_array('To', $headerNames)) {
             $message->setTo('');
         }
-        if (!in_array('Date', $headerNames)) {
-            $message->setSentAt(new \DateTime());
-        }
         if (!in_array('Subject', $headerNames)) {
             $message->setSubject('');
         }
 
+        $unixMilliseconds = $gmailApiMessage->getInternalDate();
+        $unixSeconds = preg_replace('/...$/', '', $unixMilliseconds);
+        $sentAt = (new \DateTime())->setTimestamp((int) $unixSeconds);
+
         $message
+            ->setSentAt($sentAt)
             ->setUserId($userId)
             ->setGmailId($gmailApiMessage->getId())
             ->setThreadId($gmailApiMessage->getThreadId())
