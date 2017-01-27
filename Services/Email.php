@@ -109,32 +109,6 @@ class Email
     }
 
     /**
-     * Notes are messages that don't have 'from' or 'to' headers.
-     *
-     * @param string $userId
-     * @param string $emailId
-     * @param array  $options
-     *
-     * @return \Google_Service_Gmail_Message|null
-     */
-    public function getIfNotNote(string $userId, string $emailId, array $options = [])
-    {
-        $fetchedApiMessage = $this->get($userId, $emailId, $options);
-
-        $isNotApiMessage = !($fetchedApiMessage instanceof \Google_Service_Gmail_Message);
-        if ($isNotApiMessage) {
-            return;
-        }
-
-        $isApiMessageANote = !($this->hasHeader($fetchedApiMessage, 'To') && $this->hasHeader($fetchedApiMessage, 'From'));
-        if ($isApiMessageANote) {
-            return;
-        }
-
-        return $fetchedApiMessage;
-    }
-
-    /**
      * Send an email and return the full Gmail Message stored by Google as a response.
      *
      * @param string                        $userId
@@ -204,28 +178,5 @@ class Email
     public function getLabels(string $userId): \Google_Service_Gmail_ListLabelsResponse
     {
         return $this->googleServices->getGoogleServiceGmailForUserId($userId)->users_labels->listUsersLabels($userId);
-    }
-
-    /**
-     * Return true if this Gmail Message has a header as specified in $header.
-     * Because the order and amount of Gmail headers is not deterministic,
-     * we need to loop through all the headers until we find the right one.
-     *
-     * @param \Google_Service_Gmail_Message $message
-     * @param string                        $headerName
-     *
-     * @return bool
-     */
-    private function hasHeader(\Google_Service_Gmail_Message $message, string $headerName): bool
-    {
-        /** @var \Google_Service_Gmail_MessagePartHeader[] $headers */
-        $headers = $message->getPayload()->getHeaders();
-        foreach ($headers as $header) {
-            if ($header->getName() === $headerName && $header->getValue() !== '') {
-                return true;
-            }
-        }
-
-        return false;
     }
 }
