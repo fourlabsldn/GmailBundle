@@ -157,6 +157,29 @@ class SyncMessages
      */
     private function processApiMessage(string $userId, string $domain, \Google_Service_Gmail_Message $apiMessage)
     {
+        /** @var \Google_Service_Gmail_MessagePart $payload */
+        $payload = $apiMessage->getPayload();
+        /** @var \Google_Service_Gmail_MessagePartHeader[] $headers */
+        $headers = $payload->getHeaders() ?? [];
+
+        // Messages with nonexistent, null, or empty From/To headers should not be saved.
+        $headerNames = [];
+        foreach ($headers as $header) {
+            if (
+                ($header->getName() === 'From' || $header->getName() === 'To') &&
+                ($header->getValue() === null || $header->getValue() === '')
+            ) {
+                return;
+            }
+            $headerNames[] = $header->getName();
+        }
+        if (
+            (!in_array('From', $headerNames)) ||
+            (!in_array('To', $headerNames))
+        ) {
+            return;
+        }
+
         $gmailLabelsInMessage = [];
 
         // Populate $this->gmailLabelCache[$userId] (which is a GmailLabelsCollection)
