@@ -135,16 +135,13 @@ class SyncMessages
             }
         }
 
-        $apiMessages = $this->email->getBatch($userId, $gmailIdsNotInCache) ?? [];
-        $processedGmailIds = [];
-        foreach ($apiMessages as $apiMessage) {
-            if ($apiMessage instanceof \Google_Service_Gmail_Message) {
-                $this->processApiMessage($userId, $this->oAuth->resolveDomain(), $apiMessage);
-                $processedGmailIds[] = $apiMessage->getId();
-            }
-            // Todo Messages That Weren't Found should be marked as processed
-            // e.g. Messages that were deleted in gmail, but not in our application
+        $batchResponse = $this->email->getBatch($userId, $gmailIdsNotInCache) ?? [];
+        foreach ($batchResponse->getFoundApiMessages() as $apiMessage) {
+            $this->processApiMessage($userId, $this->oAuth->resolveDomain(), $apiMessage);
         }
+        // Mark all emails as processed, including those that weren't found.
+        // E.g. gmailIds that have now been deleted in gmail.
+        $processedGmailIds = $batchResponse->getAllGmailIdsRequested();
 
         $syncEvent = new GmailSyncMessagesEvent($this->gmailMessageCache[$userId], $this->gmailLabelCache[$userId], $processedGmailIds, $userId);
         $this->dispatcher->dispatch(GmailSyncMessagesEvent::EVENT_NAME, $syncEvent);

@@ -2,6 +2,7 @@
 
 namespace FL\GmailBundle\Services;
 
+use FL\GmailBundle\DataObject\BatchEmailResponse;
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -87,9 +88,12 @@ class Email
      * @param array  $emailIds
      * @param array  $options
      *
-     * @return \Google_Service_Gmail_Message[]|mixed[]|null
+     * @return BatchEmailResponse
+     *
+     * @throws \Google_Service_Gmail_Message
+     * @throws \Google_Service_Exception
      */
-    public function getBatch(string $userId, array $emailIds, array $options = [])
+    public function getBatch(string $userId, array $emailIds, array $options = []): BatchEmailResponse
     {
         $gmailBatchService = $this->googleServices->getGoogleBatchServiceGmailForUserId($userId);
         $gmailBatchClient = $gmailBatchService->getClient();
@@ -105,7 +109,30 @@ class Email
             $batchResponses = array_merge($batchResponses, $batchRequest->execute());
         }
 
-        return $batchResponses;
+        $foundApiMessages = [];
+        foreach ($batchResponses as $response) {
+            if ($response instanceof \Google_Service_Gmail_Message) {
+                $foundApiMessages[] = $response;
+                continue;
+            }
+            if (
+                $response instanceof \Google_Service_Exception &&
+                $response->getCode() === 404
+            ) {
+                continue;
+            }
+            if ($response instanceof \Google_Service_Exception) {
+                throw $response;
+            }
+            throw new \RuntimeException(sprintf(
+                'Expected response to be of class %s or %s, but instead got %s',
+                \Google_Service_Gmail_Message::class,
+                \Google_Service_Exception::class,
+                get_class($response)
+            ));
+        }
+
+        return new BatchEmailResponse($foundApiMessages, $emailIds);
     }
 
     /**
