@@ -19,9 +19,8 @@ class Email
     /**
      * @param GoogleServices $googleClients
      */
-    public function __construct(
-        GoogleServices $googleClients
-    ) {
+    public function __construct(GoogleServices $googleClients)
+    {
         $this->googleServices = $googleClients;
     }
 
@@ -62,14 +61,14 @@ class Email
      *
      * @throws \Google_Service_Exception
      */
-    public function get(string $userId, string $emailId, array $options = [])
+    public function get(string $userId, string $emailId, array $options = []): ?\Google_Service_Gmail_Message
     {
         try {
             return $this->googleServices->getGoogleServiceGmailForUserId($userId)->users_messages->get($userId, $emailId, $options);
         } catch (\Google_Service_Exception $exception) {
             // message does not exist
             if ($exception->getCode() === 404) {
-                return;
+                return null;
             } else {
                 throw $exception;
             }
@@ -169,10 +168,10 @@ class Email
      *
      * @return \Google_Service_Gmail_Message|null
      */
-    public function trash(string $userId, string $emailId): \Google_Service_Gmail_Message
+    public function trash(string $userId, string $emailId): ?\Google_Service_Gmail_Message
     {
         if ($this->get($userId, $emailId)) {
-            return;
+            return null;
         }
 
         return $this->googleServices->getGoogleServiceGmailForUserId($userId)->users_messages->trash($userId, $emailId);
@@ -186,10 +185,10 @@ class Email
      *
      * @return \Google_Service_Gmail_Message|null
      */
-    public function untrash(string $userId, string $emailId): \Google_Service_Gmail_Message
+    public function untrash(string $userId, string $emailId): ?\Google_Service_Gmail_Message
     {
         if ($this->get($userId, $emailId)) {
-            return;
+            return null;
         }
 
         return $this->googleServices->getGoogleServiceGmailForUserId($userId)->users_messages->untrash($userId, $emailId);
