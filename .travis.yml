@@ -10,3 +10,4 @@ matrix:
 before_script:
   - composer require "swiftmailer/swiftmailer:${SWIFT_VERSION}" --no-update
   - composer install --no-interaction --dev
+

@@ -99,7 +99,7 @@ class Email
 
         $batchResponses = [];
         foreach (array_chunk($emailIds, 45)  as $gmailIds) {
-            $batchRequest = new \Google_Http_Batch($gmailBatchClient);
+            $batchRequest = new \Google_Http_Batch($gmailBatchClient, false, null, 'batch/gmail/v1');
             foreach ($gmailIds as $gmailId) {
                 /** @var RequestInterface $emailRequest */
                 $emailRequest = $gmailBatchService->users_messages->get($userId, $gmailId, $options);
