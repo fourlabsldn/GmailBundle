@@ -163,8 +163,8 @@ class SyncMessages
         $headerNames = [];
         foreach ($headers as $header) {
             if (
-                ($header->getName() === 'From' || $header->getName() === 'To') &&
-                ($header->getValue() === null || $header->getValue() === '')
+                ('From' === $header->getName() || 'To' === $header->getName()) &&
+                (null === $header->getValue() || '' === $header->getValue())
             ) {
                 return;
             }

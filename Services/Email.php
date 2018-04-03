@@ -67,7 +67,7 @@ class Email
             return $this->googleServices->getGoogleServiceGmailForUserId($userId)->users_messages->get($userId, $emailId, $options);
         } catch (\Google_Service_Exception $exception) {
             // message does not exist
-            if ($exception->getCode() === 404) {
+            if (404 === $exception->getCode()) {
                 return null;
             } else {
                 throw $exception;
@@ -112,17 +112,19 @@ class Email
         foreach ($batchResponses as $response) {
             if ($response instanceof \Google_Service_Gmail_Message) {
                 $foundApiMessages[] = $response;
+
                 continue;
             }
             if (
                 $response instanceof \Google_Service_Exception &&
-                $response->getCode() === 404
+                404 === $response->getCode()
             ) {
                 continue;
             }
             if ($response instanceof \Google_Service_Exception) {
                 throw $response;
             }
+
             throw new \RuntimeException(sprintf(
                 'Expected response to be of class %s or %s, but instead got %s',
                 \Google_Service_Gmail_Message::class,

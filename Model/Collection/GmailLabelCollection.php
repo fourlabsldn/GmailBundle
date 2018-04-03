@@ -30,7 +30,7 @@ class GmailLabelCollection
      *
      * @return GmailLabelCollection
      */
-    public function addLabel(GmailLabelInterface $label): GmailLabelCollection
+    public function addLabel(GmailLabelInterface $label): self
     {
         $this->labels->attach($label);
 
@@ -42,7 +42,7 @@ class GmailLabelCollection
      *
      * @return GmailLabelCollection
      */
-    public function removeLabel(GmailLabelInterface $label): GmailLabelCollection
+    public function removeLabel(GmailLabelInterface $label): self
     {
         $this->labels->detach($label);
 

@@ -29,7 +29,7 @@ class GmailMessageCollection
      *
      * @return GmailMessageCollection
      */
-    public function addMessage(GmailMessageInterface $message): GmailMessageCollection
+    public function addMessage(GmailMessageInterface $message): self
     {
         $this->messages->attach($message);
 
@@ -41,7 +41,7 @@ class GmailMessageCollection
      *
      * @return GmailMessageCollection
      */
-    public function removeMessage(GmailMessageInterface $message): GmailMessageCollection
+    public function removeMessage(GmailMessageInterface $message): self
     {
         $this->messages->detach($message);
 

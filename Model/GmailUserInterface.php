@@ -20,7 +20,7 @@ interface GmailUserInterface
      *
      * @return GmailUserInterface
      */
-    public function setUserId(string $userId): GmailUserInterface;
+    public function setUserId(string $userId): self;
 
     /**
      * @return string
@@ -32,7 +32,7 @@ interface GmailUserInterface
      *
      * @return GmailUserInterface
      */
-    public function setPrimaryEmailAddress(string $primaryEmailAddress): GmailUserInterface;
+    public function setPrimaryEmailAddress(string $primaryEmailAddress): self;
 
     /**
      * @return string[]
@@ -44,14 +44,14 @@ interface GmailUserInterface
      *
      * @return GmailUserInterface
      */
-    public function addEmailAlias(string $emailAlias): GmailUserInterface;
+    public function addEmailAlias(string $emailAlias): self;
 
     /**
      * @param string $emailAlias
      *
      * @return GmailUserInterface
      */
-    public function removeEmailAlias(string $emailAlias): GmailUserInterface;
+    public function removeEmailAlias(string $emailAlias): self;
 
     /**
      * Should return email aliases, plus primary email address.

@@ -85,9 +85,10 @@ class Thread
             return $this->googleServices->getGoogleServiceGmailForUserId($userId)->users_threads->modify($userId, $threadId, $postBody);
         } catch (\Google_Service_Exception $exception) {
             // thread does not exist
-            if ($exception->getCode() === 404) {
+            if (404 === $exception->getCode()) {
                 return;
             }
+
             throw $exception;
         }
     }

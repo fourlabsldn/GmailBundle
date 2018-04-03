@@ -15,7 +15,7 @@ interface GmailHistoryInterface
      *
      * @return GmailHistoryInterface
      */
-    public function setUserId(string $userId): GmailHistoryInterface;
+    public function setUserId(string $userId): self;
 
     /**
      * @return string
@@ -27,7 +27,7 @@ interface GmailHistoryInterface
      *
      * @return GmailHistoryInterface
      */
-    public function setDomain(string $domain): GmailHistoryInterface;
+    public function setDomain(string $domain): self;
 
     /**
      * @return string
@@ -39,7 +39,7 @@ interface GmailHistoryInterface
      *
      * @return GmailHistoryInterface
      */
-    public function setHistoryId(int $historyId): GmailHistoryInterface;
+    public function setHistoryId(int $historyId): self;
 
     /**
      * @return int

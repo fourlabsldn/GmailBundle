@@ -39,7 +39,7 @@ class GmailDomain
      *
      * @return GmailDomain
      */
-    public function addGmailUser(GmailUserInterface $user): GmailDomain
+    public function addGmailUser(GmailUserInterface $user): self
     {
         $this->gmailUsers->attach($user);
 
@@ -51,7 +51,7 @@ class GmailDomain
      *
      * @return GmailDomain
      */
-    public function removeGmailUser(GmailUserInterface $user): GmailDomain
+    public function removeGmailUser(GmailUserInterface $user): self
     {
         $this->gmailUsers->detach($user);
 

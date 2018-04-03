@@ -15,7 +15,7 @@ interface GmailLabelInterface
      *
      * @return GmailLabelInterface
      */
-    public function setUserId(string $userId): GmailLabelInterface;
+    public function setUserId(string $userId): self;
 
     /**
      * @return string
@@ -27,7 +27,7 @@ interface GmailLabelInterface
      *
      * @return GmailLabelInterface
      */
-    public function setDomain(string $domain): GmailLabelInterface;
+    public function setDomain(string $domain): self;
 
     /**
      * @return string
@@ -39,7 +39,7 @@ interface GmailLabelInterface
      *
      * @return GmailLabelInterface
      */
-    public function setName(string $name): GmailLabelInterface;
+    public function setName(string $name): self;
 
     /**
      * @return string

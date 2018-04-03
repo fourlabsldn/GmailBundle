@@ -15,7 +15,7 @@ interface GmailIdsInterface
      *
      * @return GmailIdsInterface
      */
-    public function setUserId(string $userId): GmailIdsInterface;
+    public function setUserId(string $userId): self;
 
     /**
      * @return string
@@ -27,7 +27,7 @@ interface GmailIdsInterface
      *
      * @return GmailIdsInterface
      */
-    public function setDomain(string $domain): GmailIdsInterface;
+    public function setDomain(string $domain): self;
 
     /**
      * @return string
@@ -42,7 +42,7 @@ interface GmailIdsInterface
      *
      * @return GmailIdsInterface
      */
-    public function setGmailIds(array $gmailIds): GmailIdsInterface;
+    public function setGmailIds(array $gmailIds): self;
 
     /**
      * The limit parameter allows you to retrieve a slice of the gmailIds.

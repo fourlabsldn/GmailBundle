@@ -16,8 +16,11 @@ interface GmailMessageInterface
      * @see https://developers.google.com/gmail/api/guides/labels
      */
     const LABEL_UNREAD = 'UNREAD';
+
     const LABEL_INBOX = 'INBOX';
+
     const LABEL_SENT = 'SENT';
+
     const LABEL_TRASH = 'TRASH';
 
     /**
@@ -25,7 +28,7 @@ interface GmailMessageInterface
      *
      * @return GmailMessageInterface
      */
-    public function setGmailId(string $gmailId): GmailMessageInterface;
+    public function setGmailId(string $gmailId): self;
 
     /**
      * @return string
@@ -37,7 +40,7 @@ interface GmailMessageInterface
      *
      * @return GmailMessageInterface
      */
-    public function setDomain(string $domain): GmailMessageInterface;
+    public function setDomain(string $domain): self;
 
     /**
      * @return string
@@ -49,7 +52,7 @@ interface GmailMessageInterface
      *
      * @return GmailMessageInterface
      */
-    public function setThreadId(string $threadId): GmailMessageInterface;
+    public function setThreadId(string $threadId): self;
 
     /**
      * @return string
@@ -61,7 +64,7 @@ interface GmailMessageInterface
      *
      * @return GmailMessageInterface
      */
-    public function setHistoryId(string $historyId): GmailMessageInterface;
+    public function setHistoryId(string $historyId): self;
 
     /**
      * @return string
@@ -73,7 +76,7 @@ interface GmailMessageInterface
      *
      * @return GmailMessageInterface
      */
-    public function setUserId(string $userId): GmailMessageInterface;
+    public function setUserId(string $userId): self;
 
     /**
      * @return string
@@ -88,7 +91,7 @@ interface GmailMessageInterface
      *
      * @return GmailMessageInterface
      */
-    public function setTo(string $to): GmailMessageInterface;
+    public function setTo(string $to): self;
 
     /**
      * @return string
@@ -111,7 +114,7 @@ interface GmailMessageInterface
      *
      * @return GmailMessageInterface
      */
-    public function setFrom(string $from): GmailMessageInterface;
+    public function setFrom(string $from): self;
 
     /**
      * @return string
@@ -138,7 +141,7 @@ interface GmailMessageInterface
      *
      * @return GmailMessageInterface
      */
-    public function setSentAt(\DateTimeInterface  $sentAt): GmailMessageInterface;
+    public function setSentAt(\DateTimeInterface  $sentAt): self;
 
     /**
      * @return \DateTimeInterface
@@ -150,7 +153,7 @@ interface GmailMessageInterface
      *
      * @return GmailMessageInterface
      */
-    public function setSubject(string $subject): GmailMessageInterface;
+    public function setSubject(string $subject): self;
 
     /**
      * @return string
@@ -162,7 +165,7 @@ interface GmailMessageInterface
      *
      * @return GmailMessageInterface
      */
-    public function setSnippet(string $snippet): GmailMessageInterface;
+    public function setSnippet(string $snippet): self;
 
     /**
      * @return string
@@ -180,7 +183,7 @@ interface GmailMessageInterface
      *
      * @return GmailMessageInterface
      */
-    public function setBodyPlainTextFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage): GmailMessageInterface;
+    public function setBodyPlainTextFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage): self;
 
     /**
      * @return string
@@ -192,7 +195,7 @@ interface GmailMessageInterface
      *
      * @return GmailMessageInterface
      */
-    public function setBodyPlainText(string $bodyPlainText): GmailMessageInterface;
+    public function setBodyPlainText(string $bodyPlainText): self;
 
     /**
      * Set from a \Google_Service_Gmail_Message (from the API).
@@ -205,14 +208,14 @@ interface GmailMessageInterface
      *
      * @return GmailMessageInterface
      */
-    public function setBodyHtmlFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage): GmailMessageInterface;
+    public function setBodyHtmlFromApiMessage(\Google_Service_Gmail_Message $gmailApiMessage): self;
 
     /**
      * @param string $bodyHtml
      *
      * @return GmailMessageInterface
      */
-    public function setBodyHtml(string $bodyHtml): GmailMessageInterface;
+    public function setBodyHtml(string $bodyHtml): self;
 
     /**
      * @return string
@@ -224,7 +227,7 @@ interface GmailMessageInterface
      *
      * @return GmailMessageInterface
      */
-    public function addLabel(GmailLabelInterface $label): GmailMessageInterface;
+    public function addLabel(GmailLabelInterface $label): self;
 
     /**
      * @return \Traversable
@@ -236,12 +239,12 @@ interface GmailMessageInterface
      *
      * @return GmailMessageInterface
      */
-    public function removeLabel(GmailLabelInterface $label): GmailMessageInterface;
+    public function removeLabel(GmailLabelInterface $label): self;
 
     /**
      * @return GmailMessageInterface
      */
-    public function clearLabels(): GmailMessageInterface;
+    public function clearLabels(): self;
 
     /**
      * @param string $name

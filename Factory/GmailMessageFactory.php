@@ -60,12 +60,15 @@ class GmailMessageFactory
             switch ($header->getName()) {
                 case 'From':
                     $message->setFrom($header->getValue() ?? '');
+
                     break;
                 case 'To':
                     $message->setTo($header->getValue() ?? '');
+
                     break;
                 case 'Subject':
                     $message->setSubject($header->getValue() ?? '');
+
                     break;
             }
             $headerNames[] = $header->getName();
