@@ -9,15 +9,12 @@ class ServiceAccount
      */
     const SCOPES = [
         \Google_Service_Gmail::GMAIL_COMPOSE,
-        \Google_Service_Gmail::GMAIL_READONLY,
         \Google_Service_Gmail::GMAIL_SEND,
         \Google_Service_Gmail::GMAIL_MODIFY,
         \Google_Service_Directory::ADMIN_DIRECTORY_USER,
         \Google_Service_Directory::ADMIN_DIRECTORY_DOMAIN_READONLY,
         \Google_Service_Oauth2::USERINFO_PROFILE,
         \Google_Service_Oauth2::USERINFO_EMAIL,
-        \Google_Service_Oauth2::PLUS_LOGIN,
-        \Google_Service_Oauth2::PLUS_ME,
     ];
 
     /**

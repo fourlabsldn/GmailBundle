@@ -22,11 +22,6 @@ class OAuth
     private $domainCache;
 
     /**
-     * @var string
-     */
-    private $userIdCache;
-
-    /**
      * @param \Google_Service_Oauth2 $oAuth
      */
     public function __construct(\Google_Service_Oauth2 $oAuth)
@@ -44,17 +39,5 @@ class OAuth
         }
 
         return $this->domainCache;
-    }
-
-    /**
-     * @return string
-     */
-    public function resolveUserId()
-    {
-        if (!isset($this->userIdCache)) {
-            $this->userIdCache = $this->oAuth->userinfo_v2_me->get()->getId();
-        }
-
-        return $this->userIdCache;
     }
 }
